@@ -34,6 +34,20 @@
 
         <!-- MAIN BODY -->
         <main>
+            @{
+                var flashKey = (TempData["Success"] ?? TempData["success"]) != null ? "success"
+                              : (TempData["Error"] ?? TempData["error"]) != null ? "danger"
+                              : null;
+                var flashText = TempData["Success"] ?? TempData["success"]
+                              ?? TempData["Error"] ?? TempData["error"];
+            }
+            @if (flashKey != null)
+            {
+                <div class="alert alert-@flashKey alert-dismissible fade show m-3" role="alert">
+                    @flashText
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
             @RenderBody()
         </main>
 

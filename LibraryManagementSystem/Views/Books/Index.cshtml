@@ -103,7 +103,9 @@
         <div class="col-md-6 mb-2">
             <select id="categoryFilter" class="form-select">
                 <option value="">All Categories</option>
-                @foreach (var item in Model.Select(x => x.Category?.Name).Distinct())
+                @foreach (var item in Model.Where(x => x.Category != null)
+                                              .Select(x => x.Category!.Name)
+                                              .Distinct())
                 {
                     <option value="@item">@item</option>
                 }

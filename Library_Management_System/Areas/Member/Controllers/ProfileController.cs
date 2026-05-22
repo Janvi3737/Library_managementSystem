@@ -165,7 +165,7 @@ namespace Library_Management_System.Areas.Member.Controllers
                 TempData["error"] =
                     "Please select an image";
 
-                return RedirectToAction(nameof(Edit));
+                return RedirectToAction(nameof(Avatar));
             }
 
             // VALIDATE FILE TYPE
@@ -182,7 +182,7 @@ namespace Library_Management_System.Areas.Member.Controllers
                 TempData["error"] =
                     "Only JPG, PNG, and WEBP images are allowed";
 
-                return RedirectToAction(nameof(Edit));
+                return RedirectToAction(nameof(Avatar));
             }
 
             // DELETE OLD IMAGE
@@ -236,7 +236,7 @@ namespace Library_Management_System.Areas.Member.Controllers
                 TempData["error"] =
                     "Failed to upload profile photo";
 
-                return RedirectToAction(nameof(Edit));
+                return RedirectToAction(nameof(Avatar));
             }
 
             await _signInManager.RefreshSignInAsync(user);

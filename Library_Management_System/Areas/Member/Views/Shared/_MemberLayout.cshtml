@@ -4,7 +4,7 @@
 @{
     var currentUser = await UserManager.GetUserAsync(User);
 
-    string profileImage = "/images/default-user.png";
+    string profileImage = "/images/default-user.svg";
 
     if (currentUser != null &&
         !string.IsNullOrEmpty(currentUser.ProfileImagePath))
@@ -538,8 +538,9 @@
 
             <a class="menu-item"
                asp-area="Member"
-               asp-controller="Borrow"
-               asp-action="MyBooks">
+               asp-controller="BorrowHistory"
+               asp-action="Index"
+               asp-route-status="active">
 
                 <i class="bi bi-book"></i>
                 <span>My Books</span>
@@ -548,8 +549,8 @@
 
             <a class="menu-item"
                asp-area="Member"
-               asp-controller="Borrow"
-               asp-action="History">
+               asp-controller="BorrowHistory"
+               asp-action="Index">
 
                 <i class="bi bi-clock-history"></i>
                 <span>Borrow History</span>
@@ -736,6 +737,20 @@
             </nav>
 
             <!-- PAGE CONTENT -->
+            @{
+                var flashKey = (TempData["Success"] ?? TempData["success"]) != null ? "success"
+                              : (TempData["Error"] ?? TempData["error"]) != null ? "danger"
+                              : null;
+                var flashText = TempData["Success"] ?? TempData["success"]
+                              ?? TempData["Error"] ?? TempData["error"];
+            }
+            @if (flashKey != null)
+            {
+                <div class="alert alert-@flashKey alert-dismissible fade show m-3" role="alert">
+                    @flashText
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
             @RenderBody()
 
         </main>

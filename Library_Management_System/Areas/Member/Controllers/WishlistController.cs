@@ -34,6 +34,7 @@ namespace Library_Management_System.Areas.Member.Controllers
 
             var wishlistItems = await _context.Wishlists
                 .Include(w => w.Book)
+                    .ThenInclude(b => b.Author)
                 .Where(w => w.MemberId == user.Id && w.BookId != null)
                 .OrderByDescending(w => w.AddedOn)
                 .ToListAsync();

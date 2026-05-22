@@ -113,7 +113,7 @@
                     <div class="book-card">
 
                         <img src="@(string.IsNullOrEmpty(book.CoverImageUrl)
-                                                                                                  ? "/images/default-book.png"
+                                                                                                  ? "/images/default-book.jpg"
                                                                                                   : book.CoverImageUrl)" alt="@book.Title" />
 
                         <h4 title="@book.Title">
@@ -279,7 +279,7 @@
             @foreach (var book in Model.NewArrivals)
             {
                 <img src="@(string.IsNullOrEmpty(book.CoverImageUrl)
-                                                                          ? "/images/default-book.png"
+                                                                          ? "/images/default-book.jpg"
                                                                           : book.CoverImageUrl)" alt="@book.Title" />
             }
 

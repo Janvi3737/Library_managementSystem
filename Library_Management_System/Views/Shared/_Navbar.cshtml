@@ -4,7 +4,7 @@
 @{
     var currentUser = await UserManager.GetUserAsync(User);
 
-    string profileImage = "/images/default-user.png";
+    string profileImage = "/images/default-user.svg";
 
     if (currentUser != null &&
         !string.IsNullOrEmpty(currentUser.ProfileImagePath))

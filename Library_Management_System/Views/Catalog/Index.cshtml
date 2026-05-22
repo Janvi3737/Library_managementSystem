@@ -33,7 +33,7 @@
         border-radius: 36px;
         padding: 75px 65px;
         margin-bottom: 50px;
-        background: linear-gradient(rgba(7,11,26,.85), rgba(15,23,42,.92)), url('/images/library-banner.jpg');
+        background: linear-gradient(rgba(7,11,26,.85), rgba(15,23,42,.92)), url('/images/library-banner.png');
         background-size: cover;
         background-position: center;
         border: 1px solid rgba(255,255,255,.08);
@@ -820,6 +820,11 @@
 
                 <a asp-action="Index"
                    asp-route-PageNumber="@(Model.PageNumber - 1)"
+                   asp-route-SearchQuery="@Model.SearchQuery"
+                   asp-route-CategoryId="@Model.CategoryId"
+                   asp-route-AuthorId="@Model.AuthorId"
+                   asp-route-Availability="@Model.Availability"
+                   asp-route-SortBy="@Model.SortBy"
                    class="page-btn @(Model.PageNumber <= 1 ? "disabled" : "")">
 
                     ← Previous
@@ -828,6 +833,11 @@
 
                 <a asp-action="Index"
                    asp-route-PageNumber="@(Model.PageNumber + 1)"
+                   asp-route-SearchQuery="@Model.SearchQuery"
+                   asp-route-CategoryId="@Model.CategoryId"
+                   asp-route-AuthorId="@Model.AuthorId"
+                   asp-route-Availability="@Model.Availability"
+                   asp-route-SortBy="@Model.SortBy"
                    class="page-btn">
 
                     Next →

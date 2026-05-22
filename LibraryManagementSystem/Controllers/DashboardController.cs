@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 [Authorize]
 public class DashboardController : Controller
 {
-    public IActionResult Index()
-    {
-        return View();
-    }
+    // The real admin dashboard lives at HomeController.Index — no Views/Dashboard/
+    // folder exists. Direct hits to /Dashboard used to crash with "view not found";
+    // redirect so the URL stays usable.
+    public IActionResult Index() => RedirectToAction("Index", "Home");
 }

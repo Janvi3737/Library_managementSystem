@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using LibraryManagementSystem.ClassLibrary.Models;
 namespace LibraryManagementSystem.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class AuthorsController : Controller
     {
         private readonly AppDbContext _context;

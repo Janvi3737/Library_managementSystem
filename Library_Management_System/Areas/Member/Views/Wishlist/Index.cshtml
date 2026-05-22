@@ -135,7 +135,7 @@
                     <div class="book-card">
 
                         <div class="book-image">
-                            <img src="@(item.Book?.CoverImageUrl ?? "/images/no-book.png")"
+                            <img src="@(item.Book?.CoverImageUrl ?? "/images/no-book.svg")"
                                  alt="@item.Book?.Title" />
                         </div>
 
@@ -146,7 +146,7 @@
                             </h3>
 
                             <div class="book-author">
-                                by @item.Book?.Author
+                                by @(item.Book?.Author?.Name ?? "Unknown Author")
                             </div>
 
                             <div class="book-actions">

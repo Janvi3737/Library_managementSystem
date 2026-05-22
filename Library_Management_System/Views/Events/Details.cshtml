@@ -5,37 +5,37 @@
 
     string speakerName = "James Clear";
     string speakerDesc = "Bestselling author and productivity expert known for inspiring readers through modern self-improvement.";
-    string speakerImage = "/images/speakers/james-clear.jpg";
+    string speakerImage = "/images/default-speaker.svg";
 
     if (Model.Title.Contains("Atomic Habits"))
     {
         speakerName = "James Clear";
         speakerDesc = "Author of Atomic Habits and expert in habits and productivity.";
-        speakerImage = "/images/speakers/james-clear.jpg";
+        speakerImage = "/images/default-speaker.svg";
     }
     else if (Model.Title.Contains("Rich Dad"))
     {
         speakerName = "Robert Kiyosaki";
         speakerDesc = "Entrepreneur and financial educator.";
-        speakerImage = "/images/speakers/robert-kiyosaki.jpg";
+        speakerImage = "/images/default-speaker.svg";
     }
     else if (Model.Title.Contains("Alchemist"))
     {
         speakerName = "Paulo Coelho";
         speakerDesc = "Inspirational novelist and storyteller.";
-        speakerImage = "/images/speakers/paulo-coelho.jpg";
+        speakerImage = "/images/default-speaker.svg";
     }
     else if (Model.Title.Contains("Clean Code"))
     {
         speakerName = "Robert C. Martin";
         speakerDesc = "Software engineering expert and Clean Code author.";
-        speakerImage = "/images/speakers/uncle-bob.jpg";
+        speakerImage = "/images/default-speaker.svg";
     }
     else if (Model.Title.Contains("Wings of Fire"))
     {
         speakerName = "Dr. A.P.J Abdul Kalam";
         speakerDesc = "Former President of India and inspirational leader.";
-        speakerImage = "/images/speakers/apj-kalam.jpg";
+        speakerImage = "/images/default-speaker.svg";
     }
 }
 
@@ -217,7 +217,7 @@
 
                         <div class="event-cover">
                             <img src="@(string.IsNullOrEmpty(Model.ImagePath)
-                                                                                                  ? "/images/default-event.jpg"
+                                                                                                  ? "/images/no-event.svg"
                                                                                                   : Model.ImagePath)" />
                         </div>
 

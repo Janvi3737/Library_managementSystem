@@ -11,7 +11,7 @@ using System.Globalization;
 
 namespace LibraryManagementSystem.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class BooksController : Controller
     {
         private readonly AppDbContext _context;
