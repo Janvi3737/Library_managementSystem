@@ -1,0 +1,456 @@
+@{
+    ViewData["Title"] = "UPI Payment";
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
+}
+
+<style>
+
+    body {
+        background: #050816;
+        font-family: 'Inter',sans-serif;
+        color: white;
+    }
+
+    .payment-page {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px;
+    }
+
+    .payment-card {
+        width: 100%;
+        max-width: 620px;
+        background: linear-gradient(180deg,#0f172a,#081120);
+        border-radius: 32px;
+        padding: 40px;
+        border: 1px solid rgba(255,255,255,.08);
+        text-align: center;
+        box-shadow: 0 20px 60px rgba(0,0,0,.45);
+    }
+
+    .title {
+        font-size: 42px;
+        font-weight: 900;
+        margin-bottom: 10px;
+        background: linear-gradient(135deg,#fff,#d8b4fe);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .price {
+        font-size: 56px;
+        font-weight: 900;
+        color: #c084fc;
+        margin-bottom: 30px;
+    }
+
+    .payment-methods {
+        display: grid;
+        grid-template-columns: repeat(2,1fr);
+        gap: 18px;
+        margin-bottom: 30px;
+    }
+
+    .method-card {
+        background: rgba(255,255,255,.04);
+        border: 1px solid rgba(255,255,255,.08);
+        border-radius: 22px;
+        padding: 22px;
+        text-align: center;
+        cursor: pointer;
+        transition: .3s;
+    }
+
+        .method-card:hover {
+            transform: translateY(-4px);
+            border-color: #a855f7;
+        }
+
+        .method-card.active {
+            border-color: #a855f7;
+            background: rgba(168,85,247,.15);
+            box-shadow: 0 12px 30px rgba(168,85,247,.25);
+        }
+
+        .method-card img {
+            width: 46px;
+            margin-bottom: 12px;
+        }
+
+        .method-card span {
+            display: block;
+            font-weight: 700;
+            color: white;
+        }
+
+    .dynamic-box {
+        background: rgba(255,255,255,.04);
+        border: 1px solid rgba(255,255,255,.08);
+        border-radius: 22px;
+        padding: 24px;
+        margin-bottom: 25px;
+    }
+
+    .dynamic-title {
+        font-size: 18px;
+        font-weight: 800;
+        margin-bottom: 14px;
+    }
+
+    .dynamic-input {
+        width: 100%;
+        padding: 16px;
+        border-radius: 16px;
+        background: #111827;
+        border: 1px solid rgba(255,255,255,.08);
+        color: white;
+        outline: none;
+    }
+
+    .qr-box {
+        background: white;
+        padding: 20px;
+        border-radius: 24px;
+        display: inline-block;
+        margin-bottom: 25px;
+    }
+
+    .upi-box {
+        background: rgba(255,255,255,.04);
+        border: 1px solid rgba(255,255,255,.08);
+        padding: 16px;
+        border-radius: 16px;
+        margin-bottom: 25px;
+    }
+
+    .upi-id {
+        color: #d8b4fe;
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .info {
+        color: #9ca3af;
+        line-height: 1.7;
+        margin-bottom: 30px;
+    }
+
+    .upload-input {
+        width: 100%;
+        padding: 16px;
+        border-radius: 16px;
+        background: #111827;
+        color: white;
+        border: 1px solid rgba(255,255,255,.08);
+        margin-bottom: 20px;
+    }
+
+    .pay-btn {
+        width: 100%;
+        border: none;
+        padding: 18px;
+        border-radius: 18px;
+        background: linear-gradient(135deg,#7c3aed,#d946ef);
+        color: white;
+        font-size: 16px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: .3s;
+    }
+
+        .pay-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(168,85,247,.3);
+        }
+
+</style>
+
+<div class="payment-page">
+
+    <div class="payment-card">
+
+        <div class="title">
+            Complete Payment
+        </div>
+
+        <div class="price">
+            ₹@ViewBag.Fee
+        </div>
+
+        <!-- PAYMENT METHODS -->
+
+        <div class="payment-methods">
+
+            <!-- PHONEPE -->
+
+            <div class="method-card active"
+                 data-method="phonepe">
+
+                <img src="https://cdn-icons-png.flaticon.com/512/5968/5968144.png">
+
+                <span>PhonePe</span>
+
+            </div>
+
+            <!-- GPAY -->
+
+            <div class="method-card"
+                 data-method="gpay">
+
+                <img src="https://cdn-icons-png.flaticon.com/512/6124/6124998.png">
+
+                <span>Google Pay</span>
+
+            </div>
+
+            <!-- PAYTM -->
+
+            <div class="method-card"
+                 data-method="paytm">
+
+                <img src="https://cdn-icons-png.flaticon.com/512/825/825454.png">
+
+                <span>Paytm</span>
+
+            </div>
+
+            <!-- BHIM -->
+
+            <div class="method-card"
+                 data-method="bhim">
+
+                <img src="https://cdn-icons-png.flaticon.com/512/196/196578.png">
+
+                <span>BHIM UPI</span>
+
+            </div>
+
+        </div>
+
+        <!-- DYNAMIC PAYMENT FORM -->
+
+        <div id="dynamicPaymentForm"></div>
+
+        <!-- UPI BOX -->
+
+        <div class="upi-box">
+
+            <div>
+                Pay To UPI ID
+            </div>
+
+            <div class="upi-id">
+                harshilinvest@okhdfcbank
+            </div>
+
+        </div>
+
+        <div class="info">
+
+            Scan QR using PhonePe, Google Pay,
+            Paytm or BHIM and complete payment.
+
+        </div>
+
+        <!-- FORM -->
+
+        <form asp-action="PaymentSuccess"
+              method="post"
+              enctype="multipart/form-data">
+
+            <!-- PAYMENT METHOD -->
+
+            <input type="hidden"
+                   id="paymentMethod"
+                   name="paymentMethod" />
+
+            <!-- TRANSACTION ID -->
+
+            <input type="text"
+                   name="transactionId"
+                   class="dynamic-input"
+                   placeholder="Enter Transaction ID"
+                   required
+                   style="margin-bottom:20px;" />
+
+            <!-- SCREENSHOT -->
+
+            <input type="file"
+                   name="screenshot"
+                   class="upload-input"
+                   required />
+
+            <button type="submit"
+                    class="pay-btn">
+
+                I Have Paid
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+
+    const cards =
+        document.querySelectorAll(".method-card");
+
+    const dynamicForm =
+        document.getElementById("dynamicPaymentForm");
+
+    const paymentMethodInput =
+        document.getElementById("paymentMethod");
+
+    // DEFAULT
+
+    renderPayment("phonepe");
+
+    // CLICK EVENT
+
+    cards.forEach(card => {
+
+        card.addEventListener("click", () => {
+
+            cards.forEach(x =>
+                x.classList.remove("active"));
+
+            card.classList.add("active");
+
+            const method =
+                card.dataset.method;
+
+            renderPayment(method);
+        });
+    });
+
+    // RENDER PAYMENT
+
+    function renderPayment(method) {
+
+        // ================= PHONEPE =================
+
+        if (method === "phonepe") {
+
+            paymentMethodInput.value =
+                "PhonePe";
+
+            dynamicForm.innerHTML = `
+
+                <div class="dynamic-box">
+
+                    <div class="dynamic-title">
+                        Pay with PhonePe
+                    </div>
+
+                    <input type="text"
+                           class="dynamic-input"
+                           placeholder="Enter PhonePe Number">
+
+                </div>
+
+                <div class="qr-box">
+
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=upi://pay?pa=harshilinvest@okhdfcbank&pn=LibraryMembership&am=@ViewBag.Fee&cu=INR"
+                         width="220">
+
+                </div>
+            `;
+        }
+
+        // ================= GPAY =================
+
+        else if (method === "gpay") {
+
+            paymentMethodInput.value =
+                "Google Pay";
+
+            dynamicForm.innerHTML = `
+
+                <div class="dynamic-box">
+
+                    <div class="dynamic-title">
+                        Pay with Google Pay
+                    </div>
+
+                    <input type="text"
+                           class="dynamic-input"
+                           placeholder="Enter Google Pay Number">
+
+                </div>
+
+                <div class="qr-box">
+
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=upi://pay?pa=harshilinvest@okhdfcbank&pn=LibraryMembership&am=@ViewBag.Fee&cu=INR"
+                         width="220">
+
+                </div>
+            `;
+        }
+
+        // ================= PAYTM =================
+
+        else if (method === "paytm") {
+
+            paymentMethodInput.value =
+                "Paytm";
+
+            dynamicForm.innerHTML = `
+
+                <div class="dynamic-box">
+
+                    <div class="dynamic-title">
+                        Pay with Paytm
+                    </div>
+
+                    <input type="text"
+                           class="dynamic-input"
+                           placeholder="Enter Paytm Number">
+
+                </div>
+
+                <div class="qr-box">
+
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=upi://pay?pa=harshilinvest@okhdfcbank&pn=LibraryMembership&am=@ViewBag.Fee&cu=INR"
+                         width="220">
+
+                </div>
+            `;
+        }
+
+        // ================= BHIM =================
+
+        else if (method === "bhim") {
+
+            paymentMethodInput.value =
+                "BHIM UPI";
+
+            dynamicForm.innerHTML = `
+
+                <div class="dynamic-box">
+
+                    <div class="dynamic-title">
+                        Pay with BHIM UPI
+                    </div>
+
+                    <input type="text"
+                           class="dynamic-input"
+                           placeholder="Enter UPI ID">
+
+                </div>
+
+                <div class="qr-box">
+
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=upi://pay?pa=harshilinvest@okhdfcbank&pn=LibraryMembership&am=@ViewBag.Fee&cu=INR"
+                         width="220">
+
+                </div>
+            `;
+        }
+    }
+
+</script>

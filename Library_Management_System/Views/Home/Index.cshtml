@@ -7,61 +7,140 @@
 
 <link rel="stylesheet" href="~/css/frontend.css" />
 
+<style>
+    a.book-card-link,
+    a.event-card-link,
+    a.arrival-card-link,
+    a.category-item-link,
+    a.membership-card-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
+    .book-card,
+    .event-card,
+    .arrival-card,
+    .category-item,
+    .membership-card {
+        cursor: pointer;
+        transition: 0.3s ease;
+    }
+
+        .book-card:hover,
+        .event-card:hover,
+        .arrival-card:hover,
+        .category-item:hover,
+        .membership-card:hover {
+            transform: translateY(-5px);
+        }
+
+
+</style>
+
 <div class="dashboard-wrapper">
 
     <!-- HERO -->
-    <!-- HERO SECTION -->
-
     <section class="hero-section">
 
         <div class="hero-card">
 
-            <!-- LEFT CONTENT -->
-
             <div class="hero-left">
 
                 <div class="welcome-badge">
-
                     <i class="bi bi-stars"></i>
-
                     Welcome Back,
-                    @User.Identity?.Name 👋
-
+                    @ViewBag.UserName 👋
                 </div>
 
                 <h1>
-
-                    Knowledge is
-
-                    <span>Power</span>
-
+                    Knowledge is <span>Power</span>
                 </h1>
 
                 <p>
-                    Explore the world’s best books,
-                    discover new authors, and unlock
+                    Explore the world’s best books and unlock
                     endless imagination through reading.
                 </p>
 
                 <div class="hero-buttons">
 
-                    <a asp-controller="Catalog" asp-action="Index" class="hero-btn">
+                    <!-- EXPLORE -->
+                    <a asp-controller="Catalog"
+                       asp-action="Index"
+                       class="hero-btn">
 
                         Explore Books
-
                         <i class="bi bi-arrow-right"></i>
 
                     </a>
 
-                    @if (User.Identity != null &&
-                                        User.Identity.IsAuthenticated &&
-                                        !User.IsInRole("Member"))
+                    <!-- MEMBERSHIP -->
+                    <a asp-controller="Membership"
+                       asp-action="Index"
+                       class="hero-btn membership-hero-btn">
+
+                        Get Membership
+                        <i class="bi bi-stars"></i>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+            <div class="hero-right">
+                <img src="~/images/hero/hero.png" alt="Hero" />
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- GRID -->
+    <div class="dashboard-grid">
+
+        <!-- LEFT -->
+        <div class="dashboard-main">
+
+            <!-- CONTINUE READING -->
+            <div class="modern-card">
+
+                <div class="section-header">
+                    <h3>Continue Reading</h3>
+
+                    <a asp-controller="Catalog"
+                       asp-action="Index">
+                        View All
+                    </a>
+                </div>
+
+                <div class="books-row">
+
+                    @foreach (var book in Model.ContinueReadingBooks)
                     {
-                        <a asp-controller="Membership" asp-action="Index" class="membership-btn">
+                        <a asp-controller="Catalog"
+                           asp-action="Details"
+                           asp-route-id="@book.Id"
+                           class="book-card-link">
 
-                            <i class="bi bi-gem"></i>
+                            <div class="book-card">
 
-                            Get Membership
+                                <img src="@(string.IsNullOrEmpty(book.CoverImageUrl)
+                                                             ? "/images/default-book.jpg"
+                                                             : book.CoverImageUrl)"
+                                     alt="@book.Title" />
+
+                                <div class="book-content">
+
+                                    <h4>@book.Title</h4>
+
+                                    <p>@(book.Author?.Name ?? "Unknown")</p>
+
+                                    <!-- ❌ Removed progress bar completely -->
+
+                                </div>
+
+                            </div>
 
                         </a>
                     }
@@ -70,218 +149,197 @@
 
             </div>
 
-            <!-- RIGHT IMAGE -->
+            <!-- EVENTS -->
+            <div class="modern-card mt-4">
 
-            <div class="hero-right">
+                <div class="section-header">
+                    <h3>Upcoming Events</h3>
 
-                <img src="~/images/hero/hero.png" alt="Library Hero" />
+                    <a asp-controller="Events"
+                       asp-action="Index">
+                        View All
+                    </a>
+                </div>
+
+                <div class="event-grid">
+
+                    @foreach (var ev in Model.UpcomingEvents)
+                    {
+                        <a asp-controller="Events"
+                           asp-action="Details"
+                           asp-route-id="@ev.Id"
+                           class="event-card-link">
+
+                            <div class="event-card">
+
+                                <div class="event-date">
+                                    <h2>@ev.Date.Day</h2>
+                                    <span>@ev.Date.ToString("MMM").ToUpper()</span>
+                                </div>
+
+                                <div class="event-info">
+                                    <h4>@ev.Title</h4>
+                                    <p>@ev.Location</p>
+                                    <small>@ev.Date.ToString("hh:mm tt")</small>
+                                </div>
+
+                            </div>
+
+                        </a>
+                    }
+
+                </div>
 
             </div>
+            <!-- NEW ARRIVALS -->
+            <div class="modern-card mt-4">
 
-            <!-- GLOW -->
+                <div class="section-header">
+                    <h3>New Arrivals</h3>
 
-            <div class="hero-glow glow-1"></div>
-            <div class="hero-glow glow-2"></div>
+                    <a asp-controller="Catalog"
+                       asp-action="NewArrivals">
+                        View All
+                    </a>
+                </div>
 
-        </div>
+                <div class="arrival-row">
 
-    </section>
+                    @foreach (var book in Model.NewArrivals)
+                    {
+                        <a asp-controller="Catalog"
+                           asp-action="Details"
+                           asp-route-id="@book.Id"
+                           class="arrival-card-link">
 
-    <!-- CONTENT -->
-    <div class="hero-grid mt-4">
+                            <div class="arrival-card">
 
-        <!-- LEFT -->
-        <div class="card-section">
+                                <img src="@(string.IsNullOrEmpty(book.CoverImageUrl)
+                                                                                 ? "/images/default-book.jpg"
+                                                                                 : book.CoverImageUrl)"
+                                     alt="@book.Title" />
 
-            <!-- CONTINUE READING -->
-            <div class="section-header">
+                            </div>
 
-                <h3>📖 Pick Up Where You Left Off</h3>
+                        </a>
+                    }
 
-                <a asp-controller="Catalog" asp-action="Index">
-
-                    View All →
-
-                </a>
-
-            </div>
-
-            <div class="books-row">
-
-                @foreach (var book in Model.ContinueReadingBooks)
-                {
-                    <div class="book-card">
-
-                        <img src="@(string.IsNullOrEmpty(book.CoverImageUrl)
-                                                                                                  ? "/images/default-book.jpg"
-                                                                                                  : book.CoverImageUrl)" alt="@book.Title" />
-
-                        <h4 title="@book.Title">
-                            @book.Title
-                        </h4>
-
-                        <p>
-                            @(book.Author?.Name ?? "Unknown Author")
-                        </p>
-
-                        <div class="book-status">
-
-                            <span class="status-dot"></span>
-
-                            Last opened recently
-
-                        </div>
-
-                    </div>
-                }
+                </div>
 
             </div>
 
         </div>
 
         <!-- RIGHT -->
-        <div class="summary-card">
+        <div class="dashboard-sidebar">
 
-            <div class="section-header">
+              <!-- MEMBERSHIP -->
+              <div class="membership-box">
 
-                <h3>🔥 Popular Categories</h3>
+                  <div class="sidebar-title">
+                      <h3>Membership Plans</h3>
+                  </div>
 
-                <a asp-controller="Catalog" asp-action="ByCategory">
+                  <a asp-controller="Membership"
+                     asp-action="Index"
+                     class="membership-card-link">
 
-                    View All →
+                      <div class="membership-card">
+                          <div class="membership-icon student">
+                              <i class="bi bi-mortarboard-fill"></i>
+                          </div>
 
-                </a>
+                          <div class="membership-content">
+                              <h4>Student</h4>
+                              <p>Perfect for learners</p>
+                              <div class="membership-price">₹1000 / year</div>
+                          </div>
+                      </div>
 
-            </div>
+                  </a>
 
-            @foreach (var category in Model.PopularCategories.Take(4))
-            {
-                <div class="summary-item">
+                  <a asp-controller="Membership"
+                     asp-action="Index"
+                     class="membership-card-link">
 
-                    <div class="icon">
-                        @category.IconClass
+                      <div class="membership-card active-membership">
+
+                          <div class="popular-badge">Popular</div>
+
+                          <div class="membership-icon regular">
+                              <i class="bi bi-book-fill"></i>
+                          </div>
+
+                          <div class="membership-content">
+                              <h4>Regular</h4>
+                              <p>Best for readers</p>
+                              <div class="membership-price">₹1500 / year</div>
+                          </div>
+
+                      </div>
+
+                  </a>
+
+                  <a asp-controller="Membership"
+                     asp-action="Index"
+                     class="membership-card-link">
+
+                      <div class="membership-card">
+                          <div class="membership-icon premium">
+                              <i class="bi bi-gem"></i>
+                          </div>
+
+                          <div class="membership-content">
+                              <h4>Premium</h4>
+                              <p>Ultimate access</p>
+                              <div class="membership-price">₹3000 / year</div>
+                          </div>
+                      </div>
+
+                  </a>
+
+                  <a asp-controller="Membership"
+                     asp-action="Index"
+                     class="membership-btn">
+
+                      View Membership Plans
+                      <i class="bi bi-arrow-right"></i>
+
+                  </a>
+
+              </div>
+
+            <!-- CATEGORIES -->
+            <div class="modern-card mt-4">
+
+                <div class="section-header">
+                    <h3>Popular Categories</h3>
+
+                    <a asp-controller="Catalog"
+                       asp-action="ByCategory">
+                        View All
+                    </a>
+                </div>
+
+                @foreach (var category in Model.PopularCategories.Take(5))
+                {
+                    <div class="category-item">
+
+                        <div class="category-icon">
+                            <span style="font-size:24px;">
+                                @category.IconClass
+                            </span>
+                        </div>
+
+                        <div class="category-content">
+                            <h4>@category.CategoryName</h4>
+                            <span>@category.BookCount+ Books</span>
+                        </div>
+
                     </div>
-
-                    <div class="summary-content">
-
-                        <h4>@category.CategoryName</h4>
-
-                        <span>
-                            @category.BookCount+ Books
-                        </span>
-
-                    </div>
-
-                </div>
-            }
-        </div>
-
-    </div>
-
-    <!-- EVENTS -->
-    <div class="card-section mt-4">
-
-        <div class="section-header">
-
-            <h3>📅 Upcoming Events</h3>
-
-            <a asp-controller="Events" asp-action="Index">
-
-                View All →
-
-            </a>
-
-        </div>
-
-        <div class="event-column">
-
-            <div class="event-card">
-
-                <div class="event-date">
-                    <h2>24</h2>
-                    <span>MAY</span>
-                </div>
-
-                <div>
-                    <h4>Author Meet</h4>
-                    <p>Chetan Bhagat</p>
-                    <small>11:00 AM</small>
-                </div>
+                }
 
             </div>
-
-            <div class="event-card">
-
-                <div class="event-date">
-                    <h2>30</h2>
-                    <span>MAY</span>
-                </div>
-
-                <div>
-                    <h4>Book Fair</h4>
-                    <p>Main Campus</p>
-                    <small>10:00 AM</small>
-                </div>
-
-            </div>
-
-            <div class="event-card">
-
-                <div class="event-date">
-                    <h2>05</h2>
-                    <span>JUN</span>
-                </div>
-
-                <div>
-                    <h4>Reading Competition</h4>
-                    <p>Seminar Hall</p>
-                    <small>02:00 PM - 04:00 PM</small>
-                </div>
-
-            </div>
-
-            <div class="event-card">
-
-                <div class="event-date">
-                    <h2>12</h2>
-                    <span>JUN</span>
-                </div>
-
-                <div>
-                    <h4>Coding & AI Workshop</h4>
-                    <p>Tech Lab</p>
-                    <small>09:00 AM - 12:00 PM</small>
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- NEW ARRIVALS -->
-    <div class="card-section mt-4">
-
-        <div class="section-header">
-
-            <h3>✨ New Arrivals</h3>
-
-            <a asp-controller="Catalog" asp-action="NewArrivals">
-
-                View All →
-
-            </a>
-
-        </div>
-
-        <div class="arrival-row">
-
-            @foreach (var book in Model.NewArrivals)
-            {
-                <img src="@(string.IsNullOrEmpty(book.CoverImageUrl)
-                                                                          ? "/images/default-book.jpg"
-                                                                          : book.CoverImageUrl)" alt="@book.Title" />
-            }
 
         </div>
 

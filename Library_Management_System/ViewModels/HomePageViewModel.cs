@@ -10,7 +10,7 @@ namespace Library_Management_System.ViewModels
 
         public List<CategoryWithCountViewModel> PopularCategories { get; set; } = new();
 
-        public List<Event> Events { get; set; } = new();
+        public List<EventViewModel> UpcomingEvents { get; set; } = new();
     }
 
     public class CategoryWithCountViewModel
@@ -20,5 +20,16 @@ namespace Library_Management_System.ViewModels
         public int BookCount { get; set; }
 
         public string IconClass { get; set; } = "📚";
+    }
+
+    public class EventViewModel
+    {
+        public int Id { get; set; }
+
+        public string Title { get; set; } = string.Empty;
+
+        public string Location { get; set; } = string.Empty;
+
+        public DateTime Date { get; set; }
     }
 }

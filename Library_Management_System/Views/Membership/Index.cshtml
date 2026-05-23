@@ -1,184 +1,145 @@
 @{
-    ViewData["Title"] = "Get Membership";
+    ViewData["Title"] = "Membership Plans";
     Layout = "~/Views/Shared/_PublicLayout.cshtml";
 }
 
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
 <style>
 
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
     body {
-        background: #050816;
+        background: radial-gradient(circle at top left, rgba(124,58,237,.18), transparent 30%), radial-gradient(circle at bottom right, rgba(217,70,239,.12), transparent 30%), #050816;
         font-family: 'Inter', sans-serif;
         color: white;
+        overflow-x: hidden;
     }
 
+    /* PAGE */
     .membership-page {
+        position: relative;
         min-height: 100vh;
-        padding: 60px 40px;
+        padding: 90px 40px;
     }
 
-    /* =========================
-                HEADER
-        ==========================*/
+        .membership-page::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            opacity: .15;
+            pointer-events: none;
+        }
 
+    /* HEADER */
     .membership-header {
+        position: relative;
+        z-index: 2;
         text-align: center;
-        margin-bottom: 60px;
+        max-width: 850px;
+        margin: auto auto 70px;
     }
 
-        .membership-header h1 {
-            font-size: 52px;
-            font-weight: 900;
-            margin-bottom: 16px;
-            background: linear-gradient(135deg,#ffffff,#c084fc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+    .membership-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 18px;
+        border-radius: 999px;
+        background: rgba(255,255,255,.06);
+        border: 1px solid rgba(255,255,255,.08);
+        backdrop-filter: blur(12px);
+        color: #c084fc;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: .5px;
+        margin-bottom: 25px;
+    }
 
-        .membership-header p {
-            color: #9ca3af;
-            font-size: 18px;
-            max-width: 700px;
-            margin: auto;
-            line-height: 1.8;
-        }
+    .membership-header h1 {
+        font-size: 62px;
+        line-height: 1.1;
+        font-weight: 900;
+        margin-bottom: 18px;
+        background: linear-gradient(135deg,#ffffff 10%,#c084fc 45%,#d946ef 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
 
-    /* =========================
-                CARDS
-        ==========================*/
+    .membership-header p {
+        color: #9ca3af;
+        font-size: 17px;
+        line-height: 1.8;
+    }
 
+    /* GRID */
     .membership-grid {
+        position: relative;
+        z-index: 2;
         display: grid;
-        grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
-        gap: 30px;
+        grid-template-columns: repeat(auto-fit,minmax(320px,1fr));
+        gap: 35px;
+        align-items: stretch;
     }
 
+    /* CARD */
     .membership-card {
         position: relative;
-        background: linear-gradient(180deg,#111827,#0f172a);
-        border: 1px solid rgba(255,255,255,.08);
-        border-radius: 28px;
-        padding: 35px;
         overflow: hidden;
-        transition: .4s;
+        border-radius: 32px;
+        padding: 35px;
+        background: linear-gradient(180deg, rgba(15,23,42,.96), rgba(8,17,32,.96));
+        border: 1px solid rgba(255,255,255,.08);
+        transition: .4s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 650px;
+        backdrop-filter: blur(20px);
     }
 
         .membership-card:hover {
             transform: translateY(-10px);
-            border-color: rgba(168,85,247,.5);
-            box-shadow: 0 20px 50px rgba(124,58,237,.25);
+            border-color: rgba(168,85,247,.45);
+            box-shadow: 0 25px 50px rgba(124,58,237,.22);
         }
 
+    /* POPULAR */
+    .popular-card {
+        border: 1px solid rgba(192,132,252,.45);
+        transform: scale(1.03);
+        box-shadow: 0 25px 60px rgba(168,85,247,.22);
+    }
+
+        .popular-card:hover {
+            transform: scale(1.03) translateY(-10px);
+        }
+
+    /* GLOW */
     .card-glow {
         position: absolute;
-        width: 200px;
-        height: 200px;
-        background: rgba(168,85,247,.18);
+        width: 220px;
+        height: 220px;
         border-radius: 50%;
-        top: -80px;
-        right: -80px;
+        background: rgba(168,85,247,.18);
+        top: -100px;
+        right: -100px;
+        filter: blur(35px);
+    }
+
+    .card-glow-2 {
+        position: absolute;
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        background: rgba(217,70,239,.10);
+        bottom: -80px;
+        left: -60px;
         filter: blur(30px);
     }
 
-    .membership-icon {
-        width: 70px;
-        height: 70px;
-        border-radius: 20px;
-        background: linear-gradient(135deg,#7c3aed,#d946ef);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 25px;
-        font-size: 30px;
-        color: white;
-    }
-
-    .membership-title {
-        font-size: 32px;
-        font-weight: 800;
-        margin-bottom: 10px;
-    }
-
-    .membership-subtitle {
-        color: #9ca3af;
-        margin-bottom: 30px;
-        line-height: 1.7;
-    }
-
-    /* =========================
-                FEATURES
-        ==========================*/
-
-    .features {
-        margin-bottom: 30px;
-    }
-
-    .feature-item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 16px;
-        color: #d1d5db;
-    }
-
-        .feature-item i {
-            color: #c084fc;
-            font-size: 18px;
-        }
-
-    /* =========================
-                PRICE
-        ==========================*/
-
-    .price-box {
-        background: rgba(255,255,255,.04);
-        border: 1px solid rgba(255,255,255,.06);
-        border-radius: 20px;
-        padding: 18px;
-        margin-bottom: 25px;
-    }
-
-    .price {
-        font-size: 38px;
-        font-weight: 900;
-        color: white;
-    }
-
-    .duration {
-        color: #9ca3af;
-        font-size: 14px;
-    }
-
-    /* =========================
-                BUTTON
-        ==========================*/
-
-    .membership-btn {
-        width: 100%;
-        border: none;
-        border-radius: 18px;
-        padding: 16px;
-        font-size: 16px;
-        font-weight: 700;
-        background: linear-gradient(135deg,#7c3aed,#d946ef);
-        color: white;
-        transition: .3s;
-    }
-
-        .membership-btn:hover {
-            transform: scale(1.02);
-            box-shadow: 0 10px 30px rgba(168,85,247,.4);
-        }
-
-    /* =========================
-                BADGE
-        ==========================*/
-
+    /* BADGE */
     .popular-badge {
         position: absolute;
         top: 20px;
@@ -186,23 +147,195 @@
         background: linear-gradient(135deg,#f59e0b,#f97316);
         color: white;
         padding: 8px 16px;
-        border-radius: 30px;
-        font-size: 12px;
-        font-weight: 700;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: .7px;
+        z-index: 2;
+        box-shadow: 0 10px 25px rgba(249,115,22,.35);
     }
 
-    /* =========================
-                MOBILE
-        ==========================*/
+    /* TOP */
+    .card-top {
+        position: relative;
+        z-index: 2;
+    }
+
+    /* ICON */
+    .membership-icon {
+        width: 78px;
+        height: 78px;
+        border-radius: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 34px;
+        margin-bottom: 28px;
+        background: linear-gradient(135deg,#7c3aed,#d946ef);
+        box-shadow: 0 15px 35px rgba(168,85,247,.35);
+    }
+
+    /* TITLE */
+    .membership-title {
+        font-size: 42px;
+        font-weight: 900;
+        margin-bottom: 12px;
+        color: white;
+    }
+
+    /* SUBTITLE */
+    .membership-subtitle {
+        color: #9ca3af;
+        line-height: 1.9;
+        font-size: 15px;
+        margin-bottom: 30px;
+    }
+
+    /* PRICE */
+    .price-box {
+        width: 100%;
+        background: rgba(255,255,255,.03);
+        border: 1px solid rgba(255,255,255,.06);
+        border-radius: 22px;
+        padding: 24px;
+        margin-bottom: 30px;
+    }
+
+    .price {
+        font-size: 60px;
+        font-weight: 900;
+        line-height: 1;
+        margin-bottom: 10px;
+        background: linear-gradient(135deg,#fff,#d8b4fe);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .duration {
+        color: #9ca3af;
+        font-size: 15px;
+    }
+
+    /* FEATURES */
+    .feature-list {
+        margin-bottom: 35px;
+    }
+
+    .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px 0;
+        border-bottom: 1px solid rgba(255,255,255,.05);
+        color: #d1d5db;
+        font-size: 15px;
+    }
+
+        .feature-item:last-child {
+            border-bottom: none;
+        }
+
+        .feature-item i {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(168,85,247,.15);
+            color: #c084fc;
+            flex-shrink: 0;
+        }
+
+    /* BUTTON */
+    .membership-card form {
+        width: 100%;
+    }
+
+    /* BUTTON */
+    .membership-btn {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        padding: 18px;
+        border-radius: 18px;
+        font-weight: 800;
+        font-size: 16px;
+        color: white;
+        cursor: pointer;
+        background: linear-gradient(135deg,#7c3aed,#d946ef);
+        transition: .35s ease;
+    }
+
+        .membership-btn::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 18px;
+            background: linear-gradient(135deg,#8b5cf6,#ec4899);
+            opacity: 0;
+            transition: .35s;
+        }
+
+        .membership-btn span {
+            position: relative;
+            z-index: 2;
+        }
+
+        .membership-btn:hover::before {
+            opacity: 1;
+        }
+
+        .membership-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 12px 30px rgba(168,85,247,.35);
+        }
+
+    /* MOBILE */
+    @@media(max-width:992px) {
+
+        .membership-header h1 {
+            font-size: 48px;
+        }
+
+        .popular-card {
+            transform: none;
+        }
+
+            .popular-card:hover {
+                transform: translateY(-10px);
+            }
+    }
 
     @@media(max-width:768px) {
 
         .membership-page {
-            padding: 30px 20px;
+            padding: 70px 20px;
         }
 
         .membership-header h1 {
-            font-size: 36px;
+            font-size: 38px;
+        }
+
+        .membership-header p {
+            font-size: 15px;
+        }
+
+        .membership-card {
+            min-height: auto;
+            padding: 28px;
+        }
+
+        .price {
+            font-size: 50px;
+        }
+
+        .membership-title {
+            font-size: 34px;
         }
     }
 
@@ -211,89 +344,81 @@
 <div class="membership-page">
 
     <!-- HEADER -->
-
     <div class="membership-header">
 
-        <h1>
-            Unlock Your Reading Universe
-        </h1>
+        <div class="membership-tag">
+            <i class="bi bi-stars"></i>
+            PREMIUM MEMBERSHIP PLANS
+        </div>
+
+        <h1>Membership Plans</h1>
 
         <p>
-            Choose your perfect membership plan and enjoy premium
-            library access, exclusive books, reservations,
-            member dashboard, and much more.
+            Unlock premium library access, faster borrowing, exclusive events,
+            and a personalized reading experience tailored for you.
         </p>
 
     </div>
 
-    <!-- MEMBERSHIP CARDS -->
-
+    <!-- GRID -->
     <div class="membership-grid">
 
         <!-- STUDENT -->
-
         <div class="membership-card">
 
             <div class="card-glow"></div>
+            <div class="card-glow-2"></div>
 
-            <div class="membership-icon">
-                <i class="bi bi-mortarboard-fill"></i>
-            </div>
+            <div class="card-top">
 
-            <div class="membership-title">
-                Student
-            </div>
-
-            <div class="membership-subtitle">
-                Affordable plan for students and learners.
-            </div>
-
-            <div class="features">
-
-                <div class="feature-item">
-                    <i class="bi bi-check-circle-fill"></i>
-                    Borrow Books
+                <div class="membership-icon">
+                    <i class="bi bi-mortarboard-fill"></i>
                 </div>
 
-                <div class="feature-item">
-                    <i class="bi bi-check-circle-fill"></i>
-                    Reserve Books
+                <div class="membership-title">Student</div>
+
+                <div class="membership-subtitle">
+                    Perfect for learners and beginners
                 </div>
 
-                <div class="feature-item">
-                    <i class="bi bi-check-circle-fill"></i>
-                    Personal Dashboard
+                <div class="price-box">
+                    <div class="price">₹1000</div>
+                    <div class="duration">12 Months</div>
                 </div>
 
-            </div>
+                <div class="feature-list">
 
-            <div class="price-box">
+                    <div class="feature-item">
+                        <i class="bi bi-check-lg"></i>
+                        Borrow Books
+                    </div>
 
-                <div class="price">
-                    ₹1000
-                </div>
+                    <div class="feature-item">
+                        <i class="bi bi-check-lg"></i>
+                        Reserve Books
+                    </div>
 
-                <div class="duration">
-                    12 Months Membership
+                    <div class="feature-item">
+                        <i class="bi bi-check-lg"></i>
+                        Basic Access
+                    </div>
+
+                    <div class="feature-item">
+                        <i class="bi bi-check-lg"></i>
+                        Community Support
+                    </div>
+
                 </div>
 
             </div>
 
             <form asp-action="Buy" method="post">
 
-                <input type="hidden"
-                       name="membershipType"
-                       value="Student" />
+                <input type="hidden" name="membershipType" value="Student" />
+                <input type="hidden" name="durationMonths" value="12" />
 
-                <input type="hidden"
-                       name="durationMonths"
-                       value="12" />
-
-                <button type="submit"
-                        class="membership-btn">
-
-                    Get Student Plan
-
+                <button type="submit" class="membership-btn">
+                    <span>Get Started</span>
                 </button>
 
             </form>
@@ -301,73 +426,65 @@
         </div>
 
         <!-- REGULAR -->
-
-        <div class="membership-card">
+        <div class="membership-card popular-card">
 
             <div class="popular-badge">
                 MOST POPULAR
             </div>
 
             <div class="card-glow"></div>
+            <div class="card-glow-2"></div>
 
-            <div class="membership-icon">
-                <i class="bi bi-book-fill"></i>
-            </div>
+            <div class="card-top">
 
-            <div class="membership-title">
-                Regular
-            </div>
-
-            <div class="membership-subtitle">
-                Perfect for passionate readers and explorers.
-            </div>
-
-            <div class="features">
-
-                <div class="feature-item">
-                    <i class="bi bi-check-circle-fill"></i>
-                    Unlimited Reservations
+                <div class="membership-icon">
+                    <i class="bi bi-book-half"></i>
                 </div>
 
-                <div class="feature-item">
-                    <i class="bi bi-check-circle-fill"></i>
-                    Faster Borrow Access
+                <div class="membership-title">Regular</div>
+
+                <div class="membership-subtitle">
+                    Best for active readers
                 </div>
 
-                <div class="feature-item">
-                    <i class="bi bi-check-circle-fill"></i>
-                    Member Dashboard
+                <div class="price-box">
+                    <div class="price">₹1500</div>
+                    <div class="duration">12 Months</div>
                 </div>
 
-            </div>
+                <div class="feature-list">
 
-            <div class="price-box">
+                    <div class="feature-item">
+                        <i class="bi bi-check-lg"></i>
+                        Unlimited Reservations
+                    </div>
 
-                <div class="price">
-                    ₹1500
-                </div>
+                    <div class="feature-item">
+                        <i class="bi bi-check-lg"></i>
+                        Priority Access
+                    </div>
 
-                <div class="duration">
-                    12 Months Membership
+                    <div class="feature-item">
+                        <i class="bi bi-check-lg"></i>
+                        Member Dashboard
+                    </div>
+
+                    <div class="feature-item">
+                        <i class="bi bi-check-lg"></i>
+                        Faster Issue Approval
+                    </div>
+
                 </div>
 
             </div>
 
             <form asp-action="Buy" method="post">
 
-                <input type="hidden"
-                       name="membershipType"
-                       value="Regular" />
+                <input type="hidden" name="membershipType" value="Regular" />
+                <input type="hidden" name="durationMonths" value="12" />
 
-                <input type="hidden"
-                       name="durationMonths"
-                       value="12" />
-
-                <button type="submit"
-                        class="membership-btn">
-
-                    Get Regular Plan
-
+                <button type="submit" class="membership-btn">
+                    <span>Choose Regular</span>
                 </button>
 
             </form>
@@ -375,70 +492,63 @@
         </div>
 
         <!-- PREMIUM -->
-
         <div class="membership-card">
 
             <div class="card-glow"></div>
+            <div class="card-glow-2"></div>
 
-            <div class="membership-icon">
-                <i class="bi bi-gem"></i>
-            </div>
+            <div class="card-top">
 
-            <div class="membership-title">
-                Premium
-            </div>
-
-            <div class="membership-subtitle">
-                Ultimate premium access for dedicated readers.
-            </div>
-
-            <div class="features">
-
-                <div class="feature-item">
-                    <i class="bi bi-check-circle-fill"></i>
-                    Priority Reservations
+                <div class="membership-icon">
+                    <i class="bi bi-gem"></i>
                 </div>
 
-                <div class="feature-item">
-                    <i class="bi bi-check-circle-fill"></i>
-                    Premium Events Access
+                <div class="membership-title">Premium</div>
+
+                <div class="membership-subtitle">
+                    Ultimate library experience
                 </div>
 
-                <div class="feature-item">
-                    <i class="bi bi-check-circle-fill"></i>
-                    Full Member Benefits
+                <div class="price-box">
+                    <div class="price">₹3000</div>
+                    <div class="duration">12 Months</div>
                 </div>
 
-            </div>
+                <div class="feature-list">
 
-            <div class="price-box">
+                    <div class="feature-item">
+                        <i class="bi bi-check-lg"></i>
+                        Priority Support
+                    </div>
 
-                <div class="price">
-                    ₹3000
-                </div>
+                    <div class="feature-item">
+                        <i class="bi bi-check-lg"></i>
+                        Events Access
+                    </div>
 
-                <div class="duration">
-                    12 Months Membership
+                    <div class="feature-item">
+                        <i class="bi bi-check-lg"></i>
+                        All Features
+                    </div>
+
+                    <div class="feature-item">
+                        <i class="bi bi-check-lg"></i>
+                        VIP Borrowing
+                    </div>
+
                 </div>
 
             </div>
 
             <form asp-action="Buy" method="post">
 
-                <input type="hidden"
-                       name="membershipType"
-                       value="Premium" />
+                <input type="hidden" name="membershipType" value="Premium" />
+                <input type="hidden" name="durationMonths" value="12" />
 
-                <input type="hidden"
-                       name="durationMonths"
-                       value="12" />
-
-                <button type="submit"
-                        class="membership-btn">
-
-                    Get Premium Plan
-
+                <button type="submit" class="membership-btn">
+                    <span>Go Premium</span>
                 </button>
+                
 
             </form>
 
