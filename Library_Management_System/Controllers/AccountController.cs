@@ -363,7 +363,10 @@ namespace LibraryManagementSystem.Controllers
 
         public IActionResult AccessDenied()
         {
-            return RedirectToAction("Index", "Membership");
+            // Render the styled AccessDenied.cshtml. Redirecting to Membership
+            // hides the "Get Member access to use this feature" CTA the page
+            // was built to show.
+            return View();
         }
     }
 }

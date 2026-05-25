@@ -117,7 +117,8 @@ namespace Library_Management_System.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PaymentSuccess(
     IFormFile screenshot,
-    string paymentMethod)
+    string paymentMethod,
+    string transactionId)
         {
             var user =
                 await _userManager.GetUserAsync(User);
@@ -206,10 +207,15 @@ namespace Library_Management_System.Controllers
 
             if (screenshot != null)
             {
+                // Path.Combine with an embedded "/" segment leaves the slash
+                // intact, which works on Windows but produces an invalid path
+                // on Mac/Linux. Pass each path segment separately so the OS
+                // separator is used.
                 string folder =
                     Path.Combine(
                         Directory.GetCurrentDirectory(),
-                        "wwwroot/paymentproof");
+                        "wwwroot",
+                        "paymentproof");
 
                 if (!Directory.Exists(folder))
                 {
@@ -251,8 +257,12 @@ namespace Library_Management_System.Controllers
                     PaymentStatus =
                         "Pending",
 
+                    // Prefer the user-entered transaction ID from the payment
+                    // form; only fall back to a generated id if absent.
                     TransactionId =
-                        Guid.NewGuid().ToString(),
+                        string.IsNullOrWhiteSpace(transactionId)
+                            ? Guid.NewGuid().ToString()
+                            : transactionId.Trim(),
 
                     PaymentDate =
                         DateTime.Now
