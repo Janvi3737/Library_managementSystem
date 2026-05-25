@@ -260,6 +260,13 @@ namespace Library_Management_System.Controllers
                     TransactionId =
                         Guid.NewGuid().ToString(),
 
+                    // Was being computed above but never stored — the admin
+                    // approval page needs this to render the proof image.
+                    ScreenshotPath =
+                        string.IsNullOrEmpty(screenshotPath)
+                            ? null
+                            : screenshotPath,
+
                     PaymentDate =
                         DateTime.Now
                 };

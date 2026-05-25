@@ -1,0 +1,188 @@
+@model IEnumerable<LibraryManagementSystem.ClassLibrary.Models.MembershipPayment>
+
+@{
+    ViewData["Title"] = "Membership Payments";
+    var currentStatus = ViewBag.CurrentStatus as string;
+    var pendingCount = ViewBag.PendingCount as int? ?? 0;
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    .table thead th {
+        font-family: 'Poppins', sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+    .table tbody td {
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+    }
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        border-radius: 12px;
+    }
+    .status-badge {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    .status-pending  { background:#fff3cd; color:#856404; }
+    .status-approved { background:#d4edda; color:#155724; }
+    .status-rejected { background:#f8d7da; color:#721c24; }
+    .proof-thumb {
+        width: 64px;
+        height: 64px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+        cursor: zoom-in;
+    }
+    .filter-pill {
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        border: 1px solid #dee2e6;
+        color: #495057;
+    }
+    .filter-pill.active {
+        background: #0d6efd;
+        color: white;
+        border-color: #0d6efd;
+    }
+</style>
+
+<div class="container mt-4">
+
+    <!-- HEADER -->
+    <div class="row align-items-center mb-3">
+        <div class="col-md-6">
+            <h2 class="m-0">💳 Membership Payments</h2>
+            @if (pendingCount > 0)
+            {
+                <small class="text-muted">@pendingCount pending review</small>
+            }
+        </div>
+        <div class="col-md-6 text-end">
+            <a class="filter-pill @(string.IsNullOrEmpty(currentStatus) ? "active" : "")"
+               asp-action="Index">All</a>
+            <a class="filter-pill @(currentStatus == "Pending" ? "active" : "")"
+               asp-action="Index" asp-route-status="Pending">Pending</a>
+            <a class="filter-pill @(currentStatus == "Approved" ? "active" : "")"
+               asp-action="Index" asp-route-status="Approved">Approved</a>
+            <a class="filter-pill @(currentStatus == "Rejected" ? "active" : "")"
+               asp-action="Index" asp-route-status="Rejected">Rejected</a>
+        </div>
+    </div>
+
+    <!-- CARD -->
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Date</th>
+                            <th>Member</th>
+                            <th>Plan</th>
+                            <th>Amount</th>
+                            <th>Method</th>
+                            <th>Transaction ID</th>
+                            <th>Proof</th>
+                            <th>Status</th>
+                            <th style="width:220px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="9" class="text-center text-muted p-4">
+                                    No payments found.
+                                </td>
+                            </tr>
+                        }
+                        @foreach (var p in Model)
+                        {
+                            <tr>
+                                <td>@p.PaymentDate.ToString("dd MMM yyyy HH:mm")</td>
+                                <td>@(p.Membership?.Member?.Name ?? "—")</td>
+                                <td>
+                                    @(p.Membership?.MembershipType ?? "—")
+                                    <small class="text-muted d-block">
+                                        @(p.Membership?.DurationMonths ?? 0) mo
+                                    </small>
+                                </td>
+                                <td>₹@p.Amount.ToString("0.00")</td>
+                                <td>@p.PaymentMethod</td>
+                                <td class="small text-muted">@p.TransactionId</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(p.ScreenshotPath))
+                                    {
+                                        <a href="@p.ScreenshotPath" target="_blank" rel="noopener">
+                                            <img src="@p.ScreenshotPath"
+                                                 class="proof-thumb"
+                                                 alt="Payment proof" />
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">No proof</span>
+                                    }
+                                </td>
+                                <td>
+                                    @{
+                                        var statusClass = p.PaymentStatus switch
+                                        {
+                                            "Approved" => "status-approved",
+                                            "Rejected" => "status-rejected",
+                                            _ => "status-pending"
+                                        };
+                                    }
+                                    <span class="status-badge @statusClass">
+                                        @p.PaymentStatus
+                                    </span>
+                                </td>
+                                <td class="text-nowrap">
+                                    @if (p.PaymentStatus != "Approved")
+                                    {
+                                        <form asp-action="Approve"
+                                              asp-route-id="@p.Id"
+                                              method="post"
+                                              onsubmit="return confirm('Approve this payment?');"
+                                              style="display:inline;">
+                                            <button type="submit"
+                                                    class="btn btn-sm btn-success me-1"
+                                                    title="Approve">
+                                                <i class="bi bi-check-lg"></i> Approve
+                                            </button>
+                                        </form>
+                                    }
+                                    @if (p.PaymentStatus != "Rejected")
+                                    {
+                                        <form asp-action="Reject"
+                                              asp-route-id="@p.Id"
+                                              method="post"
+                                              onsubmit="return confirm('Reject this payment and downgrade the user?');"
+                                              style="display:inline;">
+                                            <button type="submit"
+                                                    class="btn btn-sm btn-danger"
+                                                    title="Reject">
+                                                <i class="bi bi-x-lg"></i> Reject
+                                            </button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

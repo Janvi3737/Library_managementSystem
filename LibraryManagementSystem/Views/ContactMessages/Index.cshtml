@@ -1,0 +1,115 @@
+@model IEnumerable<LibraryManagementSystem.ClassLibrary.Models.ContactMessage>
+
+@{
+    ViewData["Title"] = "Contact Messages";
+    var unreadCount = ViewBag.UnreadCount as int? ?? 0;
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    .table thead th {
+        font-family: 'Poppins', sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+    .table tbody td {
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+    }
+    .table tbody tr.unread td {
+        background-color: #fff8e1;
+        font-weight: 600;
+    }
+    .read-pill {
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+    .read-pill.unread { background:#fff3cd; color:#856404; }
+    .read-pill.read   { background:#e0e0e0; color:#555;    }
+</style>
+
+<div class="container mt-4">
+
+    <div class="row align-items-center mb-3">
+        <div class="col-md-12">
+            <h2 class="m-0">📨 Contact Messages</h2>
+            @if (unreadCount > 0)
+            {
+                <small class="text-muted">@unreadCount unread</small>
+            }
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Received</th>
+                            <th>From</th>
+                            <th>Subject</th>
+                            <th>Status</th>
+                            <th style="width:280px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center text-muted p-4">
+                                    No messages yet.
+                                </td>
+                            </tr>
+                        }
+                        @foreach (var m in Model)
+                        {
+                            <tr class="@(m.IsRead ? "" : "unread")">
+                                <td>@m.ReceivedOn.ToString("dd MMM yyyy HH:mm")</td>
+                                <td>
+                                    @m.Name<br />
+                                    <small class="text-muted">@m.Email</small>
+                                </td>
+                                <td>@m.Subject</td>
+                                <td>
+                                    <span class="read-pill @(m.IsRead ? "read" : "unread")">
+                                        @(m.IsRead ? "Read" : "Unread")
+                                    </span>
+                                </td>
+                                <td class="text-nowrap">
+                                    <a asp-action="Details"
+                                       asp-route-id="@m.Id"
+                                       class="btn btn-sm btn-primary me-1"
+                                       title="View">
+                                        <i class="bi bi-eye-fill"></i> View
+                                    </a>
+                                    <form asp-action="ToggleRead"
+                                          asp-route-id="@m.Id"
+                                          method="post"
+                                          style="display:inline;">
+                                        <button class="btn btn-sm btn-secondary me-1">
+                                            @(m.IsRead ? "Mark Unread" : "Mark Read")
+                                        </button>
+                                    </form>
+                                    <form asp-action="Delete"
+                                          asp-route-id="@m.Id"
+                                          method="post"
+                                          onsubmit="return confirm('Delete this message?');"
+                                          style="display:inline;">
+                                        <button class="btn btn-sm btn-danger">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
