@@ -1,21 +1,309 @@
-﻿<div class="container py-5 text-center">
+@{
+    ViewData["Title"] = "Access Restricted";
+    Layout = null;
+}
 
-    <div class="card shadow border-0 rounded-4 p-5">
+<!DOCTYPE html>
 
-        <h1 class="text-danger mb-3">
-            Access Denied
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>Access Restricted</title>
+
+    <!-- Bootstrap Icons -->
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+    <!-- Google Font -->
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+          rel="stylesheet">
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            overflow: hidden;
+            background: radial-gradient(circle at top right, rgba(124,58,237,.22), transparent 30%), radial-gradient(circle at bottom left, rgba(217,70,239,.18), transparent 30%), #050816;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* =========================================
+                            BACKGROUND GLOW
+                ========================================= */
+
+        .blur-circle {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 0;
+        }
+
+        .blur1 {
+            width: 320px;
+            height: 320px;
+            background: #7c3aed;
+            top: -120px;
+            right: -100px;
+            opacity: .35;
+        }
+
+        .blur2 {
+            width: 280px;
+            height: 280px;
+            background: #d946ef;
+            bottom: -120px;
+            left: -100px;
+            opacity: .25;
+        }
+
+        /* =========================================
+                            CARD
+                ========================================= */
+
+        .access-card {
+            width: 100%;
+            max-width: 470px;
+            margin: 20px;
+            position: relative;
+            z-index: 5;
+            padding: 42px 34px;
+            border-radius: 32px;
+            background: rgba(255,255,255,.06);
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(255,255,255,.08);
+            box-shadow: 0 25px 60px rgba(0,0,0,.45);
+            text-align: center;
+            overflow: hidden;
+        }
+
+            .access-card::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: linear-gradient( 135deg, rgba(255,255,255,.08), transparent 45%);
+                pointer-events: none;
+            }
+
+        /* =========================================
+                            ICON
+                ========================================= */
+
+        .access-icon {
+            width: 90px;
+            height: 90px;
+            margin: auto auto 24px;
+            border-radius: 26px;
+            background: linear-gradient(135deg,#7c3aed,#d946ef);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 38px;
+            box-shadow: 0 15px 40px rgba(124,58,237,.35);
+        }
+
+        /* =========================================
+                            TITLE
+                ========================================= */
+
+        .access-card h1 {
+            font-size: 42px;
+            font-weight: 900;
+            color: white;
+            line-height: 1.1;
+            margin-bottom: 16px;
+        }
+
+            .access-card h1 span {
+                background: linear-gradient(to right,#a855f7,#ec4899);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+        /* =========================================
+                            MESSAGE
+                ========================================= */
+
+        .access-card p {
+            color: #cbd5e1;
+            font-size: 15px;
+            line-height: 1.9;
+            margin-bottom: 30px;
+        }
+
+        /* =========================================
+                            BUTTONS
+                ========================================= */
+
+        .btn-wrapper {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .modern-btn {
+            height: 54px;
+            min-width: 170px;
+            padding: 0 24px;
+            border-radius: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 700;
+            transition: .35s ease;
+        }
+
+        .home-btn {
+            background: linear-gradient(135deg,#7c3aed,#9333ea);
+            color: white;
+            box-shadow: 0 12px 30px rgba(124,58,237,.35);
+        }
+
+            .home-btn:hover {
+                transform: translateY(-4px);
+                color: white;
+                box-shadow: 0 20px 40px rgba(124,58,237,.45);
+            }
+
+        .membership-btn {
+            background: rgba(255,255,255,.06);
+            border: 1px solid rgba(255,255,255,.10);
+            color: white;
+        }
+
+            .membership-btn:hover {
+                background: rgba(255,255,255,.12);
+                color: white;
+                transform: translateY(-4px);
+            }
+
+        /* =========================================
+                            RESPONSIVE
+                ========================================= */
+
+        @@media(max-width:576px) {
+
+            .access-card {
+                padding: 34px 24px;
+                border-radius: 26px;
+            }
+
+                .access-card h1 {
+                    font-size: 34px;
+                }
+
+                .access-card p {
+                    font-size: 14px;
+                    line-height: 1.8;
+                }
+
+            .modern-btn {
+                width: 100%;
+            }
+
+            .access-icon {
+                width: 78px;
+                height: 78px;
+                font-size: 32px;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- GLOW EFFECT -->
+
+    <div class="blur-circle blur1"></div>
+
+    <div class="blur-circle blur2"></div>
+
+    <!-- CARD -->
+
+    <div class="access-card">
+
+        <!-- ICON -->
+
+        <div class="access-icon">
+
+            <i class="bi bi-shield-lock-fill"></i>
+
+        </div>
+
+        <!-- TITLE -->
+
+        <h1>
+
+            Access <span>Restricted</span>
+
         </h1>
 
-        <p class="text-muted">
-            You do not have permission to access this page.
+        <!-- MESSAGE -->
+
+        <p>
+
+            This page is available only for active BOOKVERSE members.
+            Purchase a membership plan to unlock borrowing access,
+            wishlist features, premium resources, and your personal member dashboard.
+
         </p>
 
-        <a asp-controller="Home"
-           asp-action="Index"
-           class="btn btn-primary mt-3">
-            Go Home
-        </a>
+        <!-- BUTTONS -->
+
+        <div class="btn-wrapper">
+
+            <!-- HOME -->
+
+            <a asp-controller="Home"
+               asp-action="Index"
+               class="modern-btn home-btn">
+
+                <i class="bi bi-house-fill"></i>
+
+                Back To Home
+
+            </a>
+
+            <!-- MEMBERSHIP -->
+
+            <a asp-controller="Membership"
+               asp-action="Index"
+               class="modern-btn membership-btn">
+
+                <i class="bi bi-gem"></i>
+
+                Get Membership
+
+            </a>
+
+        </div>
 
     </div>
 
-</div>
+</body>
+
+</html>

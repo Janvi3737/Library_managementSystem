@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Library_Management_System.Areas.Member.Controllers
 {
-    //[Area("Member")]
+    [Area("Member")]
     [Authorize(Roles = "Member,User")]
     public class ProfileController : Controller
     {

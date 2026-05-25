@@ -363,7 +363,7 @@ namespace LibraryManagementSystem.Controllers
 
         public IActionResult AccessDenied()
         {
-            return View();
+            return RedirectToAction("Index", "Membership");
         }
     }
 }

@@ -595,7 +595,8 @@
 
                 <!-- WISHLIST -->
 
-                <a asp-controller="Wishlist"
+                <a asp-area="Member"
+                  asp-controller="Wishlist"
                    asp-action="Index"
                    class="nav-icon-btn wishlist-btn">
 
@@ -659,6 +660,7 @@
 
                             <li>
                                 <a class="dropdown-item"
+                                   asp-area="Member"
                                    asp-controller="Wishlist"
                                    asp-action="Index">
 

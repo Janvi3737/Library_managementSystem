@@ -7,8 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Library_Management_System.Areas.Member.Controllers
 {
-    //[Area("Member")]
-    // Match the seeded PascalCase role name "User" — see admin Program.cs.
+    [Area("Member")]
     [Authorize(Roles = "Member,User")]
     public class WishlistController : Controller
     {
