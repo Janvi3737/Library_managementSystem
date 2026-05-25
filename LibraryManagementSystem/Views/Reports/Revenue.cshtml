@@ -1,0 +1,70 @@
+@model IEnumerable<LibraryManagementSystem.ViewModels.RevenueRowViewModel>
+
+@{
+    ViewData["Title"] = "Revenue";
+    var grandTotal = Model.Sum(r => r.Total);
+    var membershipTotal = Model.Sum(r => r.MembershipRevenue);
+    var fineTotal = Model.Sum(r => r.FineRevenue);
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    .table thead th { font-family:'Poppins',sans-serif; font-size:15px; font-weight:700; }
+    .table tbody td { font-family:'Segoe UI',sans-serif; font-size:14px; font-weight:500; }
+    .summary-card { border-radius:14px; padding:18px 22px; color:white; }
+</style>
+
+<div class="container mt-4">
+    <h2 class="mb-3">💵 Revenue Report</h2>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="summary-card" style="background:#1976d2;">
+                <small>Membership Fees</small>
+                <h3 class="mb-0">₹@membershipTotal.ToString("N2")</h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="summary-card" style="background:#f57c00;">
+                <small>Fines Collected</small>
+                <h3 class="mb-0">₹@fineTotal.ToString("N2")</h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="summary-card" style="background:#388e3c;">
+                <small>Grand Total</small>
+                <h3 class="mb-0">₹@grandTotal.ToString("N2")</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Month</th>
+                        <th>Memberships</th>
+                        <th>Fines</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr><td colspan="4" class="text-center text-muted p-4">No revenue yet.</td></tr>
+                    }
+                    @foreach (var r in Model)
+                    {
+                        <tr>
+                            <td>@r.MonthName @r.Year</td>
+                            <td>₹@r.MembershipRevenue.ToString("N2")</td>
+                            <td>₹@r.FineRevenue.ToString("N2")</td>
+                            <td><strong>₹@r.Total.ToString("N2")</strong></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

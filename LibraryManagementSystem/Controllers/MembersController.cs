@@ -164,6 +164,42 @@ namespace LibraryManagementSystem.Controllers
         {
             return _context.Members.Any(e => e.Id == id);
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> BulkDelete(int[] ids)
+        {
+            if (ids == null || ids.Length == 0)
+            {
+                TempData["Error"] = "No members selected.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var targets = await _context.Members
+                .Include(m => m.BorrowRecords)
+                .Where(m => ids.Contains(m.Id))
+                .ToListAsync();
+
+            int deleted = 0, skipped = 0;
+            foreach (var m in targets)
+            {
+                // Same FK Restrict on BorrowRecord -> Member; skip with count.
+                if (m.BorrowRecords != null && m.BorrowRecords.Any())
+                {
+                    skipped++;
+                    continue;
+                }
+                _context.Members.Remove(m);
+                deleted++;
+            }
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = skipped > 0
+                ? $"Deleted {deleted}. Skipped {skipped} (had borrow history)."
+                : $"Deleted {deleted}.";
+
+            return RedirectToAction(nameof(Index));
+        }
+
         public IActionResult ExportExcel()
         {
             var members = _context.Members.ToList();

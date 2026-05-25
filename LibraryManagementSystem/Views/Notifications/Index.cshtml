@@ -1,0 +1,97 @@
+@model IEnumerable<LibraryManagementSystem.ClassLibrary.Models.Notification>
+
+@{
+    ViewData["Title"] = "Notifications";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    .table thead th { font-family:'Poppins',sans-serif; font-size:15px; font-weight:700; }
+    .table tbody td { font-family:'Segoe UI',sans-serif; font-size:14px; font-weight:500; }
+    .table-responsive { border-radius:12px; }
+</style>
+
+<div class="container mt-4">
+    <h2 class="mb-3">🔔 Notifications</h2>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title">📣 Broadcast to all members + users</h5>
+            <form asp-action="Broadcast" method="post">
+                <div class="mb-2">
+                    <label class="form-label">Message</label>
+                    <textarea name="message" rows="2" maxlength="300"
+                              class="form-control"
+                              placeholder="e.g., Library closed Monday for maintenance"
+                              required></textarea>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Optional link</label>
+                    <input type="text" name="link" maxlength="500"
+                           class="form-control"
+                           placeholder="e.g., /Events or https://example.com" />
+                </div>
+                <button class="btn btn-primary">Send Broadcast</button>
+            </form>
+        </div>
+    </div>
+
+    <h5>Recent notifications (last 200)</h5>
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Sent</th>
+                            <th>Recipient</th>
+                            <th>Message</th>
+                            <th>Read?</th>
+                            <th style="width:90px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Any())
+                        {
+                            <tr><td colspan="5" class="text-center text-muted p-4">None yet.</td></tr>
+                        }
+                        @foreach (var n in Model)
+                        {
+                            <tr>
+                                <td>@n.CreatedOn.ToString("dd MMM HH:mm")</td>
+                                <td>@(n.Member?.Email ?? n.MemberId)</td>
+                                <td>
+                                    @n.Message
+                                    @if (!string.IsNullOrEmpty(n.Link))
+                                    {
+                                        <br /><a href="@n.Link" class="small">@n.Link</a>
+                                    }
+                                </td>
+                                <td>
+                                    @if (n.IsRead)
+                                    {
+                                        <span class="text-muted">✓</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-warning">●</span>
+                                    }
+                                </td>
+                                <td>
+                                    <form asp-action="Delete" asp-route-id="@n.Id"
+                                          method="post"
+                                          onsubmit="return confirm('Delete this notification?');"
+                                          style="display:inline;">
+                                        <button class="btn btn-sm btn-danger">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

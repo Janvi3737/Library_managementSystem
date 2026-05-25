@@ -353,6 +353,47 @@ namespace LibraryManagementSystem.Controllers
         }
 
         // =========================
+        // BULK DELETE
+        // =========================
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> BulkDelete(int[] ids)
+        {
+            if (ids == null || ids.Length == 0)
+            {
+                TempData["Error"] = "No books selected.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            int deleted = 0, skipped = 0;
+            foreach (var bookId in ids)
+            {
+                // FK Restrict on BorrowRecord -> Book — try delete and catch.
+                try
+                {
+                    var b = await _context.Books.FindAsync(bookId);
+                    if (b == null) continue;
+
+                    var inUse = await _context.BorrowRecords.AnyAsync(br => br.BookId == bookId);
+                    if (inUse) { skipped++; continue; }
+
+                    _context.Books.Remove(b);
+                    await _context.SaveChangesAsync();
+                    deleted++;
+                }
+                catch
+                {
+                    skipped++;
+                }
+            }
+
+            TempData["Success"] = skipped > 0
+                ? $"Deleted {deleted}. Skipped {skipped} (in use)."
+                : $"Deleted {deleted}.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        // =========================
         // IMPORT POST
         // =========================
         [HttpPost]

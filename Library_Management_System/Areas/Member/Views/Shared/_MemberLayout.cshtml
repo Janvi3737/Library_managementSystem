@@ -1,5 +1,7 @@
 @using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
 @inject UserManager<LibraryManagementSystem.ClassLibrary.Models.ApplicationUser> UserManager
+@inject LibraryManagementSystem.ClassLibrary.Data.AppDbContext DbContext
 
 @{
     var currentUser = await UserManager.GetUserAsync(User);
@@ -711,6 +713,31 @@
                         <!-- RIGHT SIDE -->
 
                         <div class="ms-auto d-flex align-items-center gap-4 navbar-right">
+
+                            @{
+                                var bellUnread = 0;
+                                if (currentUser != null)
+                                {
+                                    bellUnread = await DbContext.Notifications
+                                        .CountAsync(n => n.MemberId == currentUser.Id && !n.IsRead);
+                                }
+                            }
+                            @if (User.Identity != null && User.Identity.IsAuthenticated)
+                            {
+                                <a asp-area="Member" asp-controller="Notifications" asp-action="Index"
+                                   class="position-relative text-decoration-none"
+                                   style="color:white; font-size:22px;"
+                                   title="Notifications">
+                                    🔔
+                                    @if (bellUnread > 0)
+                                    {
+                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                              style="font-size:11px;">
+                                            @bellUnread
+                                        </span>
+                                    }
+                                </a>
+                            }
 
                             <!-- USER -->
                             @if (User.Identity != null &&

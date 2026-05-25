@@ -39,7 +39,11 @@ namespace LibraryManagementSystem.ClassLibrary.Models
         public decimal FinePerDay { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
-        public decimal FineAmount { get; set; } 
+        public decimal FineAmount { get; set; }
+
+        // Toggled by admin when the fine is paid OR waived. Outstanding fines
+        // are FineAmount > 0 AND FinePaid == false.
+        public bool FinePaid { get; set; }
 
 
         [Required]

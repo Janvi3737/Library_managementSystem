@@ -17,6 +17,13 @@ namespace LibraryManagementSystem.ClassLibrary.Data
     {
         public static async Task SeedAsync(AppDbContext db)
         {
+            // Library settings — singleton row that the admin Settings page edits.
+            if (!await db.LibrarySettings.AnyAsync())
+            {
+                db.LibrarySettings.Add(new LibrarySettings());
+                await db.SaveChangesAsync();
+            }
+
             // Categories — seed first, others reference them
             if (!await db.Categories.AnyAsync())
             {

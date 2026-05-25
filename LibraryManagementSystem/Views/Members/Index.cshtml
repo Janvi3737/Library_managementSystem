@@ -71,10 +71,17 @@
 
             <div class="table-responsive">
 
+                <form asp-action="BulkDelete" method="post"
+                      onsubmit="return confirm('Delete all selected members?');">
+
                 <table class="table table-hover mb-0 align-middle" id="membersTable">
 
                     <thead class="table-dark">
                         <tr>
+                            <th style="width:42px;">
+                                <input type="checkbox" id="selectAllMembers"
+                                       onclick="document.querySelectorAll('.member-check').forEach(c=>c.checked=this.checked);" />
+                            </th>
                             <th>Name</th>
                             <th>Email</th>
                             <th>Phone</th>
@@ -87,6 +94,10 @@
                         @foreach (var m in Model)
                         {
                             <tr>
+                                <td>
+                                    <input type="checkbox" class="member-check"
+                                           name="ids" value="@m.Id" />
+                                </td>
                                 <td>@m.Name</td>
                                 <td>@m.Email</td>
                                 <td>@m.Phone</td>
@@ -141,6 +152,17 @@
                     </tbody>
 
                 </table>
+
+                <div class="p-3 border-top">
+                    <button type="submit" class="btn btn-danger">
+                        🗑 Delete Selected
+                    </button>
+                    <small class="text-muted ms-2">
+                        Members with borrow history are skipped.
+                    </small>
+                </div>
+
+                </form>
 
             </div>
 

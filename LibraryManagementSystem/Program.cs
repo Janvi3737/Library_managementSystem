@@ -1,5 +1,6 @@
 using LibraryManagementSystem.ClassLibrary.Data;
 using LibraryManagementSystem.ClassLibrary.Models;
+using LibraryManagementSystem.Filters;
 using LibraryManagementSystem.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -8,8 +9,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 // SERVICES
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(opts =>
+{
+    // Register the audit log filter globally so every POST/PUT/DELETE by an
+    // admin writes a row to AuditLogs. Read more in AuditLogFilter.cs.
+    opts.Filters.Add<AuditLogFilter>();
+});
 
+builder.Services.AddScoped<AuditLogFilter>();
 builder.Services.AddScoped<PdfReceiptService>();
 builder.Services.AddScoped<ExportService>();
 
