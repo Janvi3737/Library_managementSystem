@@ -417,14 +417,18 @@ namespace LibraryManagementSystem.Controllers
                 try
                 {
                     await _emailService.SendEmailAsync(user.Email, subject, body);
-                    TempData["success"] = "Reset link sent to email.";
+                    TempData["Success"] = "Password reset link sent to your email.";
                 }
-                catch
+                catch (Exception ex)
                 {
-                    TempData["error"] = "Could not send reset email. Try again later.";
+                    _logger.LogError(ex,
+                        "Failed to send password reset email to {Email}", user.Email);
+                    TempData["Error"] = "Could not send reset email. Try again later.";
                 }
 
-                return View();
+                // Redirect so the flash banner in _PublicLayout actually fires;
+                // returning View() consumed the TempData on the empty form render.
+                return RedirectToAction("Login");
             }
 
             return View(model);
