@@ -87,6 +87,21 @@
             display: none;
         }
 
+
+        .sidebar hr {
+            border-color: rgba(255,255,255,.08);
+            margin: 22px 0;
+        }
+
+    ::-webkit-scrollbar-thumb {
+        background: #7c3aed;
+        border-radius: 20px;
+    }
+
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
     /* =========================================
        PAGE CONTENT
     ========================================= */
@@ -111,14 +126,17 @@
     }
 
     .brand-icon {
-        width: 48px;
-        height: 48px;
+        width: 52px;
+        height: 52px;
         display: flex;
         align-items: center;
         justify-content: center;
         color: #d946ef;
         font-size: 54px;
         font-weight: 900;
+        box-shadow:none;
+        background:none;
+
     }
 
     .brand-text h2 {
@@ -141,77 +159,77 @@
         margin-top: 2px;
     }
 
-    /* =========================================
-       MENU HEADING
-    ========================================= */
+      /* =========================================
+         MENU HEADING
+      ========================================= */
 
-    .menu-heading {
-        color: var(--text-muted);
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 2px;
-        margin: 28px 14px 14px;
-    }
+      .menu-heading {
+          color: var(--text-muted);
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: 2px;
+          margin: 28px 14px 14px;
+      }
 
-    /* =========================================
-       MENU LIST
-    ========================================= */
+      /* =========================================
+         MENU LIST
+      ========================================= */
 
-    .menu-list {
-        margin-bottom: 10px;
-    }
+      .menu-list {
+          margin-bottom: 10px;
+      }
 
-    /* =========================================
-       MENU ITEM
-    ========================================= */
+      /* =========================================
+         MENU ITEM
+      ========================================= */
 
-    .menu-item {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        padding: 15px 18px;
-        margin-bottom: 10px;
-        border-radius: 18px;
-        color: var(--text-light);
-        transition: .3s;
-        position: relative;
-        overflow: hidden;
-    }
+      .menu-item {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          padding: 15px 18px;
+          margin-bottom: 10px;
+          border-radius: 18px;
+          color: var(--text-light);
+          transition: .3s;
+          position: relative;
+          overflow: hidden;
+      }
 
-        .menu-item i {
-            font-size: 18px;
-            min-width: 22px;
-        }
+          .menu-item i {
+              font-size: 18px;
+              min-width: 22px;
+          }
 
-        .menu-item span {
-            font-size: 15px;
-            font-weight: 600;
-        }
+          .menu-item span {
+              font-size: 15px;
+              font-weight: 600;
+          }
 
-        /* HOVER */
+          /* HOVER */
 
-        .menu-item:hover {
-            background: var(--hover);
-            color: var(--text);
-            transform: translateX(4px);
-        }
+          .menu-item:hover {
+              background: var(--hover);
+              color: var(--text);
+              transform: translateX(4px);
+          }
 
-        /* ACTIVE */
+          /* ACTIVE */
 
-        .menu-item.active {
-            background: linear-gradient(135deg,#7c3aed,#9333ea);
-            color: white;
-            box-shadow: 0 10px 30px rgba(124,58,237,.35);
-        }
+          .menu-item.active {
+              background: linear-gradient(135deg,#7c3aed,#9333ea);
+              color: white;
+              box-shadow: 0 10px 30px rgba(124,58,237,.35);
+          }
 
-    /* =========================================
-       HORIZONTAL LINE
-    ========================================= */
+      /* =========================================
+         HORIZONTAL LINE
+      ========================================= */
 
-    .sidebar hr {
-        border-color: var(--border);
-        margin: 22px 0;
-    }
+      .sidebar hr {
+          border-color: var(--border);
+          margin: 22px 0;
+      }
 
     /* =========================================
        LOGOUT

@@ -60,9 +60,6 @@
 
     @await RenderSectionAsync("Scripts", required: false)
 
-    @* Filenames are Capital-C / Capital-W on disk. Case matters on Mac/Linux
-       (case-sensitive filesystem) — a request for "catalog.js" 404s there
-       even though it works on Windows. Match disk case for both OSes. *@
     <script src="~/js/Catalog.js"></script>
 
     <script>

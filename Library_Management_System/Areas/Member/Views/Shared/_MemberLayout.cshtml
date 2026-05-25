@@ -62,16 +62,6 @@
 
     <style>
 
-        /*  * {
-                    margin: 0;
-                    padding: 0;
-                    box-sizing: border-box;
-                } */
-
-        /*  html {
-                    scroll-behavior: smooth;
-                } */
-
         body {
             background: #050816;
             color: white;
@@ -91,29 +81,59 @@
             display: flex;
             min-height: 100vh;
         }
-
         /* =========================================
-                           SIDEBAR
-                        ========================================= */
+               SIDEBAR
+            ========================================= */
 
         .sidebar {
-            width: 270px;
+            width: 245px;
             position: fixed;
             top: 0;
             left: 0;
             height: 100vh;
-            background: linear-gradient(180deg,#0f172a 0%, #111827 100%);
-            border-right: 1px solid rgba(255,255,255,.06);
+            background: var(--sidebar-bg);
             padding: 24px 18px;
+            z-index: 9999;
+            border-right: 1px solid var(--border);
             overflow-y: auto;
-            z-index: 2000;
-            transition: .35s ease;
+            transition: .35s;
             scrollbar-width: none;
+            -ms-overflow-style: none;
         }
 
             .sidebar::-webkit-scrollbar {
                 display: none;
             }
+
+
+            .sidebar hr {
+                border-color: rgba(255,255,255,.08);
+                margin: 22px 0;
+            }
+
+        ::-webkit-scrollbar-thumb {
+            background: #7c3aed;
+            border-radius: 20px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        /* =========================================
+               SCROLLBAR
+            ========================================= */
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #7c3aed;
+            border-radius: 20px;
+        }
 
         /* =========================================
                            LOGO
@@ -123,28 +143,28 @@
             display: flex;
             align-items: center;
             gap: 14px;
-            margin-bottom: 32px;
+            margin-bottom: 30px;
+            padding: 10px 6px;
         }
 
         .brand-icon {
-            width: 58px;
-            height: 58px;
-            border-radius: 18px;
-            background: linear-gradient(135deg,#7c3aed,#d946ef);
+            width: 52px;
+            height: 52px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
-            color: white;
-            font-weight: 800;
-            box-shadow: 0 10px 30px rgba(124,58,237,.35);
+            color: #d946ef;
+            font-size: 54px;
+            font-weight: 900;
+            box-shadow: none;
+            background: none;
         }
 
         .brand-text h2 {
-            font-size: 25px;
-            font-weight: 900;
             margin: 0;
-            color: white;
+            color: var(--text);
+            font-size: 28px;
+            font-weight: 900;
             letter-spacing: 1px;
         }
 
@@ -154,55 +174,81 @@
 
         .brand-text p {
             margin: 0;
-            font-size: 10px;
+            color: var(--text-muted);
+            font-size: 8px;
             letter-spacing: 2px;
-            color: #9ca3af;
+            margin-top: 2px;
         }
 
         /* =========================================
-                           MENU
-                        ========================================= */
+               MENU HEADING
+            ========================================= */
 
         .menu-heading {
-            color: #6b7280;
+            color: var(--text-muted);
             font-size: 11px;
             font-weight: 700;
             letter-spacing: 2px;
-            margin-bottom: 14px;
+            margin: 28px 14px 14px;
         }
+
+        /* =========================================
+               MENU LIST
+            ========================================= */
+
+        .menu-list {
+            margin-bottom: 10px;
+        }
+
+        /* =========================================
+               MENU ITEM
+            ========================================= */
 
         .menu-item {
             display: flex;
             align-items: center;
             gap: 14px;
-            padding: 15px 16px;
+            padding: 15px 18px;
             margin-bottom: 10px;
             border-radius: 18px;
-            color: #d1d5db;
-            transition: .3s ease;
-            font-weight: 500;
+            color: var(--text-light);
+            transition: .3s;
+            position: relative;
+            overflow: hidden;
         }
 
-            .menu-item:hover {
-                background: rgba(124,58,237,.16);
-                color: white;
-                transform: translateX(3px);
+            .menu-item i {
+                font-size: 18px;
+                min-width: 22px;
             }
+
+            .menu-item span {
+                font-size: 15px;
+                font-weight: 600;
+            }
+
+            /* HOVER */
+
+            .menu-item:hover {
+                background: var(--hover);
+                color: var(--text);
+                transform: translateX(4px);
+            }
+
+            /* ACTIVE */
 
             .menu-item.active {
                 background: linear-gradient(135deg,#7c3aed,#9333ea);
                 color: white;
-                box-shadow: 0 10px 25px rgba(124,58,237,.25);
+                box-shadow: 0 10px 30px rgba(124,58,237,.35);
             }
 
-            .menu-item i {
-                font-size: 18px;
-                width: 20px;
-                text-align: center;
-            }
+        /* =========================================
+               HORIZONTAL LINE
+            ========================================= */
 
         .sidebar hr {
-            border-color: rgba(255,255,255,.08);
+            border-color: var(--border);
             margin: 22px 0;
         }
 
@@ -383,29 +429,11 @@
                 box-shadow: none;
             }
 
-        /* =========================================
-                           OVERLAY
-                        ========================================= */
-
-        .sidebar-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,.6);
-            z-index: 1500;
-            opacity: 0;
-            visibility: hidden;
-            transition: .3s;
-        }
-
-            .sidebar-overlay.show {
-                opacity: 1;
-                visibility: visible;
-            }
 
         /* =========================================
                            TABLET
                         ========================================= */
-        @@media(max-width:991px) {
+        @@media(max-width:992px) {
 
             .navbar-collapse {
                 margin-top: 20px;
@@ -428,19 +456,36 @@
                 flex-direction: column;
                 width: 100%;
             }
-
-            .sidebar {
-                left: -270px;
-            }
-
-                .sidebar.show {
-                    left: 0;
-                }
-
+            
             .main-content {
                 margin-left: 0;
                 width: 100%;
                 padding: 85px 18px 25px;
+            }
+
+            .sidebar {
+                width: 85px;
+                padding: 20px 12px;
+            }
+
+            .page-content {
+                margin-left: 85px;
+                width: calc(100% - 85px);
+            }
+
+            .brand-text,
+            .menu-heading,
+            .menu-item span {
+                display: none;
+            }
+
+            .brand-logo {
+                justify-content: center;
+            }
+
+            .menu-item {
+                justify-content: center;
+                padding: 16px;
             }
         }
 
@@ -451,13 +496,31 @@
 
         @@media(max-width:576px) {
 
-            .sidebar {
-                width: 245px;
-            }
-
             .main-content {
                 padding: 82px 12px 20px;
             }
+
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                transition: .4s;
+            }
+
+                .sidebar.active {
+                    left: 0;
+                }
+        }
+        @@media(max - width:768px) {
+
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                transition: .4s;
+            }
+
+                .sidebar.active {
+                    left: 0;
+                }
         }
     </style>
 
@@ -467,12 +530,12 @@
 
     <!-- MOBILE BUTTON -->
 
-    <button class="mobile-toggle"
+    @* <button class="mobile-toggle"
             id="mobileToggle">
 
         <i class="fa-solid fa-bars"></i>
 
-    </button>
+    </button> *@
 
     <!-- OVERLAY -->
 
@@ -489,12 +552,11 @@
             <!-- LOGO -->
 
             <a class="brand-logo"
-               asp-area=""
                asp-controller="Home"
                asp-action="Index">
 
                 <div class="brand-icon">
-                    <i class="bi bi-book-half"></i>
+                    ∞
                 </div>
 
                 <div class="brand-text">
@@ -504,7 +566,7 @@
                     </h2>
 
                     <p>
-                        LIBRARY MANAGEMENT
+                        LIBRARY MANAGEMENT SYSTEM
                     </p>
 
                 </div>
