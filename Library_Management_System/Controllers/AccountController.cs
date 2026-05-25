@@ -11,6 +11,7 @@ namespace LibraryManagementSystem.Controllers
 {
     public class AccountController : Controller
     {
+
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -481,10 +482,7 @@ namespace LibraryManagementSystem.Controllers
 
         public IActionResult AccessDenied()
         {
-            // Render the styled AccessDenied.cshtml. Redirecting to Membership
-            // hides the "Get Member access to use this feature" CTA the page
-            // was built to show.
-            return View();
+            return RedirectToAction("Index", "Membership");
         }
     }
 }

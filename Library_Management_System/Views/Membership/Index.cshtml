@@ -8,6 +8,7 @@
 
 <style>
 
+
     body {
         background: radial-gradient(circle at top left, rgba(124,58,237,.18), transparent 30%), radial-gradient(circle at bottom right, rgba(217,70,239,.12), transparent 30%), #050816;
         font-family: 'Inter', sans-serif;
@@ -19,7 +20,7 @@
     .membership-page {
         position: relative;
         min-height: 100vh;
-        padding: 90px 40px;
+        padding: 10px 40px;
     }
 
         .membership-page::before {
@@ -72,7 +73,56 @@
         font-size: 17px;
         line-height: 1.8;
     }
+    /* =========================================
+       PLAN TOGGLE
+    ========================================= */
 
+    .plan-toggle-wrapper {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 60px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .plan-toggle {
+        background: rgba(255,255,255,.06);
+        border: 1px solid rgba(255,255,255,.08);
+        padding: 8px;
+        border-radius: 999px;
+        display: inline-flex;
+        gap: 8px;
+        backdrop-filter: blur(14px);
+    }
+
+    .toggle-btn {
+        border: none;
+        height: 58px;
+        min-width: 140px;
+        padding: 0 30px;
+        border-radius: 999px;
+        background: transparent;
+        color: #d946ef;
+        font-size: 17px;
+        font-weight: 800;
+        transition: .35s ease;
+        cursor: pointer;
+    }
+
+        .toggle-btn.active {
+            background: #d946ef;
+            color: white;
+            box-shadow: 0 8px 20px rgba(255,255,255,.18);
+        }
+
+    @@media(max-width:576px) {
+
+        .toggle-btn {
+            min-width: 120px;
+            font-size: 15px;
+            height: 52px;
+        }
+    }
     /* GRID */
     .membership-grid {
         position: relative;
@@ -359,7 +409,31 @@
         </p>
 
     </div>
+    <!-- PLAN TOGGLE -->
 
+    <div class="plan-toggle-wrapper">
+
+        <div class="plan-toggle">
+
+            <button class="toggle-btn active"
+                    id="yearlyBtn"
+                    type="button">
+
+                Yearly
+
+            </button>
+
+            <button class="toggle-btn"
+                    id="monthlyBtn"
+                    type="button">
+
+                Monthly
+
+            </button>
+
+        </div>
+
+    </div>
     <!-- GRID -->
     <div class="membership-grid">
 
@@ -382,8 +456,21 @@
                 </div>
 
                 <div class="price-box">
-                    <div class="price">₹1000</div>
-                    <div class="duration">12 Months</div>
+                    <div class="price yearly-price">₹1000</div>
+
+                    <div class="price monthly-price"
+                         style="display:none;">
+                        ₹99
+                    </div>
+
+                    <div class="duration yearly-duration">
+                        Per Year
+                    </div>
+
+                    <div class="duration monthly-duration"
+                         style="display:none;">
+                        Per Month
+                    </div>
                 </div>
 
                 <div class="feature-list">
@@ -415,7 +502,10 @@
             <form asp-action="Buy" method="post">
 
                 <input type="hidden" name="membershipType" value="Student" />
-                <input type="hidden" name="durationMonths" value="12" />
+                <input type="hidden"
+                       class="duration-input"
+                       name="durationMonths"
+                       value="12" />
 
                 <button type="submit" class="membership-btn">
                     <span>Get Started</span>
@@ -448,8 +538,21 @@
                 </div>
 
                 <div class="price-box">
-                    <div class="price">₹1500</div>
-                    <div class="duration">12 Months</div>
+                    <div class="price yearly-price">₹1500</div>
+
+                    <div class="price monthly-price"
+                         style="display:none;">
+                        ₹149
+                    </div>
+
+                    <div class="duration yearly-duration">
+                        Per Year
+                    </div>
+
+                    <div class="duration monthly-duration"
+                         style="display:none;">
+                        Per Month
+                    </div>
                 </div>
 
                 <div class="feature-list">
@@ -481,7 +584,10 @@
             <form asp-action="Buy" method="post">
 
                 <input type="hidden" name="membershipType" value="Regular" />
-                <input type="hidden" name="durationMonths" value="12" />
+                <input type="hidden"
+                       class="duration-input"
+                       name="durationMonths"
+                       value="12" />
 
                 <button type="submit" class="membership-btn">
                     <span>Choose Regular</span>
@@ -510,8 +616,21 @@
                 </div>
 
                 <div class="price-box">
-                    <div class="price">₹3000</div>
-                    <div class="duration">12 Months</div>
+                    <div class="price yearly-price">₹3000</div>
+
+                    <div class="price monthly-price"
+                         style="display:none;">
+                        ₹299
+                    </div>
+
+                    <div class="duration yearly-duration">
+                        Per Year
+                    </div>
+
+                    <div class="duration monthly-duration"
+                         style="display:none;">
+                        Per Month
+                    </div>
                 </div>
 
                 <div class="feature-list">
@@ -543,7 +662,10 @@
             <form asp-action="Buy" method="post">
 
                 <input type="hidden" name="membershipType" value="Premium" />
-                <input type="hidden" name="durationMonths" value="12" />
+                <input type="hidden"
+                       class="duration-input"
+                       name="durationMonths"
+                       value="12" />
 
                 <button type="submit" class="membership-btn">
                     <span>Go Premium</span>
@@ -557,3 +679,65 @@
     </div>
 
 </div>
+<script>
+
+    const yearlyBtn =
+        document.getElementById("yearlyBtn");
+
+    const monthlyBtn =
+        document.getElementById("monthlyBtn");
+
+    const yearlyPrices =
+        document.querySelectorAll(".yearly-price");
+
+    const monthlyPrices =
+        document.querySelectorAll(".monthly-price");
+
+    const yearlyDurations =
+        document.querySelectorAll(".yearly-duration");
+
+    const monthlyDurations =
+        document.querySelectorAll(".monthly-duration");
+
+    const durationInputs =
+        document.querySelectorAll(".duration-input");
+
+    // ================= YEARLY =================
+
+    yearlyBtn.addEventListener("click", () => {
+
+        yearlyBtn.classList.add("active");
+        monthlyBtn.classList.remove("active");
+
+        yearlyPrices.forEach(x => x.style.display = "block");
+
+        monthlyPrices.forEach(x => x.style.display = "none");
+
+        yearlyDurations.forEach(x => x.style.display = "block");
+
+        monthlyDurations.forEach(x => x.style.display = "none");
+
+        durationInputs.forEach(x => x.value = 12);
+
+    });
+
+    // ================= MONTHLY =================
+
+    monthlyBtn.addEventListener("click", () => {
+
+        monthlyBtn.classList.add("active");
+        yearlyBtn.classList.remove("active");
+
+        yearlyPrices.forEach(x => x.style.display = "none");
+
+        monthlyPrices.forEach(x => x.style.display = "block");
+
+        yearlyDurations.forEach(x => x.style.display = "none");
+
+        monthlyDurations.forEach(x => x.style.display = "block");
+
+        durationInputs.forEach(x => x.value = 1);
+
+    });
+
+</script>

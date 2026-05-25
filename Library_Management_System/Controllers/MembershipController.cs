@@ -11,6 +11,7 @@ namespace Library_Management_System.Controllers
     [Authorize(Roles = "User,Member")]
     public class MembershipController : Controller
     {
+
         private readonly AppDbContext _context;
 
         private readonly UserManager<ApplicationUser>
@@ -60,34 +61,29 @@ namespace Library_Management_System.Controllers
         {
             decimal fee = 0;
 
-            // ================= FEES =================
 
             if (membershipType == "Student")
             {
-                if (durationMonths == 12)
-                    fee = 1000;
+                fee = durationMonths == 1 ? 99 : 1000;
             }
+
 
             else if (membershipType == "Regular")
             {
-                if (durationMonths == 12)
-                    fee = 1500;
+                fee = durationMonths == 1 ? 149 : 1500;
             }
+
 
             else if (membershipType == "Premium")
             {
-                if (durationMonths == 12)
-                    fee = 3000;
+                fee = durationMonths == 1 ? 299 : 3000;
             }
 
-            TempData["MembershipType"] =
-                membershipType;
+            TempData["MembershipType"] = membershipType;
 
-            TempData["DurationMonths"] =
-                durationMonths.ToString();
+            TempData["DurationMonths"] = durationMonths.ToString();
 
-            TempData["Fee"] =
-                fee.ToString();
+            TempData["Fee"] = fee.ToString();
 
             return RedirectToAction("Checkout");
         }
@@ -121,8 +117,7 @@ namespace Library_Management_System.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PaymentSuccess(
     IFormFile screenshot,
-    string paymentMethod,
-    string transactionId)
+    string paymentMethod)
         {
             var user =
                 await _userManager.GetUserAsync(User);
@@ -211,15 +206,10 @@ namespace Library_Management_System.Controllers
 
             if (screenshot != null)
             {
-                // Path.Combine with an embedded "/" segment leaves the slash
-                // intact, which works on Windows but produces an invalid path
-                // on Mac/Linux. Pass each path segment separately so the OS
-                // separator is used.
                 string folder =
                     Path.Combine(
                         Directory.GetCurrentDirectory(),
-                        "wwwroot",
-                        "paymentproof");
+                        "wwwroot/paymentproof");
 
                 if (!Directory.Exists(folder))
                 {
@@ -261,12 +251,8 @@ namespace Library_Management_System.Controllers
                     PaymentStatus =
                         "Pending",
 
-                    // Prefer the user-entered transaction ID from the payment
-                    // form; only fall back to a generated id if absent.
                     TransactionId =
-                        string.IsNullOrWhiteSpace(transactionId)
-                            ? Guid.NewGuid().ToString()
-                            : transactionId.Trim(),
+                        Guid.NewGuid().ToString(),
 
                     PaymentDate =
                         DateTime.Now
@@ -303,7 +289,6 @@ namespace Library_Management_System.Controllers
             return RedirectToAction(
                 "Success");
         }
-
         // =====================================================
         // SUCCESS PAGE
         // =====================================================

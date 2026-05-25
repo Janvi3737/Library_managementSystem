@@ -18,7 +18,6 @@
         display: block;
     }
 
-
     .book-card,
     .event-card,
     .arrival-card,
@@ -35,8 +34,6 @@
         .membership-card:hover {
             transform: translateY(-5px);
         }
-
-
 </style>
 
 <div class="dashboard-wrapper">
@@ -127,8 +124,8 @@
                             <div class="book-card">
 
                                 <img src="@(string.IsNullOrEmpty(book.CoverImageUrl)
-                                                             ? "/images/default-book.jpg"
-                                                             : book.CoverImageUrl)"
+                                                                                                  ? "/images/default-book.jpg"
+                                                                                                  : book.CoverImageUrl)"
                                      alt="@book.Title" />
 
                                 <div class="book-content">
@@ -216,8 +213,8 @@
                             <div class="arrival-card">
 
                                 <img src="@(string.IsNullOrEmpty(book.CoverImageUrl)
-                                                                                 ? "/images/default-book.jpg"
-                                                                                 : book.CoverImageUrl)"
+                                                                                                                      ? "/images/default-book.jpg"
+                                                                                                                      : book.CoverImageUrl)"
                                      alt="@book.Title" />
 
                             </div>
@@ -234,81 +231,81 @@
         <!-- RIGHT -->
         <div class="dashboard-sidebar">
 
-              <!-- MEMBERSHIP -->
-              <div class="membership-box">
+            <!-- MEMBERSHIP -->
+            <div class="membership-box">
 
-                  <div class="sidebar-title">
-                      <h3>Membership Plans</h3>
-                  </div>
+                <div class="sidebar-title">
+                    <h3>Membership Plans</h3>
+                </div>
 
-                  <a asp-controller="Membership"
-                     asp-action="Index"
-                     class="membership-card-link">
+                <a asp-controller="Membership"
+                   asp-action="Index"
+                   class="membership-card-link">
 
-                      <div class="membership-card">
-                          <div class="membership-icon student">
-                              <i class="bi bi-mortarboard-fill"></i>
-                          </div>
+                    <div class="membership-card">
+                        <div class="membership-icon student">
+                            <i class="bi bi-mortarboard-fill"></i>
+                        </div>
 
-                          <div class="membership-content">
-                              <h4>Student</h4>
-                              <p>Perfect for learners</p>
-                              <div class="membership-price">₹1000 / year</div>
-                          </div>
-                      </div>
+                        <div class="membership-content">
+                            <h4>Student</h4>
+                            <p>Perfect for learners</p>
+                            <div class="membership-price">₹1000 / year</div>
+                        </div>
+                    </div>
 
-                  </a>
+                </a>
 
-                  <a asp-controller="Membership"
-                     asp-action="Index"
-                     class="membership-card-link">
+                <a asp-controller="Membership"
+                   asp-action="Index"
+                   class="membership-card-link">
 
-                      <div class="membership-card active-membership">
+                    <div class="membership-card active-membership">
 
-                          <div class="popular-badge">Popular</div>
+                        <div class="popular-badge">Popular</div>
 
-                          <div class="membership-icon regular">
-                              <i class="bi bi-book-fill"></i>
-                          </div>
+                        <div class="membership-icon regular">
+                            <i class="bi bi-book-fill"></i>
+                        </div>
 
-                          <div class="membership-content">
-                              <h4>Regular</h4>
-                              <p>Best for readers</p>
-                              <div class="membership-price">₹1500 / year</div>
-                          </div>
+                        <div class="membership-content">
+                            <h4>Regular</h4>
+                            <p>Best for readers</p>
+                            <div class="membership-price">₹1500 / year</div>
+                        </div>
 
-                      </div>
+                    </div>
 
-                  </a>
+                </a>
 
-                  <a asp-controller="Membership"
-                     asp-action="Index"
-                     class="membership-card-link">
+                <a asp-controller="Membership"
+                   asp-action="Index"
+                   class="membership-card-link">
 
-                      <div class="membership-card">
-                          <div class="membership-icon premium">
-                              <i class="bi bi-gem"></i>
-                          </div>
+                    <div class="membership-card">
+                        <div class="membership-icon premium">
+                            <i class="bi bi-gem"></i>
+                        </div>
 
-                          <div class="membership-content">
-                              <h4>Premium</h4>
-                              <p>Ultimate access</p>
-                              <div class="membership-price">₹3000 / year</div>
-                          </div>
-                      </div>
+                        <div class="membership-content">
+                            <h4>Premium</h4>
+                            <p>Ultimate access</p>
+                            <div class="membership-price">₹3000 / year</div>
+                        </div>
+                    </div>
 
-                  </a>
+                </a>
 
-                  <a asp-controller="Membership"
-                     asp-action="Index"
-                     class="membership-btn">
+                <a asp-controller="Membership"
+                   asp-action="Index"
+                   class="membership-btn">
 
-                      View Membership Plans
-                      <i class="bi bi-arrow-right"></i>
+                    View Membership Plans
+                    <i class="bi bi-arrow-right"></i>
 
-                  </a>
+                </a>
 
-              </div>
+            </div>
 
             <!-- CATEGORIES -->
             <div class="modern-card mt-4">
