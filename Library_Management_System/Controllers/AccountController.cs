@@ -15,17 +15,23 @@ namespace LibraryManagementSystem.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly EmailService _emailService;
+        private readonly IWebHostEnvironment _env;
+        private readonly ILogger<AccountController> _logger;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             RoleManager<IdentityRole> roleManager,
-            EmailService emailService)
+            EmailService emailService,
+            IWebHostEnvironment env,
+            ILogger<AccountController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _emailService = emailService;
+            _env = env;
+            _logger = logger;
         }
 
         // ================= REGISTER =================
@@ -83,6 +89,21 @@ namespace LibraryManagementSystem.Controllers
 
                     await _userManager.AddToRoleAsync(user, "User");
 
+                    // In Development we skip email confirmation entirely so the
+                    // dev loop works without depending on Gmail SMTP delivery
+                    // (which silently fails on networks blocking port 587 and
+                    // leaves the user permanently unable to log in).
+                    if (_env.IsDevelopment())
+                    {
+                        user.EmailConfirmed = true;
+                        await _userManager.UpdateAsync(user);
+
+                        TempData["Success"] =
+                            "Registration successful. You can log in now (dev mode skips email confirmation).";
+
+                        return RedirectToAction("Login");
+                    }
+
                     // EMAIL CONFIRM TOKEN
 
                     var token =
@@ -97,8 +118,6 @@ namespace LibraryManagementSystem.Controllers
                             token = WebUtility.UrlEncode(token)
                         },
                         Request.Scheme);
-
-                    // EMAIL BODY
 
                     string body = $@"
                 <h2>Welcome to BookVerse</h2>
@@ -117,13 +136,21 @@ namespace LibraryManagementSystem.Controllers
                             user.Email,
                             "Confirm Your Email",
                             body);
-                    }
-                    catch
-                    {
-                    }
 
-                    TempData["Success"] =
-                        "Registration successful. Please confirm your email.";
+                        TempData["Success"] =
+                            "Registration successful. Check your inbox for the confirmation link.";
+                    }
+                    catch (Exception ex)
+                    {
+                        // Don't swallow silently — the user would think registration
+                        // worked, then be unable to log in with no clue why.
+                        _logger.LogError(ex,
+                            "Failed to send confirmation email to {Email}", user.Email);
+
+                        TempData["Error"] =
+                            "Account created but the confirmation email could not be sent. " +
+                            "Use 'Resend confirmation email' on the login page.";
+                    }
 
                     return RedirectToAction("Login");
                 }
@@ -175,6 +202,82 @@ namespace LibraryManagementSystem.Controllers
             return RedirectToAction("Login");
         }
 
+        // ================= RESEND CONFIRMATION =================
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResendConfirmation(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                TempData["Error"] = "Email is required.";
+                return RedirectToAction("Login");
+            }
+
+            var user = await _userManager.FindByEmailAsync(email);
+
+            // Don't disclose whether the email exists — same response either way
+            // so attackers can't enumerate registered accounts.
+            if (user == null || user.EmailConfirmed)
+            {
+                TempData["Success"] =
+                    "If an unconfirmed account exists for that email, a new confirmation link has been sent.";
+                return RedirectToAction("Login");
+            }
+
+            // Dev convenience: don't try to send mail, just confirm immediately.
+            if (_env.IsDevelopment())
+            {
+                user.EmailConfirmed = true;
+                await _userManager.UpdateAsync(user);
+
+                TempData["Success"] =
+                    "Email confirmed (dev mode). You can log in now.";
+
+                return RedirectToAction("Login");
+            }
+
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            var confirmationLink = Url.Action(
+                "ConfirmEmail",
+                "Account",
+                new
+                {
+                    userId = user.Id,
+                    token = WebUtility.UrlEncode(token)
+                },
+                Request.Scheme);
+
+            string body = $@"
+                <h2>Confirm your email</h2>
+                <p>Hello {user.FullName},</p>
+                <p>Click the link below to confirm your email.</p>
+                <a href='{confirmationLink}'>Confirm Email</a>";
+
+            try
+            {
+                await _emailService.SendEmailAsync(
+                    user.Email,
+                    "Confirm Your Email",
+                    body);
+
+                TempData["Success"] =
+                    "If an unconfirmed account exists for that email, a new confirmation link has been sent.";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,
+                    "Failed to resend confirmation email to {Email}", user.Email);
+
+                TempData["Error"] =
+                    "Could not send the confirmation email. Please contact support.";
+            }
+
+            return RedirectToAction("Login");
+        }
+
         // ================= LOGIN =================
 
         [HttpGet]
@@ -196,16 +299,20 @@ namespace LibraryManagementSystem.Controllers
 
                 if (user == null)
                 {
-                    ModelState.AddModelError("", "Account not found.");
+                    ModelState.AddModelError("",
+                        "No account found for this email. Please register first.");
                     return View(model);
                 }
 
-                // ✅ EMAIL CONFIRM CHECK
-
                 if (!user.EmailConfirmed)
                 {
+                    // Surface the resend option on the login page so the user can
+                    // recover without contacting an admin.
+                    ViewBag.ShowResendConfirmation = true;
+                    ViewBag.ResendEmail = model.Email;
+
                     ModelState.AddModelError("",
-                        "Please confirm your email first.");
+                        "Email not confirmed. Use the 'Resend confirmation email' link below.");
 
                     return View(model);
                 }
@@ -215,11 +322,10 @@ namespace LibraryManagementSystem.Controllers
                         user.UserName,
                         model.Password,
                         model.RememberMe,
-                        false);
+                        lockoutOnFailure: true);
 
                 if (result.Succeeded)
                 {
-
                     if (await _userManager.IsInRoleAsync(user, "Member"))
                     {
                         return RedirectToAction(
@@ -228,14 +334,26 @@ namespace LibraryManagementSystem.Controllers
                             new { area = "Member" });
                     }
 
-
                     return RedirectToAction(
                         "Index",
                         "Home");
                 }
 
-                ModelState.AddModelError("",
-                    "Invalid login attempt.");
+                if (result.IsLockedOut)
+                {
+                    ModelState.AddModelError("",
+                        "Account temporarily locked due to too many failed login attempts. Try again later.");
+                }
+                else if (result.IsNotAllowed)
+                {
+                    ModelState.AddModelError("",
+                        "Login not allowed for this account.");
+                }
+                else
+                {
+                    ModelState.AddModelError("",
+                        "Incorrect password.");
+                }
             }
 
             return View(model);
