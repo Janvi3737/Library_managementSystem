@@ -11,6 +11,7 @@ namespace Library_Management_System.Controllers
 {
     public class HomeController : Controller
     {
+
         private readonly AppDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
 

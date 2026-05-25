@@ -11,6 +11,7 @@ namespace Library_Management_System.Controllers
     [Authorize(Roles = "User,Member")]
     public class MembershipController : Controller
     {
+
         private readonly AppDbContext _context;
 
         private readonly UserManager<ApplicationUser>
@@ -60,34 +61,29 @@ namespace Library_Management_System.Controllers
         {
             decimal fee = 0;
 
-            // ================= FEES =================
 
             if (membershipType == "Student")
             {
-                if (durationMonths == 12)
-                    fee = 1000;
+                fee = durationMonths == 1 ? 99 : 1000;
             }
+
 
             else if (membershipType == "Regular")
             {
-                if (durationMonths == 12)
-                    fee = 1500;
+                fee = durationMonths == 1 ? 149 : 1500;
             }
+
 
             else if (membershipType == "Premium")
             {
-                if (durationMonths == 12)
-                    fee = 3000;
+                fee = durationMonths == 1 ? 299 : 3000;
             }
 
-            TempData["MembershipType"] =
-                membershipType;
+            TempData["MembershipType"] = membershipType;
 
-            TempData["DurationMonths"] =
-                durationMonths.ToString();
+            TempData["DurationMonths"] = durationMonths.ToString();
 
-            TempData["Fee"] =
-                fee.ToString();
+            TempData["Fee"] = fee.ToString();
 
             return RedirectToAction("Checkout");
         }

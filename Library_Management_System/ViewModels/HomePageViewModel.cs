@@ -13,6 +13,7 @@ namespace Library_Management_System.ViewModels
         public List<EventViewModel> UpcomingEvents { get; set; } = new();
     }
 
+
     public class CategoryWithCountViewModel
     {
         public string CategoryName { get; set; } = string.Empty;
