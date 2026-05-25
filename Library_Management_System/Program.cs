@@ -2,6 +2,7 @@ using Library_Management_System.Models;
 using Library_Management_System.Services;
 using LibraryManagementSystem.ClassLibrary.Data;
 using LibraryManagementSystem.ClassLibrary.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -59,6 +60,14 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LoginPath = "/Account/Login";
     options.AccessDeniedPath = "/Account/AccessDenied";
     options.ExpireTimeSpan = TimeSpan.FromDays(7);
+
+    // SameAsRequest is the default but spelling it out avoids surprises:
+    // login over HTTP sets a non-Secure cookie (works on both schemes); login
+    // over HTTPS sets a Secure cookie (HTTPS-only). To prevent the
+    // "logged-in-on-one-port / logged-out-on-the-other" confusion, pin your
+    // browser to ONE of http://localhost:5255 OR https://localhost:7057.
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.Cookie.SameSite = SameSiteMode.Lax;
 });
 
 builder.Services.AddControllersWithViews();

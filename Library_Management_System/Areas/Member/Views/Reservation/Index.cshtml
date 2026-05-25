@@ -201,13 +201,15 @@
 
             @if (item.Status == ReservationStatus.Waiting)
             {
-                <a asp-action="Cancel"
-                   asp-route-id="@item.Id"
-                   class="btn btn-cancel">
-
-                    Cancel Reservation
-
-                </a>
+                <form asp-action="Cancel"
+                      asp-route-id="@item.Id"
+                      method="post"
+                      onsubmit="return confirm('Cancel this reservation?');"
+                      style="display:inline;">
+                    <button type="submit" class="btn btn-cancel">
+                        Cancel Reservation
+                    </button>
+                </form>
             }
 
         </div>

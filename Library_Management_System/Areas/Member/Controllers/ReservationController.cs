@@ -97,6 +97,10 @@ namespace Library_Management_System.Areas.Member.Controllers
         }
 
         // CANCEL
+        // POST only — a GET link would let any page (an iframe, an email image)
+        // delete a reservation just by referencing the URL with a known id.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Cancel(int id)
         {
             // Verify the reservation belongs to the current user — without this

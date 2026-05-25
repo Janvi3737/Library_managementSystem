@@ -320,6 +320,21 @@
                          class="text-danger mb-3">
                     </div>
 
+                    @if (ViewBag.ShowResendConfirmation == true)
+                    {
+                        <div class="mb-3">
+                            <button type="submit"
+                                    formaction="@Url.Action("ResendConfirmation", "Account")"
+                                    formmethod="post"
+                                    name="email"
+                                    value="@ViewBag.ResendEmail"
+                                    class="btn btn-link p-0"
+                                    style="font-size:14px;">
+                                Resend confirmation email
+                            </button>
+                        </div>
+                    }
+
                     <div class="mb-4">
 
                         <label asp-for="Email"

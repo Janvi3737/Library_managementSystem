@@ -80,8 +80,12 @@ namespace LibraryManagementSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Member member)
+        public async Task<IActionResult> Edit(int id,
+            [Bind("Id,Name,Email,Phone,JoinedOn")] Member member)
         {
+            // Whitelist the editable fields. Without [Bind], a crafted POST
+            // could set ApplicationUserId (re-pointing the member at another
+            // user account). The line below still hardens that explicitly.
             if (id != member.Id) return NotFound();
 
             var existingMember = await _context.Members.AsNoTracking()
@@ -130,13 +134,28 @@ namespace LibraryManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var member = await _context.Members.FindAsync(id);
-            if (member != null)
+            var member = await _context.Members
+                .Include(m => m.BorrowRecords)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (member == null)
+                return RedirectToAction(nameof(Index));
+
+            // BorrowRecord.Member is OnDelete(Restrict) — deleting a member
+            // with any history would throw an FK violation 500. Block here
+            // with a clear message instead.
+            if (member.BorrowRecords != null && member.BorrowRecords.Any())
             {
-                _context.Members.Remove(member);
-                await _context.SaveChangesAsync();
+                TempData["Error"] =
+                    "Cannot delete this member — they have borrow history. " +
+                    "Reassign or archive borrow records first.";
+                return RedirectToAction(nameof(Index));
             }
 
+            _context.Members.Remove(member);
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Member deleted.";
             return RedirectToAction(nameof(Index));
         }
 

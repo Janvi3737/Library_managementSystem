@@ -25,12 +25,39 @@ namespace Library_Management_System.Controllers
         {
             var model = new HomePageViewModel();
 
-            // CONTINUE READING
-            model.ContinueReadingBooks = await _context.Books
-                .Include(x => x.Author)
-                .OrderByDescending(x => x.CreatedAt)
-                .Take(8)
-                .ToListAsync();
+            // CONTINUE READING — the user's currently-borrowed books (not yet
+            // returned). Falls back to newest books for guests / users with no
+            // active borrows so the section isn't empty.
+            var currentUser = await _userManager.GetUserAsync(User);
+
+            if (currentUser != null)
+            {
+                var memberId = await _context.Members
+                    .Where(m => m.ApplicationUserId == currentUser.Id)
+                    .Select(m => m.Id)
+                    .FirstOrDefaultAsync();
+
+                if (memberId != 0)
+                {
+                    model.ContinueReadingBooks = await _context.BorrowRecords
+                        .Where(br => br.MemberId == memberId && br.ReturnedOn == null && br.Book != null)
+                        .Include(br => br.Book)
+                            .ThenInclude(b => b.Author)
+                        .OrderByDescending(br => br.IssuedOn)
+                        .Take(8)
+                        .Select(br => br.Book!)
+                        .ToListAsync();
+                }
+            }
+
+            if (model.ContinueReadingBooks == null || model.ContinueReadingBooks.Count == 0)
+            {
+                model.ContinueReadingBooks = await _context.Books
+                    .Include(x => x.Author)
+                    .OrderByDescending(x => x.CreatedAt)
+                    .Take(8)
+                    .ToListAsync();
+            }
 
             // POPULAR CATEGORIES
             model.PopularCategories = await _context.Categories

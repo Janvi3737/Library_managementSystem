@@ -38,6 +38,7 @@ namespace LibraryManagementSystem.Controllers
         {
             var data = await _context.BorrowRecords
                 .Include(b => b.Member)
+                .Where(b => b.Member != null)
                 .GroupBy(b => new { b.MemberId, b.Member.Name })
                 .Select(g => new TopBorrowerViewModel
                 {

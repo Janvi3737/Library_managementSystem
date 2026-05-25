@@ -61,9 +61,18 @@ namespace LibraryManagementSystem.Controllers
                 .Select(d => d.ToString("ddd"))
                 .ToList();
 
+            // Was: 7 separate Count(...) queries fired sequentially inside Select.
+            // Replaced with a single GroupBy that returns a dict, then mapped to
+            // the 7-day window. Same UI output, 1 query instead of 7.
+            var windowStart = last7Days.First();
+            var borrowCounts = await context.BorrowRecords
+                .Where(x => x.IssuedOn >= windowStart)
+                .GroupBy(x => x.IssuedOn.Date)
+                .Select(g => new { Day = g.Key, Count = g.Count() })
+                .ToDictionaryAsync(x => x.Day, x => x.Count);
+
             ViewBag.BorrowData = last7Days
-                .Select(day => context.BorrowRecords
-                    .Count(x => x.IssuedOn.Date == day))
+                .Select(day => borrowCounts.TryGetValue(day, out var c) ? c : 0)
                 .ToList();
 
             // CATEGORY CHART DATA

@@ -17,13 +17,19 @@ namespace Library_Management_System.Controllers
         private readonly UserManager<ApplicationUser>
             _userManager;
 
+        private readonly SignInManager<ApplicationUser>
+            _signInManager;
+
         public MembershipController(
             AppDbContext context,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager)
         {
             _context = context;
 
             _userManager = userManager;
+
+            _signInManager = signInManager;
         }
 
         // =====================================================
@@ -282,6 +288,11 @@ namespace Library_Management_System.Controllers
                         user,
                         "Member");
             }
+
+            // Without this, the new "Member" role is in the DB but the user's
+            // auth cookie still carries the old claims — they'd be redirected
+            // away from any [Authorize(Roles="Member")] page until next login.
+            await _signInManager.RefreshSignInAsync(user);
 
             TempData["Success"] =
                 "Payment submitted successfully.";

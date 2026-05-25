@@ -184,7 +184,9 @@ namespace Library_Management_System.Controllers
         // 🆕 NEW ARRIVALS (LAST 30 DAYS)
         public async Task<IActionResult> NewArrivals()
         {
-            var date = DateTime.Now.AddDays(-30);
+            // Book.CreatedAt is written with DateTime.UtcNow (see Book.cs); use
+            // the matching base so the 30-day window agrees with HomeController.
+            var date = DateTime.UtcNow.AddDays(-30);
 
             var books = await _context.Books
                 .Include(b => b.Category)
