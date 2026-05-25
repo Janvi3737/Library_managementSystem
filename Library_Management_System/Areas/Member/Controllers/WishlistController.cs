@@ -10,6 +10,7 @@ namespace Library_Management_System.Areas.Member.Controllers
     [Area("Member")]
     [Authorize(Roles = "Member,User")]
     public class WishlistController : Controller
+
     {
         private readonly AppDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;

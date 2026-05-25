@@ -12,6 +12,7 @@ namespace Library_Management_System.Areas.Member.Controllers
     {
         private readonly IWebHostEnvironment _env;
         private readonly UserManager<ApplicationUser> _userManager;
+
         private readonly SignInManager<ApplicationUser> _signInManager;
 
         public ProfileController(
