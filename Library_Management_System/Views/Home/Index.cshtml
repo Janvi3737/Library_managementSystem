@@ -18,6 +18,7 @@
         display: block;
     }
 
+
     .book-card,
     .event-card,
     .arrival-card,
@@ -34,6 +35,7 @@
         .membership-card:hover {
             transform: translateY(-5px);
         }
+
 </style>
 
 <div class="dashboard-wrapper">
@@ -189,16 +191,19 @@
                 </div>
 
             </div>
-            <!-- NEW ARRIVALS -->
-            <div class="modern-card mt-4">
+
+            <!-- FULL WIDTH NEW ARRIVALS -->
+            <div class="modern-card full-width-arrivals">
 
                 <div class="section-header">
+
                     <h3>New Arrivals</h3>
 
                     <a asp-controller="Catalog"
                        asp-action="NewArrivals">
                         View All
                     </a>
+
                 </div>
 
                 <div class="arrival-row">
@@ -213,8 +218,8 @@
                             <div class="arrival-card">
 
                                 <img src="@(string.IsNullOrEmpty(book.CoverImageUrl)
-                                                                                                                      ? "/images/default-book.jpg"
-                                                                                                                      : book.CoverImageUrl)"
+                                                             ? "/images/default-book.jpg"
+                                                             : book.CoverImageUrl)"
                                      alt="@book.Title" />
 
                             </div>
@@ -319,7 +324,7 @@
                     </a>
                 </div>
 
-                @foreach (var category in Model.PopularCategories.Take(5))
+                @foreach (var category in Model.PopularCategories.Take(4))
                 {
                     <div class="category-item">
 

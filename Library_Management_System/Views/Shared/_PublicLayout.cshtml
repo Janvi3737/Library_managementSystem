@@ -15,10 +15,8 @@
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 
-
-
     <link rel="stylesheet" href="~/css/site.css" />
-    <link rel="stylesheet" href="~/css/frontend.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/frontend.css" />
 
 
 </head>
@@ -38,10 +36,10 @@
         <main>
             @{
                 var flashKey = (TempData["Success"] ?? TempData["success"]) != null ? "success"
-                              : (TempData["Error"] ?? TempData["error"]) != null ? "danger"
-                              : null;
+                : (TempData["Error"] ?? TempData["error"]) != null ? "danger"
+                : null;
                 var flashText = TempData["Success"] ?? TempData["success"]
-                              ?? TempData["Error"] ?? TempData["error"];
+                ?? TempData["Error"] ?? TempData["error"];
             }
             @if (flashKey != null)
             {
@@ -62,6 +60,9 @@
 
     @await RenderSectionAsync("Scripts", required: false)
 
+    @* Filenames are Capital-C / Capital-W on disk. Case matters on Mac/Linux
+       (case-sensitive filesystem) — a request for "catalog.js" 404s there
+       even though it works on Windows. Match disk case for both OSes. *@
     <script src="~/js/Catalog.js"></script>
 
     <script>
