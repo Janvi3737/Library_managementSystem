@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 /* =========================================================
-   ROOT
+ROOT
 ========================================================= */
 
 :root {
@@ -19,7 +19,7 @@
 }
 
 /* =========================================================
-   GLOBAL
+GLOBAL
 ========================================================= */
 
 * {
@@ -52,7 +52,7 @@ a {
 }
 
 /* =========================================================
-   SCROLLBAR
+SCROLLBAR
 ========================================================= */
 
 ::-webkit-scrollbar {
@@ -70,7 +70,7 @@ a {
 }
 
 /* =========================================================
-   HERO
+HERO
 ========================================================= */
 
 .hero-section {
@@ -137,7 +137,7 @@ a {
 }
 
 /* =========================================================
-   HERO CONTENT
+HERO CONTENT
 ========================================================= */
 
 .welcome-badge {
@@ -181,7 +181,7 @@ a {
 }
 
 /* =========================================================
-   BUTTONS
+BUTTONS
 ========================================================= */
 
 .hero-buttons {
@@ -225,7 +225,7 @@ a {
   }
 
 /* =========================================================
-   GRID
+GRID
 ========================================================= */
 
 .dashboard-grid {
@@ -249,7 +249,7 @@ a {
 }
 
 /* =========================================================
-   COMMON CARD
+COMMON CARD
 ========================================================= */
 
 .modern-card,
@@ -274,7 +274,7 @@ a {
   }
 
 /* =========================================================
-   SECTION HEADER
+SECTION HEADER
 ========================================================= */
 
 .section-header {
@@ -296,7 +296,7 @@ a {
   }
 
 /* =========================================================
-   BOOK ROW
+BOOK ROW
 ========================================================= */
 
 .books-row,
@@ -321,7 +321,7 @@ a {
   }
 
 /* =========================================================
-   BOOK CARD
+BOOK CARD
 ========================================================= */
 
 .book-card {
@@ -371,40 +371,40 @@ a {
   }
 
 /* =========================================================
-   ARRIVAL CARD
+ARRIVAL CARD
 ========================================================= */
-
+/*
 .arrival-card {
-  width: 210px;
-  min-width: 210px;
-  overflow: hidden;
-  border-radius: 24px;
-  background: linear-gradient( 180deg, rgba(21,28,51,.98), rgba(9,14,28,.98) );
-  border: 1px solid rgba(255,255,255,.06);
-  transition: .35s ease;
-  flex-shrink: 0;
+width: 210px;
+min-width: 210px;
+overflow: hidden;
+border-radius: 24px;
+background: linear-gradient( 180deg, rgba(21,28,51,.98), rgba(9,14,28,.98) ); */
+/* border: 1px solid rgba(255,255,255,.06);
+transition: .35s ease;
+flex-shrink: 0;
 }
 
-  .arrival-card:hover {
-    transform: translateY(-8px);
-    border-color: rgba(168,85,247,.35);
-    box-shadow: 0 20px 45px rgba(124,58,237,.25);
-  }
+.arrival-card:hover {
+transform: translateY(-8px);
+border-color: rgba(168,85,247,.35);
+box-shadow: 0 20px 45px rgba(124,58,237,.25);
+}
 
-  .arrival-card img {
-    width: 100%;
-    height: 320px;
-    object-fit: cover;
-    display: block;
-    transition: .35s ease;
-  }
+.arrival-card img {
+width: 100%;
+height: 320px;
+object-fit: cover;
+display: block;
+transition: .35s ease;
+}
 
-  .arrival-card:hover img {
-    transform: scale(1.05);
-  }
+.arrival-card:hover img {
+transform: scale(1.05);
+} */
 
 /* =========================================================
-   EVENTS
+EVENTS
 ========================================================= */
 
 .event-grid {
@@ -465,7 +465,7 @@ a {
 }
 
 /* =========================================================
-   MEMBERSHIP
+MEMBERSHIP
 ========================================================= */
 
 .sidebar-title {
@@ -481,11 +481,11 @@ a {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px;
+  gap: 20px;
+  padding: 25px;
   border-radius: 20px;
-  background: linear-gradient( to right, rgba(21,28,51,.96), rgba(12,17,32,.96) );
-  border: 1px solid rgba(255,255,255,.06);
+  background: linear-gradient(to right, rgba(21, 28, 51, .96), rgba(12, 17, 32, .96));
+  border: 1px solid rgba(255, 255, 255, .06);
   margin-bottom: 14px;
   transition: .35s ease;
 }
@@ -568,7 +568,7 @@ a {
   }
 
 /* =========================================================
-   CATEGORY
+CATEGORY
 ========================================================= */
 
 .category-item {
@@ -610,7 +610,7 @@ a {
 }
 
 /* =========================================================
-   FULL WIDTH ARRIVALS
+FULL WIDTH ARRIVALS
 ========================================================= */
 
 .full-width-arrivals {
@@ -619,7 +619,7 @@ a {
 }
 
 /* =========================================================
-   SPACING
+SPACING
 ========================================================= */
 
 .mt-4 {
@@ -627,7 +627,7 @@ a {
 }
 
 /* =========================================================
-   RESPONSIVE
+RESPONSIVE
 ========================================================= */
 
 @media(max-width:1200px) {
@@ -717,4 +717,80 @@ a {
   .section-header h3 {
     font-size: 20px;
   }
+}
+
+
+/* =========================================
+NEW ARRIVALS
+========================================= */
+
+.full-width-arrivals {
+  width: 100%;
+  margin-top: 24px;
+  padding: 30px;
+}
+
+.arrival-row {
+  display: flex;
+  align-items: stretch;
+  gap: 22px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: 100%;
+  padding-bottom: 5px;
+  scroll-behavior: smooth;
+  /* HIDE SCROLLBAR */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+  .arrival-row::-webkit-scrollbar {
+    display: none;
+  }
+
+.arrival-card-link {
+  flex: 0 0 auto;
+}
+
+.arrival-card {
+  width: 250px;
+  min-width: 250px;
+  border-radius: 28px;
+  overflow: hidden;
+  position: relative;
+  transition: 0.3s ease;
+}
+
+  .arrival-card:hover {
+    transform: translateY(-6px);
+  }
+
+  .arrival-card img {
+    width: 100%;
+    height: 380px;
+    object-fit: cover;
+    display: block;
+    border-radius: 28px;
+    transition: 0.3s ease;
+  }
+
+  .arrival-card:hover img {
+    transform: scale(1.04);
+  }
+
+/* MOBILE */
+@media(max-width:768px) {
+
+  .full-width-arrivals {
+    padding: 20px;
+  }
+
+  .arrival-card {
+    width: 180px;
+    min-width: 180px;
+  }
+
+    .arrival-card img {
+      height: 270px;
+    }
 }

@@ -126,8 +126,8 @@
                             <div class="book-card">
 
                                 <img src="@(string.IsNullOrEmpty(book.CoverImageUrl)
-                                                                                                  ? "/images/default-book.jpg"
-                                                                                                  : book.CoverImageUrl)"
+                                                                                                                                       ? "/images/default-book.jpg"
+                                                                                                                                       : book.CoverImageUrl)"
                                      alt="@book.Title" />
 
                                 <div class="book-content">
@@ -192,7 +192,7 @@
 
             </div>
 
-            <!-- FULL WIDTH NEW ARRIVALS -->
+            @* <!-- FULL WIDTH NEW ARRIVALS -->
             <div class="modern-card full-width-arrivals">
 
                 <div class="section-header">
@@ -229,7 +229,7 @@
 
                 </div>
 
-            </div>
+            </div> *@
 
         </div>
 
@@ -324,7 +324,7 @@
                     </a>
                 </div>
 
-                @foreach (var category in Model.PopularCategories.Take(4))
+                @foreach (var category in Model.PopularCategories.Take(3))
                 {
                     <div class="category-item">
 
@@ -347,5 +347,45 @@
         </div>
 
     </div>
+
+    <!-- FULL WIDTH NEW ARRIVALS -->
+    <div class="modern-card full-width-arrivals">
+
+        <div class="section-header">
+
+            <h3>New Arrivals</h3>
+
+            <a asp-controller="Catalog"
+               asp-action="NewArrivals">
+                View All
+            </a>
+
+        </div>
+
+        <div class="arrival-row">
+
+            @foreach (var book in Model.NewArrivals)
+            {
+                <a asp-controller="Catalog"
+                   asp-action="Details"
+                   asp-route-id="@book.Id"
+                   class="arrival-card-link">
+
+                    <div class="arrival-card">
+
+                        <img src="@(string.IsNullOrEmpty(book.CoverImageUrl)
+                                                                                          ? "/images/default-book.jpg"
+                                                                                          : book.CoverImageUrl)"
+                             alt="@book.Title" />
+
+                    </div>
+
+                </a>
+            }
+
+        </div>
+
+    </div>
+
 
 </div>

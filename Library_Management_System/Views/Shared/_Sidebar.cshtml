@@ -1,8 +1,8 @@
 <style>
     @@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
     /* =========================================
-       ROOT VARIABLES
-    ========================================= */
+           ROOT VARIABLES
+        ========================================= */
     :root {
         --bg: #050816;
         --bg2: #0f172a;
@@ -21,8 +21,8 @@
 
 
     /* =========================================
-       LIGHT MODE
-    ========================================= */
+           LIGHT MODE
+        ========================================= */
 
     body.light-theme {
         --bg: #f3f5fb;
@@ -39,8 +39,8 @@
     }
 
     /* =========================================
-       GLOBAL
-    ========================================= */
+           GLOBAL
+        ========================================= */
 
     * {
         margin: 0;
@@ -65,8 +65,8 @@
     }
 
     /* =========================================
-       SIDEBAR
-    ========================================= */
+           SIDEBAR
+        ========================================= */
 
     .sidebar {
         width: 245px;
@@ -104,8 +104,8 @@
         height: 8px;
     }
     /* =========================================
-       PAGE CONTENT
-    ========================================= */
+           PAGE CONTENT
+        ========================================= */
 
     .page-content {
         margin-left: 245px;
@@ -115,8 +115,8 @@
     }
 
     /* =========================================
-       LOGO
-    ========================================= */
+           LOGO
+        ========================================= */
 
     .brand-logo {
         display: flex;
@@ -129,15 +129,15 @@
     .brand-icon {
         width: 52px;
         height: 52px;
+        border-radius: 18px;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #d946ef;
-        font-size: 54px;
-        font-weight: 900;
-        box-shadow:none;
-        background:none;
-
+        /* background: linear-gradient(135deg,#7c3aed,#d946ef); */
+        color: white;
+        font-size: 48px;
+        font-weight: 800;
+        /* box-shadow: 0 15px 30px rgba(124,58,237,.35); */
     }
 
     .brand-text h2 {
@@ -160,81 +160,81 @@
         margin-top: 2px;
     }
 
-      /* =========================================
-         MENU HEADING
-      ========================================= */
+    /* =========================================
+             MENU HEADING
+          ========================================= */
 
-      .menu-heading {
-          color: var(--text-muted);
-          font-size: 11px;
-          font-weight: 700;
-          letter-spacing: 2px;
-          margin: 28px 14px 14px;
-      }
-
-      /* =========================================
-         MENU LIST
-      ========================================= */
-
-      .menu-list {
-          margin-bottom: 10px;
-      }
-
-      /* =========================================
-         MENU ITEM
-      ========================================= */
-
-      .menu-item {
-          display: flex;
-          align-items: center;
-          gap: 14px;
-          padding: 15px 18px;
-          margin-bottom: 10px;
-          border-radius: 18px;
-          color: var(--text-light);
-          transition: .3s;
-          position: relative;
-          overflow: hidden;
-      }
-
-          .menu-item i {
-              font-size: 18px;
-              min-width: 22px;
-          }
-
-          .menu-item span {
-              font-size: 15px;
-              font-weight: 600;
-          }
-
-          /* HOVER */
-
-          .menu-item:hover {
-              background: var(--hover);
-              color: var(--text);
-              transform: translateX(4px);
-          }
-
-          /* ACTIVE */
-
-          .menu-item.active {
-              background: linear-gradient(135deg,#7c3aed,#9333ea);
-              color: white;
-              box-shadow: 0 10px 30px rgba(124,58,237,.35);
-          }
-
-      /* =========================================
-         HORIZONTAL LINE
-      ========================================= */
-
-      .sidebar hr {
-          border-color: var(--border);
-          margin: 22px 0;
-      }
+    .menu-heading {
+        color: var(--text-muted);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        margin: 28px 14px 14px;
+    }
 
     /* =========================================
-       LOGOUT
-    ========================================= */
+             MENU LIST
+          ========================================= */
+
+    .menu-list {
+        margin-bottom: 10px;
+    }
+
+    /* =========================================
+             MENU ITEM
+          ========================================= */
+
+    .menu-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 15px 18px;
+        margin-bottom: 10px;
+        border-radius: 18px;
+        color: var(--text-light);
+        transition: .3s;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .menu-item i {
+            font-size: 18px;
+            min-width: 22px;
+        }
+
+        .menu-item span {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        /* HOVER */
+
+        .menu-item:hover {
+            background: var(--hover);
+            color: var(--text);
+            transform: translateX(4px);
+        }
+
+        /* ACTIVE */
+
+        .menu-item.active {
+            background: linear-gradient(135deg,#7c3aed,#9333ea);
+            color: white;
+            box-shadow: 0 10px 30px rgba(124,58,237,.35);
+        }
+
+    /* =========================================
+             HORIZONTAL LINE
+          ========================================= */
+
+    .sidebar hr {
+        border-color: var(--border);
+        margin: 22px 0;
+    }
+
+    /* =========================================
+           LOGOUT
+        ========================================= */
 
     .logout-box {
         margin-top: 40px;
@@ -260,8 +260,8 @@
         }
 
     /* =========================================
-       NAVBAR
-    ========================================= */
+           NAVBAR
+        ========================================= */
 
     .modern-navbar {
         position: sticky;
@@ -275,8 +275,8 @@
     }
 
     /* =========================================
-       NAV BUTTONS
-    ========================================= */
+           NAV BUTTONS
+        ========================================= */
 
     .nav-icon-btn {
         width: 52px;
@@ -299,8 +299,8 @@
         }
 
     /* =========================================
-       THEME ICON
-    ========================================= */
+           THEME ICON
+        ========================================= */
 
     .theme-light-icon {
         display: none;
@@ -315,8 +315,8 @@
     }
 
     /* =========================================
-       SCROLLBAR
-    ========================================= */
+           SCROLLBAR
+        ========================================= */
 
     ::-webkit-scrollbar {
         width: 8px;
@@ -329,8 +329,8 @@
     }
 
     /* =========================================
-       MOBILE
-    ========================================= */
+           MOBILE
+        ========================================= */
 
     @@media(max - width:992px) {
 
@@ -568,4 +568,3 @@
     </div>
 
 </aside>
-

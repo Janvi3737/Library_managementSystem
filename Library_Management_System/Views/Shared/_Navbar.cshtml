@@ -1,4 +1,6 @@
 @using Microsoft.AspNetCore.Identity
+@using LibraryManagementSystem.ClassLibrary.Data
+@inject AppDbContext Context
 @inject UserManager<LibraryManagementSystem.ClassLibrary.Models.ApplicationUser> UserManager
 
 @{
@@ -11,8 +13,16 @@
     {
         profileImage = currentUser.ProfileImagePath;
     }
-}
 
+    int wishlistCount = 0;
+
+    if (currentUser != null)
+    {
+        wishlistCount = Context.Wishlists
+            .Count(x => x.MemberId == currentUser.Id
+                     && x.BookId != null);
+    }
+}
 
 <style>
     @@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
@@ -141,50 +151,6 @@
         min-height: 100vh;
         width: calc(100% - 260px);
         transition: .35s;
-    }
-
-    /* =========================================
-       LOGO
-    ========================================= */
-
-    .brand-logo {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        margin-bottom: 32px;
-    }
-
-    .brand-icon {
-        width: 52px;
-        height: 52px;
-        border-radius: 18px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: linear-gradient(135deg,#7c3aed,#d946ef);
-        color: white;
-        font-size: 28px;
-        font-weight: 800;
-        box-shadow: 0 15px 30px rgba(124,58,237,.35);
-    }
-
-    .brand-text h2 {
-        margin: 0;
-        color: var(--text-color);
-        font-size: 26px;
-        font-weight: 900;
-        letter-spacing: 1px;
-    }
-
-    .brand-text span {
-        color: var(--pink);
-    }
-
-    .brand-text p {
-        margin: 0;
-        color: var(--text-muted);
-        font-size: 9px;
-        letter-spacing: 2px;
     }
 
     /* =========================================
@@ -341,20 +307,70 @@
 
     /* WISHLIST BUTTON */
 
-    .wishlist-btn {
-        text-decoration: none;
+    .wishlist-nav-icon {
+        width: 46px;
+        height: 46px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        font-size: 24px;
+        color: white;
+        transition: .3s;
     }
 
-        .wishlist-btn i {
-            font-size: 18px;
+        .wishlist-nav-icon:hover {
+            color: #ff4d8d;
+            transform: scale(1.12);
         }
 
-        .wishlist-btn:hover {
-            background: linear-gradient(135deg,#ec4899,#9333ea);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(236,72,153,.35);
+        .wishlist-nav-icon::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,.04);
+            transform: scale(0);
+            transition: .3s ease;
         }
+
+        .wishlist-nav-icon:hover::after {
+            transform: scale(1);
+        }
+
+    .wishlist-badge {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        min-width: 22px;
+        height: 22px;
+        padding: 0 6px;
+        border-radius: 50px;
+        background: linear-gradient( 135deg, #ef4444, #ff4d8d);
+        color: white;
+        font-size: 11px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid #111827;
+        box-shadow: 0 4px 12px rgba(239,68,68,.5);
+        animation: pulseBadge 1.8s infinite;
+    }
+    @@keyframes pulseBadge {
+
+        0% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.15);
+        }
+
+        100% {
+            transform: scale(1);
+        }
+    }
     /* =========================================
        PROFILE
     ========================================= */
@@ -597,11 +613,18 @@
                 <!-- WISHLIST -->
 
                 <a asp-area="Member"
-                  asp-controller="Wishlist"
+                   asp-controller="Wishlist"
                    asp-action="Index"
-                   class="nav-icon-btn wishlist-btn">
+                   class="wishlist-nav-icon">
 
-                    <i class="bi bi-heart-fill"></i>
+                    <i class="fa-regular fa-heart"></i>
+
+                    @if (wishlistCount > 0)
+                    {
+                        <span class="wishlist-badge">
+                            @wishlistCount
+                        </span>
+                    }
 
                 </a>
 
