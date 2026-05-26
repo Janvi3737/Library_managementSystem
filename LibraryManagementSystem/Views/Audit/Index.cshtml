@@ -1,0 +1,72 @@
+@model IEnumerable<LibraryManagementSystem.ClassLibrary.Models.AuditLog>
+
+@{
+    ViewData["Title"] = "Audit Log";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    .table thead th { font-family:'Poppins',sans-serif; font-size:15px; font-weight:700; }
+    .table tbody td { font-family:'Segoe UI',sans-serif; font-size:13px; font-weight:500; }
+    .badge-method { padding:2px 8px; border-radius:8px; font-size:11px; font-weight:700; }
+    .m-POST   { background:#cfe2ff; color:#084298; }
+    .m-PUT    { background:#fff3cd; color:#856404; }
+    .m-DELETE { background:#f8d7da; color:#721c24; }
+    .m-PATCH  { background:#d1e7dd; color:#0a3622; }
+</style>
+
+<div class="container mt-4">
+    <h2 class="mb-3">📜 Audit Log</h2>
+
+    <form method="get" class="row mb-3 g-2">
+        <div class="col-md-4">
+            <input type="text" name="user" value="@ViewBag.UserFilter" class="form-control"
+                   placeholder="Filter by user email…" />
+        </div>
+        <div class="col-md-4">
+            <input type="text" name="controller" value="@ViewBag.ControllerFilter" class="form-control"
+                   placeholder="Filter by controller (e.g. Books)" />
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-primary w-100">Filter</button>
+        </div>
+        <div class="col-md-2">
+            <a asp-action="Index" class="btn btn-secondary w-100">Reset</a>
+        </div>
+    </form>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>When</th>
+                            <th>User</th>
+                            <th>Method</th>
+                            <th>Controller / Action</th>
+                            <th>Path</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Any())
+                        {
+                            <tr><td colspan="5" class="text-center text-muted p-4">No audit entries.</td></tr>
+                        }
+                        @foreach (var a in Model)
+                        {
+                            var method = a.Action.Split(' ').FirstOrDefault() ?? "";
+                            <tr>
+                                <td>@a.Timestamp.ToString("dd MMM yyyy HH:mm:ss")</td>
+                                <td>@(a.UserEmail ?? "—")</td>
+                                <td><span class="badge-method m-@method">@method</span></td>
+                                <td>@a.Controller / @a.ActionName</td>
+                                <td class="small text-muted">@a.Details</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

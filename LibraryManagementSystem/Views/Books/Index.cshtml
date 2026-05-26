@@ -119,9 +119,15 @@
 
                 <div class="card-body">
 
+            <form asp-action="BulkDelete" method="post"
+                  onsubmit="return confirm('Delete all selected books?');">
             <table class="table table-bordered table-striped table-hover align-middle" id="booksTable">
                         <thead class="table-dark">
                             <tr>
+                                <th style="width:42px;">
+                                    <input type="checkbox" id="selectAllBooks"
+                                           onclick="document.querySelectorAll('.book-check').forEach(c=>c.checked=this.checked);" />
+                                </th>
                                 <th>Title</th>
                                 <th>ISBN</th>
                                 <th>Author</th>
@@ -139,6 +145,10 @@
                             @foreach (var item in Model)
                             {
                                 <tr>
+                                    <td>
+                                        <input type="checkbox" class="book-check"
+                                               name="ids" value="@item.Id" />
+                                    </td>
                                     <td>@item.Title</td>
                                     <td>@item.ISBN</td>
                                     <td>@item.Author?.Name</td>
@@ -200,6 +210,17 @@
                         </tbody>
 
                     </table>
+
+                    <div class="p-3 border-top">
+                        <button type="submit" class="btn btn-danger">
+                            🗑 Delete Selected
+                        </button>
+                        <small class="text-muted ms-2">
+                            Books with borrow history will fail FK and be reported.
+                        </small>
+                    </div>
+
+                    </form>
 
                 </div>
             </div>

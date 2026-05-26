@@ -1,0 +1,214 @@
+@model IEnumerable<LibraryManagementSystem.ViewModels.UserRowViewModel>
+
+@{
+    ViewData["Title"] = "Users";
+    var currentRole = ViewBag.CurrentRole as string;
+    var search = ViewBag.Search as string;
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    .table thead th {
+        font-family: 'Poppins', sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+    .table tbody td {
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+    }
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        border-radius: 12px;
+    }
+    .role-badge {
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 700;
+        margin-right: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .role-admin   { background:#fce4ec; color:#880e4f; }
+    .role-member  { background:#e8f5e9; color:#1b5e20; }
+    .role-user    { background:#e3f2fd; color:#0d47a1; }
+    .state-good   { color:#1b5e20; }
+    .state-bad    { color:#b71c1c; }
+    .filter-pill {
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        border: 1px solid #dee2e6;
+        color: #495057;
+        margin-left: 4px;
+    }
+    .filter-pill.active {
+        background: #0d6efd;
+        color: white;
+        border-color: #0d6efd;
+    }
+</style>
+
+<div class="container mt-4">
+
+    <div class="row align-items-center mb-3">
+        <div class="col-md-5">
+            <h2 class="m-0">🧑‍🤝‍🧑 Users</h2>
+            <small class="text-muted">@Model.Count() shown</small>
+        </div>
+        <div class="col-md-7 text-end">
+            <a class="filter-pill @(string.IsNullOrEmpty(currentRole) ? "active" : "")"
+               asp-action="Index">All</a>
+            <a class="filter-pill @(currentRole == "Admin" ? "active" : "")"
+               asp-action="Index" asp-route-role="Admin">Admins</a>
+            <a class="filter-pill @(currentRole == "Member" ? "active" : "")"
+               asp-action="Index" asp-route-role="Member">Members</a>
+            <a class="filter-pill @(currentRole == "User" ? "active" : "")"
+               asp-action="Index" asp-route-role="User">Users</a>
+        </div>
+    </div>
+
+    <form method="get" class="row mb-3">
+        <div class="col-md-6">
+            <input type="text" name="search" value="@search" class="form-control"
+                   placeholder="Search by email or name…" />
+        </div>
+        <input type="hidden" name="role" value="@currentRole" />
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Search</button>
+        </div>
+    </form>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Email&nbsp;Confirmed</th>
+                            <th>Lockout</th>
+                            <th>Roles</th>
+                            <th style="width:330px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center text-muted p-4">
+                                    No users match.
+                                </td>
+                            </tr>
+                        }
+                        @foreach (var u in Model)
+                        {
+                            <tr>
+                                <td>@(u.FullName ?? "—")</td>
+                                <td>@u.Email</td>
+                                <td>@(u.PhoneNumber ?? "—")</td>
+                                <td>
+                                    @if (u.EmailConfirmed)
+                                    {
+                                        <span class="state-good">✓ Confirmed</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="state-bad">✗ Pending</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (u.IsLocked)
+                                    {
+                                        <span class="state-bad">Locked until @u.LockoutEnd?.ToLocalTime():HH:mm</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="state-good">—</span>
+                                    }
+                                </td>
+                                <td>
+                                    @foreach (var r in u.Roles)
+                                    {
+                                        var cls = r switch
+                                        {
+                                            "Admin" => "role-admin",
+                                            "Member" => "role-member",
+                                            _ => "role-user"
+                                        };
+                                        <span class="role-badge @cls">@r</span>
+                                    }
+                                    @if (u.Roles.Count == 0)
+                                    {
+                                        <span class="text-muted small">no role</span>
+                                    }
+                                </td>
+                                <td class="text-nowrap">
+                                    @if (!u.Roles.Contains("Admin"))
+                                    {
+                                        @if (!u.Roles.Contains("Member"))
+                                        {
+                                            <form asp-action="PromoteToMember"
+                                                  asp-route-id="@u.Id"
+                                                  method="post"
+                                                  style="display:inline;">
+                                                <button class="btn btn-sm btn-success me-1"
+                                                        title="Promote to Member">
+                                                    ↑ Member
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <form asp-action="DemoteToUser"
+                                                  asp-route-id="@u.Id"
+                                                  method="post"
+                                                  style="display:inline;">
+                                                <button class="btn btn-sm btn-warning me-1"
+                                                        title="Demote to User">
+                                                    ↓ User
+                                                </button>
+                                            </form>
+                                        }
+                                    }
+                                    @if (!u.EmailConfirmed)
+                                    {
+                                        <form asp-action="ConfirmEmail"
+                                              asp-route-id="@u.Id"
+                                              method="post"
+                                              style="display:inline;">
+                                            <button class="btn btn-sm btn-primary me-1"
+                                                    title="Mark email confirmed">
+                                                ✓ Confirm
+                                            </button>
+                                        </form>
+                                    }
+                                    @if (u.IsLocked)
+                                    {
+                                        <form asp-action="Unlock"
+                                              asp-route-id="@u.Id"
+                                              method="post"
+                                              style="display:inline;">
+                                            <button class="btn btn-sm btn-info"
+                                                    title="Unlock account">
+                                                🔓 Unlock
+                                            </button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

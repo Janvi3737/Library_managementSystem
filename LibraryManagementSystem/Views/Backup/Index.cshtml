@@ -1,0 +1,27 @@
+@{
+    ViewData["Title"] = "Backup";
+}
+
+<div class="container mt-4" style="max-width:680px;">
+    <h2 class="mb-3">💾 Database Backup</h2>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <p>
+                Click the button below to download a snapshot of the current
+                SQLite database file. On Windows + SQL Server, use SSMS or
+                <code>BACKUP DATABASE</code> from a query window — this download
+                is dev-only.
+            </p>
+
+            <a asp-action="Download" class="btn btn-primary">
+                <i class="bi bi-cloud-download"></i> Download .db file
+            </a>
+
+            <p class="text-muted small mt-3">
+                The file is read while the app is running, so the snapshot is
+                point-in-time consistent (SQLite WAL handles concurrent reads).
+            </p>
+        </div>
+    </div>
+</div>

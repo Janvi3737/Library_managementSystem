@@ -1,0 +1,106 @@
+@model IEnumerable<LibraryManagementSystem.ClassLibrary.Models.BorrowRecord>
+
+@{
+    ViewData["Title"] = "Fines";
+    var currentStatus = ViewBag.CurrentStatus as string ?? "outstanding";
+    var outstandingTotal = ViewBag.OutstandingTotal as decimal? ?? 0m;
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    .table thead th { font-family:'Poppins',sans-serif; font-size:15px; font-weight:700; letter-spacing:.5px; }
+    .table tbody td { font-family:'Segoe UI',sans-serif; font-size:14px; font-weight:500; }
+    .table-responsive { width:100%; overflow-x:auto; border-radius:12px; }
+    .filter-pill {
+        padding:6px 14px; border-radius:20px; font-size:13px; font-weight:600;
+        text-decoration:none; border:1px solid #dee2e6; color:#495057; margin-left:4px;
+    }
+    .filter-pill.active { background:#0d6efd; color:white; border-color:#0d6efd; }
+    .pill { padding:3px 10px; border-radius:12px; font-size:11px; font-weight:700; }
+    .pill-paid { background:#e0e0e0; color:#555; }
+    .pill-unpaid { background:#ffe0b2; color:#a14a00; }
+</style>
+
+<div class="container mt-4">
+    <div class="row align-items-center mb-3">
+        <div class="col-md-5">
+            <h2 class="m-0">💰 Fines</h2>
+            <small class="text-muted">Outstanding total: <strong>₹@outstandingTotal.ToString("0.00")</strong></small>
+        </div>
+        <div class="col-md-7 text-end">
+            <a class="filter-pill @(currentStatus == "outstanding" ? "active" : "")"
+               asp-action="Index" asp-route-status="outstanding">Outstanding</a>
+            <a class="filter-pill @(currentStatus == "paid" ? "active" : "")"
+               asp-action="Index" asp-route-status="paid">Paid</a>
+            <a class="filter-pill @(currentStatus == "all" ? "active" : "")"
+               asp-action="Index" asp-route-status="all">All</a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Member</th>
+                            <th>Book</th>
+                            <th>Due</th>
+                            <th>Returned</th>
+                            <th>Days Late</th>
+                            <th>Fine</th>
+                            <th>Status</th>
+                            <th style="width:220px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Any())
+                        {
+                            <tr><td colspan="8" class="text-center text-muted p-4">No fines.</td></tr>
+                        }
+                        @foreach (var r in Model)
+                        {
+                            <tr>
+                                <td>@(r.Member?.Name ?? "—")</td>
+                                <td>@(r.Book?.Title ?? "—")</td>
+                                <td>@r.DueDate.ToString("dd MMM yyyy")</td>
+                                <td>@(r.ReturnedOn?.ToString("dd MMM yyyy") ?? "—")</td>
+                                <td>@r.DaysLate</td>
+                                <td>₹@r.FineAmount.ToString("0.00")</td>
+                                <td>
+                                    @if (r.FinePaid)
+                                    {
+                                        <span class="pill pill-paid">Paid / Waived</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="pill pill-unpaid">Outstanding</span>
+                                    }
+                                </td>
+                                <td class="text-nowrap">
+                                    @if (!r.FinePaid)
+                                    {
+                                        <form asp-action="MarkPaid" asp-route-id="@r.Id"
+                                              method="post" style="display:inline;">
+                                            <button class="btn btn-sm btn-success me-1">
+                                                ✓ Mark Paid
+                                            </button>
+                                        </form>
+                                        <form asp-action="Waive" asp-route-id="@r.Id"
+                                              method="post"
+                                              onsubmit="return confirm('Waive this fine?');"
+                                              style="display:inline;">
+                                            <button class="btn btn-sm btn-warning">
+                                                Waive
+                                            </button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

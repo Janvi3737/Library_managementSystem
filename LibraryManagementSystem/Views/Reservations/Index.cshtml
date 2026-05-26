@@ -1,0 +1,117 @@
+@model IEnumerable<LibraryManagementSystem.ClassLibrary.Models.Reservation>
+
+@{
+    ViewData["Title"] = "Reservations";
+    var currentStatus = ViewBag.CurrentStatus as string;
+    var waitingCount = ViewBag.WaitingCount as int? ?? 0;
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    .table thead th { font-family:'Poppins',sans-serif; font-size:15px; font-weight:700; letter-spacing:.5px; }
+    .table tbody td { font-family:'Segoe UI',sans-serif; font-size:14px; font-weight:500; }
+    .table-responsive { width:100%; overflow-x:auto; border-radius:12px; }
+    .status-badge { padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600; }
+    .status-waiting   { background:#fff3cd; color:#856404; }
+    .status-completed { background:#d4edda; color:#155724; }
+    .status-cancelled { background:#f8d7da; color:#721c24; }
+    .filter-pill {
+        padding:6px 14px; border-radius:20px; font-size:13px; font-weight:600;
+        text-decoration:none; border:1px solid #dee2e6; color:#495057; margin-left:4px;
+    }
+    .filter-pill.active { background:#0d6efd; color:white; border-color:#0d6efd; }
+</style>
+
+<div class="container mt-4">
+    <div class="row align-items-center mb-3">
+        <div class="col-md-5">
+            <h2 class="m-0">📋 Reservations</h2>
+            @if (waitingCount > 0)
+            {
+                <small class="text-muted">@waitingCount waiting</small>
+            }
+        </div>
+        <div class="col-md-7 text-end">
+            <a class="filter-pill @(string.IsNullOrEmpty(currentStatus) ? "active" : "")"
+               asp-action="Index">All</a>
+            <a class="filter-pill @(currentStatus == "Waiting" ? "active" : "")"
+               asp-action="Index" asp-route-status="Waiting">Waiting</a>
+            <a class="filter-pill @(currentStatus == "Completed" ? "active" : "")"
+               asp-action="Index" asp-route-status="Completed">Completed</a>
+            <a class="filter-pill @(currentStatus == "Cancelled" ? "active" : "")"
+               asp-action="Index" asp-route-status="Cancelled">Cancelled</a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Reserved</th>
+                            <th>Book</th>
+                            <th>Member</th>
+                            <th>Status</th>
+                            <th style="width:240px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Any())
+                        {
+                            <tr><td colspan="5" class="text-center text-muted p-4">No reservations.</td></tr>
+                        }
+                        @foreach (var r in Model)
+                        {
+                            <tr>
+                                <td>@r.ReservedOn.ToString("dd MMM yyyy HH:mm")</td>
+                                <td>
+                                    @(r.Book?.Title ?? "—")
+                                    <small class="text-muted d-block">
+                                        @(r.Book?.Author?.Name ?? "")
+                                    </small>
+                                </td>
+                                <td>
+                                    @(r.Member?.FullName ?? r.Member?.Email ?? "—")
+                                    <small class="text-muted d-block">@r.Member?.Email</small>
+                                </td>
+                                <td>
+                                    @{
+                                        var cls = r.Status switch
+                                        {
+                                            LibraryManagementSystem.ClassLibrary.Models.ReservationStatus.Completed => "status-completed",
+                                            LibraryManagementSystem.ClassLibrary.Models.ReservationStatus.Cancelled => "status-cancelled",
+                                            _ => "status-waiting"
+                                        };
+                                    }
+                                    <span class="status-badge @cls">@r.Status</span>
+                                </td>
+                                <td class="text-nowrap">
+                                    @if (r.Status == LibraryManagementSystem.ClassLibrary.Models.ReservationStatus.Waiting)
+                                    {
+                                        <form asp-action="Fulfill" asp-route-id="@r.Id"
+                                              method="post"
+                                              onsubmit="return confirm('Mark fulfilled + notify member?');"
+                                              style="display:inline;">
+                                            <button class="btn btn-sm btn-success me-1">
+                                                ✓ Fulfill + Notify
+                                            </button>
+                                        </form>
+                                        <form asp-action="Cancel" asp-route-id="@r.Id"
+                                              method="post"
+                                              onsubmit="return confirm('Cancel this reservation?');"
+                                              style="display:inline;">
+                                            <button class="btn btn-sm btn-danger">
+                                                ✗ Cancel
+                                            </button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

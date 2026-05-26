@@ -1,0 +1,48 @@
+@model IEnumerable<LibraryManagementSystem.ClassLibrary.Models.Book>
+
+@{
+    ViewData["Title"] = "Never Borrowed";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    .table thead th { font-family:'Poppins',sans-serif; font-size:15px; font-weight:700; }
+    .table tbody td { font-family:'Segoe UI',sans-serif; font-size:14px; font-weight:500; }
+</style>
+
+<div class="container mt-4">
+    <h2 class="mb-3">📚 Books Never Borrowed</h2>
+    <p class="text-muted small">@Model.Count() book(s) with zero borrow history — candidates for weeding.</p>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Category</th>
+                        <th>ISBN</th>
+                        <th>Copies</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr><td colspan="5" class="text-center text-muted p-4">All books have been borrowed at least once.</td></tr>
+                    }
+                    @foreach (var b in Model)
+                    {
+                        <tr>
+                            <td>@b.Title</td>
+                            <td>@(b.Author?.Name ?? "—")</td>
+                            <td>@(b.Category?.Name ?? "—")</td>
+                            <td>@b.ISBN</td>
+                            <td>@b.TotalCopies</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

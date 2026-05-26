@@ -1,0 +1,34 @@
+@model IEnumerable<LibraryManagementSystem.ClassLibrary.Models.Notification>
+
+@{
+    ViewData["Title"] = "Notifications";
+}
+
+<div class="container py-4" style="max-width:760px;">
+    <h2 class="mb-4">🔔 Notifications</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center text-muted p-4">
+            You have no notifications.
+        </div>
+    }
+
+    <div class="list-group">
+        @foreach (var n in Model)
+        {
+            <div class="list-group-item">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <p class="mb-1">@n.Message</p>
+                        @if (!string.IsNullOrEmpty(n.Link))
+                        {
+                            <a href="@n.Link" class="small">Open</a>
+                        }
+                    </div>
+                    <small class="text-muted">@n.CreatedOn.ToString("dd MMM HH:mm")</small>
+                </div>
+            </div>
+        }
+    </div>
+</div>

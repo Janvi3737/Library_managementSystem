@@ -110,5 +110,106 @@ namespace LibraryManagementSystem.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        // ================= DETAILS =================
+        public async Task<IActionResult> Details(int id)
+        {
+            var membership = await _context.Memberships
+                .Include(m => m.Member)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (membership == null) return NotFound();
+
+            ViewBag.Payments = await _context.MembershipPayments
+                .Where(p => p.MembershipId == id)
+                .OrderByDescending(p => p.PaymentDate)
+                .ToListAsync();
+
+            return View(membership);
+        }
+
+        // ================= EDIT GET =================
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var membership = await _context.Memberships
+                .Include(m => m.Member)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (membership == null) return NotFound();
+
+            ViewBag.Members = new SelectList(
+                await _context.Members.ToListAsync(),
+                "Id",
+                "Name",
+                membership.MemberId);
+
+            return View(membership);
+        }
+
+        // ================= EDIT POST =================
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id,
+            [Bind("Id,MemberId,MembershipType,DurationMonths,StartDate,EndDate,IsActive,Fee")]
+            Membership membership)
+        {
+            if (id != membership.Id) return NotFound();
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Members = new SelectList(
+                    await _context.Members.ToListAsync(),
+                    "Id",
+                    "Name",
+                    membership.MemberId);
+                return View(membership);
+            }
+
+            try
+            {
+                _context.Update(membership);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Memberships.Any(m => m.Id == membership.Id))
+                    return NotFound();
+                throw;
+            }
+
+            TempData["Success"] = "Membership updated.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        // ================= DELETE GET =================
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var membership = await _context.Memberships
+                .Include(m => m.Member)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (membership == null) return NotFound();
+            return View(membership);
+        }
+
+        // ================= DELETE POST =================
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var membership = await _context.Memberships.FindAsync(id);
+            if (membership == null)
+                return RedirectToAction(nameof(Index));
+
+            // MembershipPayments cascade-delete via the FK config, so any
+            // payment rows under this membership go away with it.
+            _context.Memberships.Remove(membership);
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Membership deleted.";
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
