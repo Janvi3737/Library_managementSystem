@@ -1,6 +1,6 @@
 @using Microsoft.AspNetCore.Identity
 @using LibraryManagementSystem.ClassLibrary.Data
-@inject AppDbContext Context
+@inject AppDbContext DbContext
 @inject UserManager<LibraryManagementSystem.ClassLibrary.Models.ApplicationUser> UserManager
 
 @{
@@ -18,7 +18,7 @@
 
     if (currentUser != null)
     {
-        wishlistCount = Context.Wishlists
+        wishlistCount = DbContext.Wishlists
             .Count(x => x.MemberId == currentUser.Id
                      && x.BookId != null);
     }
