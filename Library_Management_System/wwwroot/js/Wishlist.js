@@ -1,62 +1,134 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-  document.querySelectorAll(".wishlist-btn").forEach(btn => {
+  document.querySelectorAll(".wishlist-btn")
+    .forEach(btn => {
 
-    btn.addEventListener("click", async function () {
+      btn.addEventListener("click", async function () {
 
-      const bookId = this.dataset.bookid ? parseInt(this.dataset.bookid) : null;
-      if (!bookId) return;
+        const bookId =
+          parseInt(this.dataset.bookid);
 
-      const body = new URLSearchParams();
-      body.append("bookId", bookId);
+        if (!bookId) return;
 
-      try {
+        const body =
+          new URLSearchParams();
 
-        const response = await fetch('/Member/Wishlist/Toggle', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          body: body
-        });
+        body.append(
+          "bookId",
+          bookId
+        );
 
-        const result = await response.json();
+        try {
 
-        if (!result.success) {
-          alert(result.message || "Login required");
-          return;
-        }
+          const response =
+            await fetch(
+              '/Member/Wishlist/Toggle',
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type':
+                    'application/x-www-form-urlencoded'
+                },
+                body: body
+              });
 
-        // ⭐ UPDATE ALL BUTTON STATES USING RETURNED wishlistIds
-        document.querySelectorAll(".wishlist-btn").forEach(b => {
+          const result =
+            await response.json();
 
-          const id = parseInt(b.dataset.bookid);
+          if (!result.success) {
 
-          const icon = b.querySelector("i");
+            alert(
+              result.message ||
+              "Login required"
+            );
 
-          const isActive = result.wishlistIds.includes(id);
+            return;
+          }
 
-          b.classList.toggle("active", isActive);
+          // update all heart buttons
 
-          if (icon) {
-            if (isActive) {
-              icon.classList.remove("fa-regular");
-              icon.classList.add("fa-solid");
-            } else {
-              icon.classList.add("fa-regular");
-              icon.classList.remove("fa-solid");
+          document
+            .querySelectorAll(".wishlist-btn")
+            .forEach(b => {
+
+              const id =
+                parseInt(
+                  b.dataset.bookid
+                );
+
+              const icon =
+                b.querySelector("i");
+
+              const active =
+                result.wishlistIds
+                  .includes(id);
+
+              b.classList.toggle(
+                "active",
+                active
+              );
+
+              if (icon) {
+
+                if (active) {
+
+                  icon.classList.remove(
+                    "fa-regular"
+                  );
+
+                  icon.classList.add(
+                    "fa-solid"
+                  );
+
+                } else {
+
+                  icon.classList.add(
+                    "fa-regular"
+                  );
+
+                  icon.classList.remove(
+                    "fa-solid"
+                  );
+                }
+              }
+
+            });
+
+          // UPDATE NAVBAR COUNT
+          const badge =
+            document.getElementById(
+              "wishlistCountBadge"
+            );
+
+          if (badge) {
+
+            badge.innerText =
+              result.wishlistCount;
+
+            if (
+              result.wishlistCount <= 0
+            ) {
+              badge.style.display =
+                "none";
+            }
+            else {
+              badge.style.display =
+                "flex";
             }
           }
 
-        });
+        }
+        catch (err) {
 
-      } catch (err) {
-        console.log(err);
-        alert("Something went wrong");
-      }
+          console.log(err);
+
+          alert(
+            "Something went wrong"
+          );
+        }
+
+      });
 
     });
-
-  });
 
 });

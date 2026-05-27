@@ -619,12 +619,13 @@
 
                     <i class="fa-regular fa-heart"></i>
 
-                    @if (wishlistCount > 0)
-                    {
-                        <span class="wishlist-badge">
-                            @wishlistCount
-                        </span>
-                    }
+                    <span class="wishlist-badge"
+                          id="wishlistCountBadge"
+                          style="@(wishlistCount == 0 ? "display:none" : "")">
+
+                        @wishlistCount
+
+                    </span>
 
                 </a>
 

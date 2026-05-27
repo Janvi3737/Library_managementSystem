@@ -5,19 +5,21 @@
     ViewData["Title"] = "New Arrivals";
 }
 
+<link rel="stylesheet" href="~/css/book-arrival-card.css" />
+
 <style>
 
     body {
         background: #070b1a;
         color: white;
-        font-family: 'Inter', sans-serif;
+        font-family: 'Inter',sans-serif;
     }
 
     .arrivals-page {
         padding: 25px 0 80px;
     }
 
-    /* HERO SECTION */
+    /* HERO */
 
     .arrivals-hero {
         position: relative;
@@ -25,14 +27,13 @@
         border-radius: 36px;
         padding: 80px 65px;
         margin-bottom: 60px;
-        background: linear-gradient(rgba(7,11,26,.88), rgba(15,23,42,.92)), url('/images/library-banner.png');
+        background: linear-gradient( rgba(7,11,26,.88), rgba(15,23,42,.92)), url('/images/library-banner.png');
         background-size: cover;
         background-position: center;
         border: 1px solid rgba(255,255,255,.08);
-        box-shadow: 0 0 40px rgba(139,92,246,.15);
     }
 
-        .arrivals-hero::before {
+        .arrivals-hero:before {
             content: "";
             position: absolute;
             width: 420px;
@@ -43,7 +44,7 @@
             right: -120px;
         }
 
-        .arrivals-hero::after {
+        .arrivals-hero:after {
             content: "";
             position: absolute;
             width: 260px;
@@ -61,168 +62,38 @@
 
     .hero-badge {
         display: inline-flex;
-        align-items: center;
-        gap: 10px;
         padding: 12px 22px;
         border-radius: 50px;
         background: rgba(255,255,255,.05);
         border: 1px solid rgba(255,255,255,.08);
         color: #c4b5fd;
-        font-size: 13px;
-        letter-spacing: 1px;
-        margin-bottom: 24px;
-        backdrop-filter: blur(12px);
+        margin-bottom: 25px;
     }
 
     .hero-content h1 {
-        color: white;
-        font-size: 62px;
+        font-size: 60px;
         font-weight: 900;
-        line-height: 1.1;
-        margin-bottom: 20px;
+        margin-bottom: 18px;
     }
 
-        .hero-content h1 span {
-            background: linear-gradient(90deg,#c084fc,#f0abfc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+    .hero-content span {
+        background: linear-gradient( 90deg,#c084fc,#f0abfc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
 
     .hero-content p {
-        color: #d1d5db;
-        font-size: 17px;
-        line-height: 1.9;
-        max-width: 720px;
+        color: #cbd5e1;
+        line-height: 1.8;
     }
 
-    /* BOOK GRID */
+    /* GRID */
 
-    .books-grid {
+    .arrival-book-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill,minmax(260px,1fr));
         gap: 28px;
     }
-
-    /* CARD */
-
-    .book-card {
-        background: rgba(255,255,255,.04);
-        border: 1px solid rgba(255,255,255,.08);
-        border-radius: 28px;
-        overflow: hidden;
-        transition: .4s;
-        backdrop-filter: blur(12px);
-    }
-
-        .book-card:hover {
-            transform: translateY(-8px);
-            border-color: rgba(139,92,246,.35);
-            box-shadow: 0 20px 40px rgba(139,92,246,.18);
-        }
-
-    /* IMAGE */
-
-    .book-image {
-        position: relative;
-        height: 330px;
-        overflow: hidden;
-    }
-
-        .book-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: .6s;
-        }
-
-    .book-card:hover img {
-        transform: scale(1.08);
-    }
-
-    .new-badge {
-        position: absolute;
-        top: 18px;
-        left: 18px;
-        padding: 10px 16px;
-        border-radius: 50px;
-        background: rgba(15,23,42,.85);
-        border: 1px solid rgba(255,255,255,.08);
-        color: white;
-        font-size: 12px;
-        font-weight: 700;
-        z-index: 2;
-        backdrop-filter: blur(10px);
-    }
-
-    /* CONTENT */
-
-    .book-content {
-        padding: 22px;
-    }
-
-    .category-pill {
-        display: inline-block;
-        padding: 7px 14px;
-        border-radius: 50px;
-        background: rgba(139,92,246,.15);
-        color: #d8b4fe;
-        font-size: 12px;
-        font-weight: 700;
-        margin-bottom: 14px;
-    }
-
-    .book-title {
-        color: white;
-        font-size: 22px;
-        font-weight: 800;
-        line-height: 1.4;
-        margin-bottom: 10px;
-    }
-
-    .book-author {
-        color: #cbd5e1;
-        font-size: 14px;
-        margin-bottom: 16px;
-    }
-
-    .book-description {
-        color: #94a3b8;
-        font-size: 13px;
-        line-height: 1.8;
-        min-height: 70px;
-    }
-
-    .arrival-date {
-        margin-top: 18px;
-        color: #f9a8d4;
-        font-size: 13px;
-        font-weight: 600;
-    }
-
-    /* BUTTON */
-
-    .book-footer {
-        margin-top: 22px;
-    }
-
-    .details-btn {
-        width: 100%;
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-        padding: 14px;
-        border-radius: 16px;
-        background: linear-gradient(90deg,#7c3aed,#9333ea);
-        color: white;
-        text-decoration: none;
-        font-weight: 700;
-        transition: .3s;
-    }
-
-        .details-btn:hover {
-            color: white;
-            transform: translateY(-2px);
-        }
 
     /* EMPTY */
 
@@ -235,14 +106,12 @@
     }
 
         .empty-box h3 {
-            color: white;
-            margin-top: 20px;
-            margin-bottom: 10px;
             font-size: 32px;
+            margin-bottom: 12px;
         }
 
         .empty-box p {
-            color: #9ca3af;
+            color: #94a3b8;
         }
 
     @@media(max-width:768px) {
@@ -255,13 +124,16 @@
         .hero-content h1 {
             font-size: 42px;
         }
-    }
 
+        .arrival-book-grid {
+            grid-template-columns: repeat(2,1fr);
+            gap: 16px;
+        }
+    }
 </style>
 
-<div class="container arrivals-page">
 
-    <!-- HERO -->
+<div class="container arrivals-page">
 
     <section class="arrivals-hero">
 
@@ -277,56 +149,62 @@
             </h1>
 
             <p>
-                Explore recently added books from the last 30 days,
-                including trending novels, educational resources,
-                technology books, biographies, and more.
+                Explore recently added books from the last
+                30 days including trending novels,
+                educational resources and technology books.
             </p>
 
         </div>
 
     </section>
 
-    <!-- BOOKS -->
+
     @if (Model.PagedBooks != null && Model.PagedBooks.Any())
     {
-        <div class="books-grid">
+        <div class="arrival-book-grid">
 
             @foreach (var book in Model.PagedBooks)
             {
-                <div class="book-card">
+                <div class="arrival-book-card">
 
-                    <!-- IMAGE -->
-
-                    <div class="book-image">
+                    <div class="arrival-book-image">
 
                         <img src="@(string.IsNullOrEmpty(book.CoverImageUrl)
-                                                                  ? "/images/default-book.jpg"
-                                                                  : book.CoverImageUrl)"
-                             alt="@book.Title" />
+                             ? "/images/default-book.jpg"
+                             : book.CoverImageUrl)" />
 
-                        <div class="new-badge">
+                        <div class="arrival-new-badge">
                             🆕 New Arrival
                         </div>
 
                     </div>
 
-                    <!-- CONTENT -->
 
-                    <div class="book-content">
+                    <div class="arrival-book-content">
 
-                        <div class="category-pill">
-                            📚 @(book.Category?.Name ?? "Unknown")
+                        <div class="arrival-category-pill">
+
+                            📚
+                            @(book.Category?.Name
+                                                ?? "Unknown")
+
                         </div>
 
-                        <h2 class="book-title">
+
+                        <h2 class="arrival-book-title">
                             @book.Title
                         </h2>
 
-                        <div class="book-author">
-                            ✍️ @(book.Author?.Name ?? "Unknown Author")
+                        <div class="arrival-book-author">
+
+                            ✍️
+                            @(book.Author?.Name
+                                                ?? "Unknown Author")
+
                         </div>
 
-                        <div class="book-description">
+
+                        <div class="arrival-book-description">
 
                             @(string.IsNullOrEmpty(book.Description)
                                                 ? "No description available."
@@ -336,19 +214,21 @@
 
                         </div>
 
-                        <div class="arrival-date">
-                            📅 Added on:
+
+                        <div class="arrival-book-date">
+
+                            📅 Added:
                             @book.CreatedAt.ToString("dd MMM yyyy")
+
                         </div>
 
-                        <!-- BUTTON -->
 
-                        <div class="book-footer">
+                        <div class="arrival-book-footer">
 
                             <a asp-controller="Catalog"
                                asp-action="Details"
                                asp-route-id="@book.Id"
-                               class="details-btn">
+                               class="arrival-details-btn">
 
                                 View Details →
 
@@ -365,15 +245,17 @@
     }
     else
     {
+
         <div class="empty-box">
 
             <h3>No New Arrivals</h3>
 
             <p>
-                No books were added in the last 30 days.
+                No books were added in the last 30 days
             </p>
 
         </div>
+
     }
 
 </div>

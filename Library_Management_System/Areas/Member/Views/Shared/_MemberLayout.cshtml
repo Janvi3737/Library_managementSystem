@@ -139,10 +139,10 @@
         }
 
         /* =========================================
-                           LOGO
-                        ========================================= */
+                   LOGO
+                ========================================= */
 
-        .brand-logo {
+        .brand-logo-Member {
             display: flex;
             align-items: center;
             gap: 14px;
@@ -150,20 +150,21 @@
             padding: 10px 6px;
         }
 
-        .brand-icon {
+        .brand-icon-Member {
             width: 52px;
             height: 52px;
+            border-radius: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
+            /* background: linear-gradient(135deg,#7c3aed,#d946ef); */
             color: #d946ef;
-            font-size: 54px;
-            font-weight: 900;
-            box-shadow: none;
-            background: none;
+            font-size: 48px;
+            font-weight: 800;
+            /* box-shadow: 0 15px 30px rgba(124,58,237,.35); */
         }
 
-        .brand-text h2 {
+        .brand-text-Member h2 {
             margin: 0;
             color: var(--text);
             font-size: 28px;
@@ -171,11 +172,11 @@
             letter-spacing: 1px;
         }
 
-        .brand-text span {
+        .brand-text-Member span {
             color: #d946ef;
         }
 
-        .brand-text p {
+        .brand-text-Member p {
             margin: 0;
             color: var(--text-muted);
             font-size: 8px;
@@ -554,15 +555,15 @@
 
             <!-- LOGO -->
 
-            <a class="brand-logo"
+            <a class="brand-logo-Member"
                asp-controller="Home"
                asp-action="Index">
 
-                <div class="brand-icon">
+                <div class="brand-icon-Member">
                     ∞
                 </div>
 
-                <div class="brand-text">
+                <div class="brand-text-Member">
 
                     <h2>
                         BOOK<span>VERSE</span>

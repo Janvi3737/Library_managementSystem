@@ -5,19 +5,21 @@
     ViewData["Title"] = "Book Authors";
 }
 
+<link rel="stylesheet" href="~/css/book-card.css" />
+
 <style>
 
     body {
         background: #070b1a;
         color: white;
-        font-family: 'Inter', sans-serif;
+        font-family: 'Inter',sans-serif;
     }
 
     .authors-page {
         padding: 25px 0 80px;
     }
 
-    /* HERO SECTION */
+    /* HERO */
 
     .authors-hero {
         position: relative;
@@ -25,7 +27,7 @@
         border-radius: 36px;
         padding: 80px 65px;
         margin-bottom: 60px;
-        background: linear-gradient(rgba(7,11,26,.88), rgba(15,23,42,.92)), url('/images/library-banner.png');
+        background: linear-gradient( rgba(7,11,26,.88), rgba(15,23,42,.92)), url('/images/library-banner.png');
         background-size: cover;
         background-position: center;
         border: 1px solid rgba(255,255,255,.08);
@@ -69,33 +71,28 @@
         border: 1px solid rgba(255,255,255,.08);
         color: #c4b5fd;
         font-size: 13px;
-        letter-spacing: 1px;
         margin-bottom: 24px;
-        backdrop-filter: blur(12px);
     }
 
     .hero-content h1 {
-        color: white;
         font-size: 62px;
         font-weight: 900;
-        line-height: 1.1;
         margin-bottom: 20px;
     }
 
         .hero-content h1 span {
-            background: linear-gradient(90deg,#c084fc,#f0abfc);
+            background: linear-gradient( 90deg, #c084fc, #f0abfc);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
     .hero-content p {
         color: #d1d5db;
-        font-size: 17px;
         line-height: 1.9;
-        max-width: 720px;
+        max-width: 700px;
     }
 
-    /* AUTHOR GROUP */
+    /* AUTHOR */
 
     .author-section {
         margin-bottom: 60px;
@@ -106,14 +103,13 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 25px;
-        padding-bottom: 12px;
+        padding-bottom: 14px;
         border-bottom: 1px solid rgba(255,255,255,.08);
     }
 
         .author-header h2 {
             font-size: 28px;
             font-weight: 800;
-            color: white;
         }
 
     .book-count {
@@ -124,94 +120,6 @@
         font-size: 13px;
         font-weight: 700;
     }
-
-    /* BOOK GRID */
-
-    .books-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill,minmax(240px,1fr));
-        gap: 24px;
-    }
-
-    /* BOOK CARD */
-
-    .book-card {
-        background: rgba(255,255,255,.04);
-        border: 1px solid rgba(255,255,255,.08);
-        border-radius: 24px;
-        overflow: hidden;
-        transition: .35s;
-        backdrop-filter: blur(12px);
-    }
-
-        .book-card:hover {
-            transform: translateY(-8px);
-            border-color: rgba(139,92,246,.35);
-            box-shadow: 0 20px 40px rgba(139,92,246,.18);
-        }
-
-    .book-image {
-        height: 300px;
-        overflow: hidden;
-    }
-
-        .book-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: .5s;
-        }
-
-    .book-card:hover img {
-        transform: scale(1.08);
-    }
-
-    .book-content {
-        padding: 20px;
-    }
-
-    .book-title {
-        font-size: 20px;
-        font-weight: 700;
-        margin-bottom: 10px;
-        color: white;
-    }
-
-    .book-category {
-        color: #c4b5fd;
-        font-size: 14px;
-        margin-bottom: 12px;
-    }
-
-    .book-description {
-        color: #94a3b8;
-        font-size: 13px;
-        line-height: 1.7;
-        min-height: 65px;
-    }
-
-    .book-footer {
-        margin-top: 20px;
-    }
-
-    .details-btn {
-        width: 100%;
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-        padding: 12px;
-        border-radius: 14px;
-        background: linear-gradient(90deg,#7c3aed,#9333ea);
-        color: white;
-        text-decoration: none;
-        font-weight: 700;
-        transition: .3s;
-    }
-
-        .details-btn:hover {
-            color: white;
-            transform: translateY(-2px);
-        }
 
     @@media(max-width:768px) {
 
@@ -230,46 +138,50 @@
             gap: 12px;
         }
     }
-
 </style>
 
 <div class="container authors-page">
-
-    <!-- HERO -->
 
     <section class="authors-hero">
 
         <div class="hero-content">
 
             <div class="hero-badge">
+
                 ✍️ DISCOVER GREAT AUTHORS
+
             </div>
 
             <h1>
+
                 Browse
                 <span>Book Authors</span>
+
             </h1>
 
             <p>
+
                 Explore books grouped by authors and discover
                 masterpieces from talented writers across
-                fiction, science, history, technology, and more.
+                fiction, science, history,
+                technology and many more.
+
             </p>
 
         </div>
 
     </section>
 
-    @if (Model.PagedBooks != null && Model.PagedBooks.Any())
+    @if (Model.PagedBooks != null &&
+        Model.PagedBooks.Any())
     {
-        var groupedAuthors = Model.PagedBooks
+        var groupedAuthors =
+        Model.PagedBooks
         .GroupBy(x => x.Author?.Name);
 
         @foreach (var authorGroup in groupedAuthors)
         {
             <div class="author-section">
-
-                <!-- AUTHOR HEADER -->
 
                 <div class="author-header">
 
@@ -283,49 +195,58 @@
 
                 </div>
 
-                <!-- BOOKS -->
+                <!-- SAME CLASS AS CATEGORY PAGE -->
 
-                <div class="books-grid">
+                <div class="catalog-books-grid">
 
                     @foreach (var book in authorGroup)
                     {
-                        <div class="book-card">
+                        <div class="catalog-book-card">
 
-                            <div class="book-image">
+                            <div class="catalog-book-image">
 
                                 <img src="@(string.IsNullOrEmpty(book.CoverImageUrl)
-                                                                                  ? "/images/default-book.jpg"
-                                                                                  : book.CoverImageUrl)"
+                                                                        ? "/images/default-book.jpg"
+                                                                        : book.CoverImageUrl)"
                                      alt="@book.Title" />
 
                             </div>
 
-                            <div class="book-content">
+                            <div class="catalog-book-content">
 
-                                <h3 class="book-title">
+                                <h3 class="catalog-book-title">
                                     @book.Title
                                 </h3>
 
-                                <div class="book-category">
-                                    📚 @(book.Category?.Name ?? "Unknown Category")
+                                <div class="catalog-book-author">
+
+                                    📚
+                                    @(book.Category?.Name
+                                                            ?? "Unknown Category")
+
                                 </div>
 
-                                <div class="book-description">
+                                <div class="catalog-book-description">
 
                                     @(string.IsNullOrEmpty(book.Description)
+
                                                             ? "No description available."
+
                                                             : (book.Description.Length > 90
-                                                            ? book.Description.Substring(0, 90) + "..."
+
+                                                            ? book.Description.Substring(0, 90)
+                                                            + "..."
+
                                                             : book.Description))
 
                                 </div>
 
-                                <div class="book-footer">
+                                <div class="catalog-book-footer">
 
                                     <a asp-controller="Catalog"
                                        asp-action="Details"
                                        asp-route-id="@book.Id"
-                                       class="details-btn">
+                                       class="catalog-details-btn">
 
                                         View Details →
 
@@ -346,7 +267,9 @@
     else
     {
         <div class="text-center mt-5">
+
             <h3>No Authors Found</h3>
+
         </div>
     }
 

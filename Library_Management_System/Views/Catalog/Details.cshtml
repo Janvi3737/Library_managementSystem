@@ -404,17 +404,18 @@
                 <div class="details-actions">
 
                     <button type="button"
-                            class="details-btn details-wishlist-btn @(Model.IsWishlisted ? "active" : "")"
+                            class="details-btn details-wishlist-btn wishlist-btn @(Model.IsWishlisted ? "active" : "")"
                             data-bookid="@Model.Id">
 
-                        <i class="@(Model.IsWishlisted
-                                                       ? "fa-solid fa-heart"
-                                                       : "fa-regular fa-heart")"></i>
+                        <i class="wishlist-icon @(Model.IsWishlisted
+                                       ? "fa-solid fa-heart"
+                                       : "fa-regular fa-heart")"></i>
 
-                        @(Model.IsWishlisted
-                                                ? "Wishlisted"
-                                                : "Add Wishlist")
-
+                        <span class="wishlist-text">
+                            @(Model.IsWishlisted
+                                                        ? "Wishlisted"
+                                                        : "Add Wishlist")
+                        </span>
                     </button>
 
                     @if (Model.IsAvailable)

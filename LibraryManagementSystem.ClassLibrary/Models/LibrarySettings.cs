@@ -10,30 +10,30 @@ namespace LibraryManagementSystem.ClassLibrary.Models
     /// </summary>
     public class LibrarySettings
     {
-        public int Id { get; set; } = 1;
+        public int Id { get; set; } 
 
         // BORROWING
-        public int DefaultLoanDays { get; set; } = 14;
-        public int MaxRenewals { get; set; } = 2;
+        public int DefaultLoanDays { get; set; } 
+        public int MaxRenewals { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
-        public decimal FinePerDay { get; set; } = 5m;
+        public decimal FinePerDay { get; set; } 
 
         // MEMBERSHIP FEES (1-month vs annual). Premium/Regular/Student.
         [Column(TypeName = "decimal(18,2)")]
-        public decimal StudentMonthly { get; set; } = 99m;
+        public decimal StudentMonthly { get; set; } 
         [Column(TypeName = "decimal(18,2)")]
-        public decimal StudentAnnual { get; set; } = 1000m;
+        public decimal StudentAnnual { get; set; } 
 
         [Column(TypeName = "decimal(18,2)")]
-        public decimal RegularMonthly { get; set; } = 149m;
+        public decimal RegularMonthly { get; set; } 
         [Column(TypeName = "decimal(18,2)")]
-        public decimal RegularAnnual { get; set; } = 1500m;
+        public decimal RegularAnnual { get; set; } 
 
         [Column(TypeName = "decimal(18,2)")]
-        public decimal PremiumMonthly { get; set; } = 299m;
+        public decimal PremiumMonthly { get; set; } 
         [Column(TypeName = "decimal(18,2)")]
-        public decimal PremiumAnnual { get; set; } = 3000m;
+        public decimal PremiumAnnual { get; set; }
 
         [StringLength(120)]
         public string LibraryName { get; set; } = "BookVerse";

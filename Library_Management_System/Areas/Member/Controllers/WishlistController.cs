@@ -90,11 +90,15 @@ namespace Library_Management_System.Areas.Member.Controllers
                 .Select(x => x.BookId.Value)
                 .ToListAsync();
 
+            // NEW COUNT
+            var wishlistCount = wishlistIds.Count;
+
             return Json(new
             {
                 success = true,
                 added,
-                wishlistIds
+                wishlistIds,
+                wishlistCount
             });
         }
 
