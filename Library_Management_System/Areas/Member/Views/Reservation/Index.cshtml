@@ -100,7 +100,31 @@
         padding: 12px 20px;
         border-radius: 14px;
         font-weight: 600;
+        transition: 0.3s;
     }
+
+        .btn-cancel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(239,68,68,0.35);
+            color: white;
+        }
+
+    .btn-success {
+        margin-top: 20px;
+        background: linear-gradient(135deg,#059669,#10b981);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 14px;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(16,185,129,0.35);
+            color: white;
+        }
 </style>
 
 <div class="reservation-wrapper">
@@ -199,19 +223,6 @@
 
             </div>
 
-            @* @if (item.Status == ReservationStatus.Waiting)
-            {
-                <form asp-action="Cancel"
-                      asp-route-id="@item.Id"
-                      method="post"
-                      onsubmit="return confirm('Cancel this reservation?');"
-                      style="display:inline;">
-                    <button type="submit" class="btn btn-cancel">
-                        Cancel Reservation
-                    </button>
-                </form>
-            } *@
-
             @if (item.Status == ReservationStatus.Waiting)
             {
                 <form asp-action="Approve"
@@ -222,7 +233,7 @@
                     @Html.AntiForgeryToken()
 
                     <button class="btn btn-success">
-                        Approve & Issue Book
+                        Final Reservation
                     </button>
 
                 </form>

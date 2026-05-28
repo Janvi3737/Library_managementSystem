@@ -1,7 +1,5 @@
-﻿
 using Library_Management_System.ViewModels;
 using LibraryManagementSystem.ClassLibrary.Data;
-using LibraryManagementSystem.ClassLibrary.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,95 +20,140 @@ namespace Library_Management_System.Areas.Member.Controllers
 
         public async Task<IActionResult> Index()
         {
+            // CURRENT USER ID
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (string.IsNullOrEmpty(userId))
+            {
                 return RedirectToAction("Login", "Account");
+            }
 
-            // MEMBER ID
+            // MEMBER DETAILS
 
-            var memberId = await _context.Members
-                .Where(m => m.ApplicationUserId == userId)
-                .Select(m => m.Id)
-                .FirstOrDefaultAsync();
+            var member = await _context.Members
+                .FirstOrDefaultAsync(x => x.ApplicationUserId == userId);
 
-            // CURRENT BORROWED BOOKS
+            if (member == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            // BORROW RECORDS
 
             var borrowRecords = await _context.BorrowRecords
-                .Include(b => b.Book)
-                .ThenInclude(b => b.Author)
-                .Where(b => b.MemberId == memberId && b.ReturnedOn == null)
+                .Include(x => x.Book)
+                    .ThenInclude(x => x.Author)
+                .Where(x => x.MemberId == member.Id)
+                .OrderByDescending(x => x.IssuedOn)
                 .ToListAsync();
+
+            // ACTIVE BOOKS
+
+            var activeBooks = borrowRecords
+                .Where(x => x.ReturnedOn == null)
+                .ToList();
 
             // MY BOOKS
 
-            var myBooks = borrowRecords.Select(b => new MyBookViewModel
+            var myBooks = activeBooks.Select(x => new MyBookViewModel
             {
-                Id = b.Id,
+                Id = x.Id,
 
-                BookTitle = b.Book.Title,
+                BookTitle = x.Book.Title,
 
-                Author = b.Book.Author.Name,
+                Author = x.Book.Author.Name,
 
-                IssueDate = b.IssuedOn,
+                IssueDate = x.IssuedOn,
 
-                DueDate = b.DueDate,
+                DueDate = x.DueDate,
 
-                IsReturned = b.ReturnedOn != null,
+                IsReturned = x.ReturnedOn != null,
 
-                FineAmount = b.DueDate < DateTime.Now
-                    ? (DateTime.Now - b.DueDate).Days *
-                      (b.FinePerDay > 0 ? b.FinePerDay : 5)
+                FineAmount = x.DueDate < DateTime.Now
+                    ? (DateTime.Now - x.DueDate).Days *
+                      (x.FinePerDay > 0 ? x.FinePerDay : 5)
                     : 0
             }).ToList();
 
             // RETURNED BOOKS COUNT
 
-            var returnedBooks = await _context.BorrowRecords
-                .CountAsync(x =>
-                    x.MemberId == memberId &&
-                    x.ReturnedOn != null);
+            var returnedBooks = borrowRecords
+                .Count(x => x.ReturnedOn != null);
 
-            // RECENT ACTIVITY
+            // OVERDUE BOOKS COUNT
 
-            var recentActivities = await _context.BorrowRecords
-                .Include(x => x.Book)
-                .Where(x => x.MemberId == memberId)
-                .OrderByDescending(x => x.IssuedOn)
-                .Take(5)
+            var overdueBooks = activeBooks
+                .Count(x => x.DueDate < DateTime.Now);
+
+            // TOTAL FINE
+
+            decimal totalFine = myBooks.Sum(x => x.FineAmount);
+
+            // WISHLIST COUNT
+
+            // WISHLIST COUNT
+
+            var wishlistCount = await _context.Wishlists
+                .CountAsync(x => x.MemberId == userId);
+
+            // MEMBERSHIP DETAILS
+
+            DateTime joinedDate = member.JoinedOn;
+
+            DateTime membershipTill = joinedDate.AddYears(1);
+
+            int daysLeft = (membershipTill - DateTime.Now).Days;
+
+            if (daysLeft < 0)
+            {
+                daysLeft = 0;
+            }
+
+            // RECENT ACTIVITIES
+
+            var activities = borrowRecords
+                .Take(6)
                 .Select(x => new RecentActivityViewModel
                 {
                     Activity = x.ReturnedOn != null
-                        ? "Returned \"" + x.Book.Title + "\""
-                        : "Borrowed \"" + x.Book.Title + "\"",
+                        ? $"Returned \"{x.Book.Title}\""
+                        : $"Borrowed \"{x.Book.Title}\"",
 
                     ActivityDate = x.ReturnedOn ?? x.IssuedOn
                 })
-                .ToListAsync();
+                .ToList();
 
-            // FINAL MODEL
+            // VIEWBAG DATA
+
+            ViewBag.MemberName = member.Name;
+
+            ViewBag.MemberSince = joinedDate;
+
+            ViewBag.MembershipTill = membershipTill;
+
+            ViewBag.DaysLeft = daysLeft;
+
+            // DASHBOARD VIEWMODEL
 
             var model = new MemberDashboardViewModel
             {
-                CurrentBorrows = borrowRecords.Count,
-
-                Overdue = borrowRecords.Count(x =>
-                    x.DueDate < DateTime.Now &&
-                    x.ReturnedOn == null),
-
-                FineDue = myBooks.Sum(x => x.FineAmount),
-
-                WishListCount = 0,
+                CurrentBorrows = activeBooks.Count,
 
                 ReturnedBooks = returnedBooks,
 
+                Overdue = overdueBooks,
+
+                FineDue = totalFine,
+
+                WishListCount = wishlistCount,
+
                 MyBooks = myBooks,
 
-                RecentActivity = recentActivities
+                RecentActivity = activities
             };
 
             return View(model);
         }
     }
 }
-

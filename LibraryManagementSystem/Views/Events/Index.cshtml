@@ -1,4 +1,4 @@
-﻿@model IEnumerable<LibraryManagementSystem.ClassLibrary.Models.Event>
+@model IEnumerable<LibraryManagementSystem.ClassLibrary.Models.Event>
 
 @{
     ViewData["Title"] = "Events";
@@ -6,10 +6,14 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+<!-- DATATABLE CSS -->
+<link rel="stylesheet"
+      href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css" />
+
 <style>
 
     /* =========================
-           TABLE RESPONSIVE
+               TABLE RESPONSIVE
         ========================= */
 
     .table-responsive {
@@ -78,7 +82,6 @@
             min-width: 850px;
         }
     }
-
 </style>
 
 <div class="container mt-4">
@@ -184,8 +187,8 @@
                             <td>
 
                                 <img src="@(string.IsNullOrEmpty(item.ImagePath)
-                                                                             ? "/images/no-event.svg"
-                                                                             : item.ImagePath)"
+                                                                         ? "/images/no-event.svg"
+                                                                         : item.ImagePath)"
                                      class="event-image" />
 
                             </td>
@@ -282,9 +285,24 @@
 
 @section Scripts {
 
+    <!-- JQUERY -->
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+
+    <!-- DATATABLE JS -->
+    <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+
     <script>
 
-        $(function () {
+        $(document).ready(function () {
+
+            // DATATABLE PAGINATION
+            $('#eventsTable').DataTable({
+                searching: false,
+                paging: true,
+                info: true,
+                ordering: true,
+                pageLength: 5
+            });
 
             // SEARCH FILTER
             $("#searchBox").on("keyup", function () {
@@ -322,8 +340,7 @@
                                 day: '2-digit',
                                 month: 'short',
                                 year: 'numeric'
-                            })
-                            .replace(/ /g, ' ');
+                            });
 
                         $(this).toggle(rowDate.includes(formattedDate));
 

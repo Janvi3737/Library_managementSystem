@@ -1,92 +1,146 @@
-﻿@model IEnumerable<LibraryManagementSystem.ClassLibrary.Models.Department>
+@model IEnumerable<LibraryManagementSystem.ClassLibrary.Models.Department>
 
 @{
     ViewData["Title"] = "Departments";
 }
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet">
+
+<link rel="stylesheet"
+      href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css" />
+
 <style>
+
     .table-responsive {
         width: 100%;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
         border-radius: 16px;
     }
-    /* TABLE HEADING FONT */
-    .table thead th {
-        font-family: 'Poppins', sans-serif;
-        font-size: 15px;
-        font-weight: 700;
-        letter-spacing: 0.5px;
+
+    .table {
+        min-width: 700px;
     }
 
-    /* TABLE BODY FONT */
-    .table tbody td {
-        font-family: 'Segoe UI', sans-serif;
-        font-size: 14px;
-        font-weight: 500;
+        /* TABLE HEADING FONT */
+
+        .table thead th {
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        /* TABLE BODY FONT */
+
+        .table tbody td {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .table th,
+        .table td {
+            white-space: nowrap;
+            font-size: 14px;
+            padding: 12px;
+        }
+
+    @@media (max-width:768px) {
+
+        .table {
+            min-width: 650px;
+        }
     }
 
-    .table th, .table td {
-        white-space: nowrap;
-        font-size: 14px;
-        padding: 12px;
-    }
 </style>
 
 <div class="container mt-4">
 
-    <!-- HEADER (same system as all pages) -->
+    <!-- HEADER -->
+
     <div class="d-flex justify-content-between align-items-center mb-3">
 
         <h3>🏢 Departments</h3>
 
-        <a asp-action="Create" class="btn btn-primary">
+        <a asp-action="Create"
+           class="btn btn-primary">
+
             + Add Department
+
         </a>
+
+    </div>
+
+    <!-- SEARCH -->
+
+    <div class="row mb-3">
+
+        <div class="col-md-6">
+
+            <input type="text"
+                   id="searchBox"
+                   class="form-control"
+                   placeholder="Search department..." />
+
+        </div>
 
     </div>
 
     @if (Model == null || !Model.Any())
     {
         <div class="alert alert-info">
+
             No departments found.
+
         </div>
     }
     else
     {
-        <!-- CARD WRAPPER -->
+        <!-- CARD -->
+
         <div class="card shadow-sm">
+
             <div class="card-body p-0">
 
                 <div class="table-responsive">
 
-                    <table class="table table-hover align-middle mb-0">
+                    <table class="table table-hover align-middle mb-0"
+                           id="departmentsTable">
 
                         <thead class="table-dark">
+
                             <tr>
+
                                 <th>Name</th>
+
                                 <th>Description</th>
-                                <th style="width:220px;">Actions</th>
+
+                                <th style="width:220px;">
+                                    Actions
+                                </th>
+
                             </tr>
+
                         </thead>
 
                         <tbody>
+
                             @foreach (var item in Model)
                             {
                                 <tr>
 
-                                    <td>
-                                        @item.Name
-                                    </td>
+                                    <td>@item.Name</td>
 
-                                    <td>
-                                        @item.Description
-                                    </td>
+                                    <td>@item.Description</td>
 
                                     <td class="text-nowrap">
 
                                         <!-- VIEW -->
+
                                         <a asp-action="Details"
+                                           asp-route-id="@item.Id"
                                            class="btn btn-sm btn-primary me-1"
                                            title="View">
 
@@ -95,7 +149,9 @@
                                         </a>
 
                                         <!-- EDIT -->
+
                                         <a asp-action="Edit"
+                                           asp-route-id="@item.Id"
                                            class="btn btn-sm btn-warning me-1"
                                            title="Edit">
 
@@ -104,7 +160,9 @@
                                         </a>
 
                                         <!-- DELETE -->
+
                                         <a asp-action="Delete"
+                                           asp-route-id="@item.Id"
                                            class="btn btn-sm btn-danger"
                                            title="Delete">
 
@@ -116,6 +174,7 @@
 
                                 </tr>
                             }
+
                         </tbody>
 
                     </table>
@@ -123,7 +182,50 @@
                 </div>
 
             </div>
+
         </div>
     }
 
 </div>
+
+@section Scripts {
+
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+
+    <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+
+            // DATATABLE
+
+            $('#departmentsTable').DataTable({
+                searching: false,
+                paging: true,
+                info: true,
+                ordering: true,
+                responsive: true
+            });
+
+            // CUSTOM SEARCH
+
+            $("#searchBox").on("keyup", function () {
+
+                let value = $(this).val().toLowerCase();
+
+                $("#departmentsTable tbody tr").filter(function () {
+
+                    $(this).toggle(
+                        $(this).text().toLowerCase().indexOf(value) > -1
+                    );
+
+                });
+
+            });
+
+        });
+
+    </script>
+
+}

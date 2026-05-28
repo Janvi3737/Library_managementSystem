@@ -235,45 +235,65 @@
 </div>
 
 @section Scripts {
+
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+
+    <!-- Datatable plugin JS -->
+    <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+
     <script>
-        $(function () {
+        $(document).ready(function () {
 
-            // 🔍 Search filter
+            // DATATABLE
+            var table = $('#booksTable').DataTable({
+                searching: false, // remove default datatable search
+                paging: true,
+                info: true,
+                ordering: true,
+                responsive: true
+            });
+
+            // CUSTOM SEARCH BAR
             $("#searchBox").on("keyup", function () {
+
                 let value = $(this).val().toLowerCase();
 
-                $("#booksTable tbody tr").each(function () {
-                    let rowText = $(this).text().toLowerCase();
-                    $(this).toggle(rowText.includes(value));
+                $("#booksTable tbody tr").filter(function () {
+
+                    $(this).toggle(
+                        $(this).text().toLowerCase().indexOf(value) > -1
+                    );
+
                 });
+
             });
 
-                              $(document).ready(function () {
-
-            $('#booksTable').DataTable({});
-
-        });
-        });
-
-
-            // 📂 Category filter
+            // CATEGORY FILTER
             $("#categoryFilter").on("change", function () {
+
                 let value = $(this).val().toLowerCase();
 
                 $("#booksTable tbody tr").each(function () {
+
                     if (!value) {
+
                         $(this).show();
+
                     } else {
-                        let category = $(this).find(".category").text().toLowerCase();
+
+                        let category = $(this)
+                            .find(".category")
+                            .text()
+                            .toLowerCase();
+
                         $(this).toggle(category.includes(value));
+
                     }
+
                 });
+
             });
+
         });
-    </script>
-    <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js">
-    </script>
-    <!-- Datatable plugin JS library file -->
-    <script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js">
     </script>
 }

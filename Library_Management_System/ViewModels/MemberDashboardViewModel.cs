@@ -1,7 +1,21 @@
-﻿namespace Library_Management_System.ViewModels
+namespace Library_Management_System.ViewModels
 {
     public class MemberDashboardViewModel
     {
+        // MEMBER INFO
+
+        public string MemberName { get; set; }
+
+        public string? ProfileImage { get; set; }
+
+        public string MembershipType { get; set; }
+
+        public DateTime MembershipStartDate { get; set; }
+
+        public DateTime MembershipEndDate { get; set; }
+
+        // STATS
+
         public int CurrentBorrows { get; set; }
 
         public int Overdue { get; set; }
@@ -12,11 +26,13 @@
 
         public int ReturnedBooks { get; set; }
 
+        // COLLECTIONS
+
         public List<RecentActivityViewModel> RecentActivity { get; set; }
-            = new List<RecentActivityViewModel>();
+            = new();
 
         public List<MyBookViewModel> MyBooks { get; set; }
-            = new List<MyBookViewModel>();
+            = new();
     }
 
     public class MyBookViewModel
@@ -26,6 +42,8 @@
         public string BookTitle { get; set; }
 
         public string Author { get; set; }
+
+        public string? CoverImage { get; set; }
 
         public DateTime IssueDate { get; set; }
 
@@ -39,6 +57,8 @@
     public class RecentActivityViewModel
     {
         public string Activity { get; set; }
+
+        public string ActivityType { get; set; }
 
         public DateTime ActivityDate { get; set; }
     }

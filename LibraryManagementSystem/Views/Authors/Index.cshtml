@@ -1,11 +1,18 @@
-﻿@model IEnumerable<LibraryManagementSystem.ClassLibrary.Models.Author>
+@model IEnumerable<LibraryManagementSystem.ClassLibrary.Models.Author>
 
 @{
     ViewData["Title"] = "Authors";
 }
+
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+      href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css" />
+
 <style>
+
     /* MOBILE RESPONSIVE */
+
     .table-responsive {
         width: 100%;
         overflow-x: auto;
@@ -16,7 +23,9 @@
     .table {
         min-width: 700px;
     }
+
         /* TABLE HEADING FONT */
+
         .table thead th {
             font-family: 'Poppins', sans-serif;
             font-size: 15px;
@@ -25,6 +34,7 @@
         }
 
         /* TABLE BODY FONT */
+
         .table tbody td {
             font-family: 'Segoe UI', sans-serif;
             font-size: 14px;
@@ -32,6 +42,7 @@
         }
 
     @@media (max-width: 768px) {
+
         .table th,
         .table td {
             white-space: nowrap;
@@ -43,22 +54,52 @@
             min-width: 650px;
         }
     }
+
 </style>
 
 <div class="container mt-4">
 
     <!-- HEADER -->
+
     <div class="d-flex justify-content-between align-items-center mb-3">
+
         <h2>👤 Authors List</h2>
-        <a class="btn btn-primary" asp-action="Create">+ Add Author</a>
+
+        <a class="btn btn-primary"
+           asp-action="Create">
+
+            + Add Author
+
+        </a>
+
+    </div>
+
+    <!-- SEARCH -->
+
+    <div class="row mb-3">
+
+        <div class="col-md-6">
+
+            <input type="text"
+                   id="searchBox"
+                   class="form-control"
+                   placeholder="Search author..." />
+
+        </div>
+
     </div>
 
     <!-- SUCCESS -->
     @if (TempData["Success"] != null)
     {
         <div class="alert alert-success alert-dismissible fade show">
+
             @TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"></button>
+
         </div>
     }
 
@@ -66,34 +107,50 @@
     @if (!Model.Any())
     {
         <div class="alert alert-info">
+
             No authors found.
+
         </div>
     }
     else
     {
         <!-- TABLE -->
+
         <div class="table-responsive">
 
-            <table class="table table-bordered table-striped table-hover align-middle">
+            <table class="table table-bordered table-striped table-hover align-middle"
+                   id="authorsTable">
 
                 <thead class="table-dark">
+
                     <tr>
+
                         <th>Name</th>
+
                         <th>Bio</th>
-                        <th style="width: 200px;">Actions</th>
+
+                        <th style="width:200px;">
+                            Actions
+                        </th>
+
                     </tr>
+
                 </thead>
 
                 <tbody>
+
                     @foreach (var item in Model)
                     {
                         <tr>
+
                             <td>@item.Name</td>
+
                             <td>@item.Bio</td>
 
                             <td class="text-nowrap">
 
                                 <!-- VIEW -->
+
                                 <a asp-action="Details"
                                    asp-route-id="@item.Id"
                                    class="btn btn-sm btn-primary me-1"
@@ -104,6 +161,7 @@
                                 </a>
 
                                 <!-- EDIT -->
+
                                 <a asp-action="Edit"
                                    asp-route-id="@item.Id"
                                    class="btn btn-sm btn-warning me-1"
@@ -114,6 +172,7 @@
                                 </a>
 
                                 <!-- DELETE -->
+
                                 <a asp-action="Delete"
                                    asp-route-id="@item.Id"
                                    class="btn btn-sm btn-danger"
@@ -124,8 +183,10 @@
                                 </a>
 
                             </td>
+
                         </tr>
                     }
+
                 </tbody>
 
             </table>
@@ -134,3 +195,45 @@
     }
 
 </div>
+
+@section Scripts {
+
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+
+    <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+
+            // DATATABLE
+
+            $('#authorsTable').DataTable({
+                searching: false,
+                paging: true,
+                info: true,
+                ordering: true,
+                responsive: true
+            });
+
+            // CUSTOM SEARCH
+
+            $("#searchBox").on("keyup", function () {
+
+                let value = $(this).val().toLowerCase();
+
+                $("#authorsTable tbody tr").filter(function () {
+
+                    $(this).toggle(
+                        $(this).text().toLowerCase().indexOf(value) > -1
+                    );
+
+                });
+
+            });
+
+        });
+
+    </script>
+
+}

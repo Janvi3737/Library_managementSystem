@@ -1,26 +1,35 @@
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.EntityFrameworkCore
+
 @inject UserManager<LibraryManagementSystem.ClassLibrary.Models.ApplicationUser> UserManager
 @inject LibraryManagementSystem.ClassLibrary.Data.AppDbContext DbContext
 
 @{
     var currentUser = await UserManager.GetUserAsync(User);
 
-    string profileImage = "/images/default-user.svg";
+    var bellUnread = 0;
+    int wishlistCount = 0;
 
-    if (currentUser != null &&
-        !string.IsNullOrEmpty(currentUser.ProfileImagePath))
+    if (currentUser != null)
     {
+        // MEMBER
 
-        profileImage = currentUser.ProfileImagePath;
-    }
+        var member = await DbContext.Members
+            .FirstOrDefaultAsync(x => x.ApplicationUserId == currentUser.Id);
 
-    string userName = "Member";
+        if (member != null)
+        {
+            // NOTIFICATIONS
 
-    if (currentUser != null &&
-        !string.IsNullOrEmpty(currentUser.FullName))
-    {
-        userName = currentUser.FullName;
+            bellUnread = await DbContext.Notifications
+                .CountAsync(n => n.MemberId == currentUser.Id && !n.IsRead);
+
+            // WISHLIST COUNT
+
+            wishlistCount = DbContext.Wishlists
+            .Count(x => x.MemberId == currentUser.Id
+                     && x.BookId != null);
+        }
     }
 }
 
@@ -34,7 +43,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0" />
 
-    <title>@ViewData["Title"] - Library System</title>
+    <title>@ViewData["Title"] - BOOKVERSE</title>
 
     <!-- Bootstrap -->
 
@@ -65,35 +74,70 @@
 
     <style>
 
+        @@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        :root {
+            --bg: #050816;
+            --bg2: #0f172a;
+            --card: #111827;
+            --text: #ffffff;
+            --text-light: #d1d5db;
+            --text-muted: #94a3b8;
+            --border: rgba(255,255,255,.06);
+            --purple: #7c3aed;
+            --purple2: #9333ea;
+            --hover: rgba(124,58,237,.15);
+            --shadow: 0 15px 40px rgba(0,0,0,.35);
+            --sidebar-bg: linear-gradient(180deg,#0f172a,#111827);
+            --navbar-bg: rgba(5,8,22,.92);
+        }
+
+        /* LIGHT MODE */
+
+        body.light-theme {
+            --bg: #f3f5fb;
+            --bg2: #ffffff;
+            --card: #ffffff;
+            --text: #111827;
+            --text-light: #374151;
+            --text-muted: #6b7280;
+            --border: rgba(0,0,0,.08);
+            --hover: rgba(124,58,237,.08);
+            --shadow: 0 15px 35px rgba(0,0,0,.08);
+            --sidebar-bg: linear-gradient(180deg,#ffffff,#f8fafc);
+            --navbar-bg: rgba(255,255,255,.92);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter',sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            background: #050816;
-            color: white;
+            background: radial-gradient(circle at top left, rgba(124, 58, 237, .12), transparent 25%), radial-gradient(circle at top right, rgba(217, 70, 239, .08), transparent 25%), #050816;
+            color: var(--text);
             overflow-x: hidden;
-            font-family: 'Inter', sans-serif;
+            transition: .35s;
         }
 
         a {
             text-decoration: none;
         }
 
-        /* =========================================
-                           LAYOUT
-                        ========================================= */
-
-        .layout-wrapper {
-            display: flex;
-            min-height: 100vh;
-        }
-        /* =========================================
-               SIDEBAR
-            ========================================= */
+        /* SIDEBAR */
 
         .sidebar {
-            width: 245px;
+            width: 260px;
+            height: 100vh;
             position: fixed;
             top: 0;
             left: 0;
-            height: 100vh;
             background: var(--sidebar-bg);
             padding: 24px 18px;
             z-index: 9999;
@@ -101,48 +145,30 @@
             overflow-y: auto;
             transition: .35s;
             scrollbar-width: none;
-            -ms-overflow-style: none;
         }
 
             .sidebar::-webkit-scrollbar {
                 display: none;
             }
 
-
             .sidebar hr {
                 border-color: rgba(255,255,255,.08);
                 margin: 22px 0;
             }
 
-        ::-webkit-scrollbar-thumb {
-            background: #7c3aed;
-            border-radius: 20px;
+        /* PAGE */
+
+        .page-content {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
+        /* LOGO */
 
-        /* =========================================
-               SCROLLBAR
-            ========================================= */
-
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #7c3aed;
-            border-radius: 20px;
-        }
-
-        /* =========================================
-                   LOGO
-                ========================================= */
-
-        .brand-logo-Member {
+        .brand-logo {
             display: flex;
             align-items: center;
             gap: 14px;
@@ -150,21 +176,19 @@
             padding: 10px 6px;
         }
 
-        .brand-icon-Member {
+        .brand-icon {
             width: 52px;
             height: 52px;
             border-radius: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
-            /* background: linear-gradient(135deg,#7c3aed,#d946ef); */
             color: #d946ef;
             font-size: 48px;
             font-weight: 800;
-            /* box-shadow: 0 15px 30px rgba(124,58,237,.35); */
         }
 
-        .brand-text-Member h2 {
+        .brand-text h2 {
             margin: 0;
             color: var(--text);
             font-size: 28px;
@@ -172,11 +196,11 @@
             letter-spacing: 1px;
         }
 
-        .brand-text-Member span {
+        .brand-text span {
             color: #d946ef;
         }
 
-        .brand-text-Member p {
+        .brand-text p {
             margin: 0;
             color: var(--text-muted);
             font-size: 8px;
@@ -184,9 +208,7 @@
             margin-top: 2px;
         }
 
-        /* =========================================
-               MENU HEADING
-            ========================================= */
+        /* MENU */
 
         .menu-heading {
             color: var(--text-muted);
@@ -196,17 +218,9 @@
             margin: 28px 14px 14px;
         }
 
-        /* =========================================
-               MENU LIST
-            ========================================= */
-
         .menu-list {
             margin-bottom: 10px;
         }
-
-        /* =========================================
-               MENU ITEM
-            ========================================= */
 
         .menu-item {
             display: flex;
@@ -217,8 +231,6 @@
             border-radius: 18px;
             color: var(--text-light);
             transition: .3s;
-            position: relative;
-            overflow: hidden;
         }
 
             .menu-item i {
@@ -231,15 +243,11 @@
                 font-weight: 600;
             }
 
-            /* HOVER */
-
             .menu-item:hover {
                 background: var(--hover);
-                color: var(--text);
+                color: white;
                 transform: translateX(4px);
             }
-
-            /* ACTIVE */
 
             .menu-item.active {
                 background: linear-gradient(135deg,#7c3aed,#9333ea);
@@ -247,107 +255,95 @@
                 box-shadow: 0 10px 30px rgba(124,58,237,.35);
             }
 
-        /* =========================================
-               HORIZONTAL LINE
-            ========================================= */
+        /* LOGOUT */
 
-        .sidebar hr {
-            border-color: var(--border);
-            margin: 22px 0;
+        .logout-box {
+            margin-top: 40px;
         }
-
-        /* =========================================
-                           LOGOUT
-                        ========================================= */
 
         .logout-link {
             display: flex;
             align-items: center;
-            gap: 12px;
-            background: rgba(239,68,68,.12);
-            color: #f87171;
-            padding: 15px 16px;
+            gap: 14px;
+            padding: 15px 18px;
             border-radius: 18px;
+            background: rgba(239,68,68,.08);
+            border: 1px solid rgba(239,68,68,.12);
+            color: #f87171;
             transition: .3s;
             font-weight: 600;
         }
 
             .logout-link:hover {
-                background: rgba(239,68,68,.2);
+                background: #ef4444;
                 color: white;
+                transform: translateY(-2px);
             }
 
-        /* =========================================
-                           MAIN CONTENT
-                        ========================================= */
-
-        .main-content {
-            margin-left: 270px;
-            width: calc(100% - 270px);
-            min-height: 100vh;
-            padding: 0 24px 24px 24px;
-        }
-        /* =========================
-                           NAVBAR
-                        ==========================*/
+        /* NAVBAR */
 
         .modern-navbar {
             position: sticky;
             top: 0;
-            z-index: 99999;
-            background: rgba(5,8,22,.96);
+            z-index: 999;
+            padding: 18px 0;
+            background: var(--navbar-bg);
             backdrop-filter: blur(18px);
-            border-bottom: 1px solid rgba(255,255,255,.08);
-            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
         }
-        /* =========================
-                           SEARCH
-                        ==========================*/
+
+        .nav-icon-btn {
+            width: 52px;
+            height: 52px;
+            border: none;
+            border-radius: 16px;
+            background: var(--card);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: .3s;
+            box-shadow: var(--shadow);
+        }
+
+            .nav-icon-btn:hover {
+                background: linear-gradient(135deg,#7c3aed,#9333ea);
+                color: white;
+                transform: translateY(-3px);
+            }
+
+        /* SEARCH */
 
         .search-box {
             position: relative;
-            width: 430px;
+            width: 420px;
+            max-width: 100%;
         }
 
         .search-input {
             width: 100%;
-            height: 58px;
+            height: 56px;
             border-radius: 18px;
             border: 1px solid rgba(255,255,255,.08);
             background: rgba(255,255,255,.05);
-            color: white;
-            padding: 0 55px 0 22px;
+            color: var(--text);
+            padding: 0 55px 0 20px;
             outline: none;
-            transition: .3s;
-            font-size: 15px;
         }
 
-            .search-input:focus {
-                border-color: #9333ea;
-                background: rgba(255,255,255,.08);
-            }
-
             .search-input::placeholder {
-                color: #9ca3af;
+                color: var(--text-muted);
             }
 
         .search-icon {
             position: absolute;
-            top: 50%;
             right: 18px;
+            top: 50%;
             transform: translateY(-50%);
-            color: #9ca3af;
-            font-size: 18px;
-            pointer-events: none;
+            color: var(--text-muted);
         }
 
-        /* =========================
-                           PROFILE
-                        ==========================*/
-
-        .dropdown {
-            position: relative;
-        }
+        /* PROFILE */
 
         .profile-trigger {
             display: flex;
@@ -357,27 +353,14 @@
             border-radius: 50px;
             background: rgba(255,255,255,.05);
             border: 1px solid rgba(255,255,255,.08);
-            transition: .3s;
-            color: white;
+            color: var(--text);
         }
-
-            .profile-trigger:hover {
-                background: rgba(255,255,255,.08);
-                color: white;
-            }
 
         .profile-avatar {
             width: 48px;
             height: 48px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid rgba(255,255,255,.15);
-        }
-
-        .profile-user {
-            color: white;
-            font-size: 14px;
-            font-weight: 700;
         }
 
         .default-avatar {
@@ -389,9 +372,78 @@
             font-weight: 800;
         }
 
-        /* =========================
-                           DROPDOWN
-                        ==========================*/
+        .profile-user {
+            font-size: 14px;
+            font-weight: 700;
+        }
+        /* WISHLIST BUTTON */
+
+        .wishlist-nav-icon {
+            width: 46px;
+            height: 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            font-size: 24px;
+            color: white;
+            transition: .3s;
+        }
+
+            .wishlist-nav-icon:hover {
+                color: #ff4d8d;
+                transform: scale(1.12);
+            }
+
+            .wishlist-nav-icon::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                border-radius: 50%;
+                background: rgba(255,255,255,.04);
+                transform: scale(0);
+                transition: .3s ease;
+            }
+
+            .wishlist-nav-icon:hover::after {
+                transform: scale(1);
+            }
+
+        .wishlist-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            min-width: 22px;
+            height: 22px;
+            padding: 0 6px;
+            border-radius: 50px;
+            background: linear-gradient( 135deg, #ef4444, #ff4d8d);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #111827;
+            box-shadow: 0 4px 12px rgba(239,68,68,.5);
+            animation: pulseBadge 1.8s infinite;
+        }
+
+        @@keyframes pulseBadge {
+
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.15);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+        /* DROPDOWN */
 
         .dropdown-menu {
             background: rgba(10,14,28,.98);
@@ -399,7 +451,6 @@
             border-radius: 20px;
             padding: 12px;
             min-width: 240px;
-            margin-top: 18px;
         }
 
         .dropdown-item {
@@ -407,7 +458,6 @@
             padding: 13px 16px;
             border-radius: 14px;
             font-weight: 600;
-            transition: .3s;
         }
 
             .dropdown-item:hover {
@@ -415,57 +465,366 @@
                 color: white;
             }
 
-        .dropdown-divider {
-            border-color: rgba(255,255,255,.08);
+        /* NOTIFICATION */
+
+        .notification-count {
+            position: absolute;
+            top: -6px;
+            right: -4px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #ef4444;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* =========================
-                           TOGGLER
-                        ==========================*/
+        /* MAIN */
 
-        .navbar-toggler {
-            border: 1px solid rgba(255,255,255,.12);
-            border-radius: 14px;
-            padding: 10px 14px;
+        .main-wrapper {
+            padding: 24px;
+            flex: 1;
+        }
+        /* =========================================
+           PREMIUM FOOTER
+        ========================================= */
+
+        .premium-footer {
+            margin-top: 70px;
+            padding: 0 20px 20px;
         }
 
-            .navbar-toggler:focus {
-                box-shadow: none;
+        .footer-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: 32px;
+            padding: 55px 45px 30px;
+            background: linear-gradient(135deg,#0b1120,#121a35);
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 0 40px rgba(124,58,237,.14);
+        }
+
+            /* GLOW */
+
+            .footer-wrapper::before {
+                content: "";
+                position: absolute;
+                width: 420px;
+                height: 420px;
+                border-radius: 50%;
+                background: radial-gradient(rgba(139,92,246,.18),transparent 70%);
+                top: -220px;
+                right: -180px;
             }
-
 
         /* =========================================
-                           TABLET
-                        ========================================= */
-        @@media(max-width:992px) {
+           BRAND
+        ========================================= */
 
-            .navbar-collapse {
-                margin-top: 20px;
-                padding: 20px;
-                border-radius: 24px;
-                background: rgba(10,14,28,.98);
+        .footer-brand {
+            position: relative;
+            z-index: 2;
+            padding-right: 25px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .footer-logo-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #d946ef;
+            font-size: 50px;
+            font-weight: 800;
+        }
+
+        .footer-logo h2 {
+            margin: 0;
+            color: white;
+            font-size: 30px;
+            font-weight: 900;
+            line-height: 1.1;
+        }
+
+            .footer-logo h2 span {
+                color: #d946ef;
+            }
+
+        .footer-logo p {
+            margin: 6px 0 0;
+            color: #9ca3af;
+            font-size: 11px;
+            letter-spacing: 2px;
+        }
+
+        .footer-description {
+            color: #cbd5e1;
+            line-height: 1.9;
+            font-size: 15px;
+            max-width: 340px;
+        }
+
+        /* =========================================
+           FOOTER TITLES
+        ========================================= */
+
+        .footer-title {
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 28px;
+            position: relative;
+        }
+
+            .footer-title::after {
+                content: "";
+                position: absolute;
+                left: 0;
+                bottom: -10px;
+                width: 42px;
+                height: 3px;
+                border-radius: 20px;
+                background: linear-gradient(135deg,#7c3aed,#d946ef);
+            }
+
+        /* =========================================
+           LINKS
+        ========================================= */
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+            .footer-links li {
+                margin-bottom: 16px;
+            }
+
+            .footer-links a {
+                color: #cbd5e1;
+                text-decoration: none;
+                transition: .3s;
+                font-size: 15px;
+                display: inline-block;
+            }
+
+                .footer-links a:hover {
+                    color: #c084fc;
+                    transform: translateX(5px);
+                }
+
+        /* =========================================
+           CONTACT
+        ========================================= */
+
+        .footer-contact {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            color: #cbd5e1;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+            .contact-item i {
+                color: #a855f7;
+                margin-top: 4px;
+                min-width: 18px;
+            }
+
+        /* =========================================
+           SOCIAL ICONS
+        ========================================= */
+
+        .social-icons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+            .social-icons a {
+                width: 48px;
+                height: 48px;
+                border-radius: 16px;
+                background: rgba(255,255,255,.05);
                 border: 1px solid rgba(255,255,255,.08);
-            }
-
-            .search-box {
-                width: 100%;
-            }
-
-            .profile-trigger {
-                width: 100%;
+                display: flex;
+                align-items: center;
                 justify-content: center;
+                color: white;
+                text-decoration: none;
+                font-size: 18px;
+                transition: .35s;
             }
 
-            .navbar-right {
+                .social-icons a:hover {
+                    transform: translateY(-6px);
+                    background: linear-gradient(135deg,#7c3aed,#9333ea);
+                    color: white;
+                    box-shadow: 0 12px 25px rgba(124,58,237,.35);
+                }
+
+        /* =========================================
+           FOOTER BOTTOM
+        ========================================= */
+
+        .footer-bottom {
+            margin-top: 50px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255,255,255,.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        /* =========================================
+           LIGHT THEME SUPPORT
+        ========================================= */
+
+        body.light-theme .footer-wrapper {
+            background: linear-gradient(135deg,#ffffff,#f3f4f6);
+            border: 1px solid rgba(0,0,0,.08);
+        }
+
+        body.light-theme .footer-logo h2,
+        body.light-theme .footer-title {
+            color: #111827;
+        }
+
+        body.light-theme .footer-description,
+        body.light-theme .footer-links a,
+        body.light-theme .contact-item,
+        body.light-theme .footer-bottom {
+            color: #4b5563;
+        }
+
+        body.light-theme .social-icons a {
+            background: white;
+            color: #111827;
+            border: 1px solid rgba(0,0,0,.08);
+        }
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+
+        @@media (max-width: 1200px) {
+
+            .footer-wrapper {
+                padding: 45px 35px 28px;
+            }
+        }
+
+        @@media (max-width: 992px) {
+
+            .footer-wrapper {
+                padding: 40px 28px 25px;
+            }
+
+            .footer-brand {
+                padding-right: 0;
+            }
+
+            .footer-bottom {
                 flex-direction: column;
-                width: 100%;
+                align-items: flex-start;
             }
-            
-            .main-content {
-                margin-left: 0;
-                width: 100%;
-                padding: 85px 18px 25px;
+        }
+
+        @@media (max-width: 768px) {
+
+            .premium-footer {
+                padding: 0 14px 16px;
             }
+
+            .footer-wrapper {
+                padding: 34px 22px 24px;
+                border-radius: 24px;
+            }
+
+            .footer-logo h2 {
+                font-size: 24px;
+            }
+
+            .footer-title {
+                margin-top: 10px;
+            }
+        }
+
+        @@media (max-width: 576px) {
+
+            .footer-wrapper {
+                padding: 28px 18px 20px;
+            }
+
+            .footer-logo {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .social-icons a {
+                width: 44px;
+                height: 44px;
+                border-radius: 14px;
+            }
+
+            .footer-bottom {
+                font-size: 13px;
+                gap: 10px;
+            }
+
+            .footer-description {
+                max-width: 100%;
+            }
+        }
+        /* THEME ICON */
+
+        .theme-light-icon {
+            display: none;
+        }
+
+        body.light-theme .theme-dark-icon {
+            display: none;
+        }
+
+        body.light-theme .theme-light-icon {
+            display: block;
+        }
+
+        /* SCROLLBAR */
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #7c3aed;
+            border-radius: 20px;
+        }
+
+        /* TABLET */
+
+        @@media(max-width:992px) {
 
             .sidebar {
                 width: 85px;
@@ -491,40 +850,33 @@
                 justify-content: center;
                 padding: 16px;
             }
-        }
 
-
-        /* =========================================
-                           MOBILE
-                        ========================================= */
-
-        @@media(max-width:576px) {
-
-            .main-content {
-                padding: 82px 12px 20px;
+            .logout-link {
+                justify-content: center;
             }
 
+            .search-box {
+                width: 100%;
+            }
+        }
+
+        /* MOBILE */
+
+        @@media(max-width:768px) {
+
             .sidebar {
-                position: fixed;
                 left: -100%;
-                transition: .4s;
             }
 
                 .sidebar.active {
                     left: 0;
                 }
-        }
-        @@media(max - width:768px) {
 
-            .sidebar {
-                position: fixed;
-                left: -100%;
-                transition: .4s;
+            .page-content {
+                margin-left: 0;
+                width: 100%;
             }
-
-                .sidebar.active {
-                    left: 0;
-                }
+            
         }
     </style>
 
@@ -532,65 +884,56 @@
 
 <body>
 
-    <!-- MOBILE BUTTON -->
+    <!-- SIDEBAR -->
 
-    @* <button class="mobile-toggle"
-            id="mobileToggle">
+    <aside class="sidebar">
 
-        <i class="fa-solid fa-bars"></i>
+        <!-- LOGO -->
 
-    </button> *@
+        <a class="brand-logo"
+           asp-controller="Home"
+           asp-action="Index">
 
-    <!-- OVERLAY -->
-
-    <div class="sidebar-overlay"
-         id="sidebarOverlay"></div>
-
-    <div class="layout-wrapper">
-
-        <!-- SIDEBAR -->
-
-        <aside class="sidebar"
-               id="sidebar">
-
-            <!-- LOGO -->
-
-            <a class="brand-logo-Member"
-               asp-controller="Home"
-               asp-action="Index">
-
-                <div class="brand-icon-Member">
-                    ∞
-                </div>
-
-                <div class="brand-text-Member">
-
-                    <h2>
-                        BOOK<span>VERSE</span>
-                    </h2>
-
-                    <p>
-                        LIBRARY MANAGEMENT SYSTEM
-                    </p>
-
-                </div>
-
-            </a>
-
-            <!-- MENU -->
-            <a class="menu-item"
-               asp-area=""
-               asp-controller="Home"
-               asp-action="Index">
-
-                <i class="bi bi-house-fill"></i>
-                <span>Home</span>
-
-            </a>
-
-            <div class="menu-heading">
-                MEMBER PANEL
+            <div class="brand-icon">
+                ∞
             </div>
+
+            <div class="brand-text">
+
+                <h2>
+                    BOOK<span>VERSE</span>
+                </h2>
+
+                <p>
+                    LIBRARY MANAGEMENT SYSTEM
+                </p>
+
+            </div>
+
+        </a>
+
+        <!-- HOME -->
+
+        <a class="menu-item"
+        asp-area=""
+           asp-controller="Home"
+           asp-action="Index">
+
+            <i class="bi bi-house-fill"></i>
+
+            <span>Home</span>
+
+        </a>
+
+        <hr />
+
+        <!-- MEMBER PANEL -->
+
+        <div class="menu-heading">
+            MEMBER PANEL
+        </div>
+
+        <div class="menu-list">
 
             <a class="menu-item active"
                asp-area="Member"
@@ -598,18 +941,8 @@
                asp-action="Index">
 
                 <i class="bi bi-grid-fill"></i>
+
                 <span>My Dashboard</span>
-
-            </a>
-
-            <a class="menu-item"
-               asp-area="Member"
-               asp-controller="BorrowHistory"
-               asp-action="Index"
-               asp-route-status="active">
-
-                <i class="bi bi-book"></i>
-                <span>My Books</span>
 
             </a>
 
@@ -655,49 +988,90 @@
 
             <a class="menu-item"
                asp-area="Member"
-               asp-controller="Profile"
-               asp-action="ChangePassword">
+               asp-controller="Notifications"
+               asp-action="Index">
 
-                <i class="bi bi-shield-lock"></i>
-                <span>Change Password</span>
+                <i class="bi bi-bell-fill"></i>
+
+                <span>Notifications</span>
 
             </a>
 
-            <hr />
+        </div>
 
-            <!-- LOGOUT -->
+        <!-- EXPLORE -->
+
+        <div class="menu-heading">
+            EXPLORE
+        </div>
+
+        <div class="menu-list">
+
+            <a class="menu-item"
+            asp-area=""
+               asp-controller="Catalog"
+               asp-action="Index">
+
+                <i class="bi bi-book-half"></i>
+
+                <span>Browse Books</span>
+
+            </a>
+
+            <a class="menu-item"
+            asp-area=""
+               asp-controller="Events"
+               asp-action="Index">
+
+                <i class="bi bi-calendar2-event"></i>
+
+                <span>Events</span>
+
+            </a>
+
+        </div>
+
+        <!-- LOGOUT -->
+
+        <div class="logout-box">
 
             <a asp-area=""
-               asp-controller="Account"
+              asp-controller="Account"
                asp-action="Logout"
                class="logout-link">
 
-                <i class="bi bi-box-arrow-right"></i>
+                <i class="bi bi-box-arrow-left"></i>
 
                 Logout
 
             </a>
 
-        </aside>
+        </div>
 
-        <!-- MAIN CONTENT -->
+    </aside>
 
-        <main class="main-content">
+    <!-- PAGE -->
 
-            <!-- NAVBAR -->
+    <div class="page-content">
 
-            <nav class="navbar navbar-expand-lg navbar-dark modern-navbar">
+        <!-- NAVBAR -->
 
-                <div class="container-fluid px-4">
+        <nav class="modern-navbar">
 
+            <div class="container-fluid px-4">
 
+                <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
 
-                    <!-- NAVBAR -->
+                    <!-- LEFT -->
 
-                    <div class="collapse navbar-collapse"
-                         id="mainNavbar">
+                    <div class="d-flex align-items-center gap-3">
 
-                        <!-- SEARCH LEFT -->
+                        <button class="nav-icon-btn d-lg-none"
+                                id="menuToggle">
+
+                            <i class="bi bi-list"></i>
+
+                        </button>
 
                         <div class="search-box">
 
@@ -706,177 +1080,458 @@
                                    placeholder="Search books, authors..." />
 
                             <span class="search-icon">
-                                🔍
+                                <i class="bi bi-search"></i>
                             </span>
 
                         </div>
 
-                        <!-- RIGHT SIDE -->
+                    </div>
 
-                        <div class="ms-auto d-flex align-items-center gap-4 navbar-right">
+                    <!-- RIGHT -->
 
-                            @{
-                                var bellUnread = 0;
-                                if (currentUser != null)
-                                {
-                                    bellUnread = await DbContext.Notifications
-                                        .CountAsync(n => n.MemberId == currentUser.Id && !n.IsRead);
-                                }
-                            }
-                            @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    <div class="d-flex align-items-center gap-3">
+
+                        <!-- THEME -->
+
+                        <button class="nav-icon-btn"
+                                id="themeToggle">
+
+                            <i class="bi bi-moon-stars-fill theme-dark-icon"></i>
+
+                            <i class="bi bi-brightness-high-fill theme-light-icon"></i>
+
+                        </button>
+
+
+                        <!-- WISHLIST -->
+
+                        <a asp-area="Member"
+                           asp-controller="Wishlist"
+                           asp-action="Index"
+                           class="wishlist-nav-icon">
+
+                            <i class="fa-regular fa-heart"></i>
+
+                            <span class="wishlist-badge"
+                                  id="wishlistCountBadge"
+                                  style="@(wishlistCount == 0 ? "display:none" : "")">
+
+                                @wishlistCount
+
+                            </span>
+
+                        </a>
+
+                        <!-- NOTIFICATION -->
+
+                        <a asp-area="Member"
+                           asp-controller="Notifications"
+                           asp-action="Index"
+                           class="nav-icon-btn position-relative">
+
+                            <i class="bi bi-bell-fill"></i>
+
+                            @if (bellUnread > 0)
                             {
-                                <a asp-area="Member" asp-controller="Notifications" asp-action="Index"
-                                   class="position-relative text-decoration-none"
-                                   style="color:white; font-size:22px;"
-                                   title="Notifications">
-                                    🔔
-                                    @if (bellUnread > 0)
+                                <span class="notification-count">
+                                    @bellUnread
+                                </span>
+                            }
+
+                        </a>
+
+                        <!-- PROFILE -->
+                        @if (User.Identity != null &&
+                                                User.Identity.IsAuthenticated)
+                        {
+                            <div class="dropdown">
+
+                                <a href="javascript:void(0)"
+                                   class="profile-trigger dropdown-toggle"
+                                   data-bs-toggle="dropdown">
+
+                                    @if (!string.IsNullOrEmpty(currentUser?.ProfileImagePath))
                                     {
-                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                                              style="font-size:11px;">
-                                            @bellUnread
-                                        </span>
+                                        <img src="@currentUser.ProfileImagePath"
+                                             class="profile-avatar" />
                                     }
+                                    else
+                                    {
+                                        <div class="profile-avatar default-avatar">
+
+                                            @(string.IsNullOrEmpty(currentUser?.FullName)
+                                                                                ? "U"
+                                                                                : currentUser.FullName.Substring(0, 1).ToUpper())
+
+                                        </div>
+                                    }
+
+                                    <span class="profile-user">
+                                        @currentUser?.FullName
+                                    </span>
+
                                 </a>
-                            }
 
-                            <!-- USER -->
-                            @if (User.Identity != null &&
-                                                        User.Identity.IsAuthenticated)
-                            {
-                                <div class="dropdown">
+                                <ul class="dropdown-menu dropdown-menu-end">
 
-                                    <a href="javascript:void(0)"
-                                       class="profile-trigger dropdown-toggle"
-                                       data-bs-toggle="dropdown">
+                                    <li>
 
-                                        @if (!string.IsNullOrEmpty(currentUser?.ProfileImagePath))
-                                        {
-                                            <img src="@currentUser.ProfileImagePath"
-                                                 class="profile-avatar" />
-                                        }
-                                        else
-                                        {
-                                            <div class="profile-avatar default-avatar">
+                                        <a class="dropdown-item"
+                                           asp-area="Member"
+                                           asp-controller="Dashboard"
+                                           asp-action="Index">
 
-                                                @(string.IsNullOrEmpty(currentUser?.FullName)
-                                                                                        ? "U"
-                                                                                        : currentUser.FullName.Substring(0, 1).ToUpper())
+                                            📊 Dashboard
 
-                                            </div>
-                                        }
+                                        </a>
 
-                                        <span class="profile-user">
+                                    </li>
 
-                                            @currentUser?.FullName
+                                    <li>
 
-                                        </span>
+                                        <a class="dropdown-item"
+                                           asp-area="Member"
+                                           asp-controller="Profile"
+                                           asp-action="Index">
 
-                                    </a>
+                                            👤 My Profile
 
-                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        </a>
 
-                                        <li>
+                                    </li>
 
-                                            <a class="dropdown-item"
-                                               asp-area="Member"
-                                               asp-controller="Dashboard"
-                                               asp-action="Index">
+                                    <li>
 
-                                                📊 Dashboard
+                                        <a class="dropdown-item"
+                                        asp-area=""
+                                           asp-controller="Account"
+                                           asp-action="Logout">
 
-                                            </a>
+                                            🚪 Logout
 
-                                        </li>
+                                        </a>
 
-                                        <li>
+                                    </li>
 
-                                            <a class="dropdown-item"
-                                               asp-area="Member"
-                                               asp-controller="Profile"
-                                               asp-action="Index">
+                                </ul>
 
-                                                👤 My Profile
+                            </div>
+                        }
 
-                                            </a>
+                    </div>
 
-                                        </li>
+                </div>
 
-                                        <li>
+            </div>
 
-                                            <a class="dropdown-item"
-                                            asp-area=""
-                                               asp-controller="Account"
-                                               asp-action="Logout">
+        </nav>
 
-                                                🚪 Logout
+        <!-- MAIN -->
 
-                                            </a>
+        <main class="main-wrapper">
 
-                                        </li>
+            @{
+                var flashKey = (TempData["Success"] ?? TempData["success"]) != null ? "success"
+                : (TempData["Error"] ?? TempData["error"]) != null ? "danger"
+                : null;
 
-                                    </ul>
+                var flashText = TempData["Success"] ?? TempData["success"]
+                ?? TempData["Error"] ?? TempData["error"];
+            }
+
+            @if (flashKey != null)
+            {
+                <div class="alert alert-@flashKey alert-dismissible fade show mb-4"
+                     role="alert">
+
+                    @flashText
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="alert"></button>
+
+                </div>
+            }
+
+            @RenderBody()
+
+        </main>
+
+        <!-- FOOTER -->
+        <!-- =========================
+                PREMIUM FOOTER
+        ========================= -->
+
+        <footer class="premium-footer">
+
+            <div class="container-fluid px-4">
+
+                <div class="footer-wrapper">
+
+                    <div class="row gy-5">
+
+                        <!-- LOGO SECTION -->
+
+                        <div class="col-lg-4">
+
+                            <div class="footer-brand">
+
+                                <div class="footer-logo">
+
+                                    <div class="footer-logo-icon">
+                                        ∞
+                                    </div>
+
+                                    <div>
+
+                                        <h2>
+                                            BOOK<span>VERSE</span>
+                                        </h2>
+
+                                        <p>
+                                            LIBRARY MANAGEMENT SYSTEM
+                                        </p>
+
+                                    </div>
 
                                 </div>
-                            }
 
+                                <div class="footer-description">
+
+                                    Modern digital library platform for
+                                    readers, students, researchers and
+                                    knowledge lovers across the world.
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- QUICK LINKS -->
+
+                        <div class="col-lg-2 col-md-6">
+
+                            <h5 class="footer-title">
+                                Quick Links
+                            </h5>
+
+                            <ul class="footer-links">
+
+                                <li>
+                                    <a asp-controller="Home"
+                                       asp-action="Index">
+                                        Home
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a asp-controller="Home"
+                                       asp-action="About">
+                                        About Us
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a asp-controller="Contact"
+                                       asp-action="Index">
+                                        Contact
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a asp-controller="Home"
+                                       asp-action="FAQ">
+                                        FAQs
+                                    </a>
+                                </li>
+
+                            </ul>
+
+                        </div>
+
+                        <!-- HELP -->
+
+                        <div class="col-lg-2 col-md-6">
+
+                            <h5 class="footer-title">
+                                Help & Support
+                            </h5>
+
+                            <ul class="footer-links">
+
+                                <li>
+                                    <a href="/Home/Rules">
+                                        Borrowing Rules
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="/Home/Hours">
+                                        Our Hours
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="/Home/Privacy">
+                                        Privacy Policy
+                                    </a>
+                                </li>
+
+                            </ul>
+
+                        </div>
+
+                        <!-- CONTACT -->
+
+                        <div class="col-lg-2 col-md-6">
+
+                            <h5 class="footer-title">
+                                Contact Us
+                            </h5>
+
+                            <div class="footer-contact">
+
+                                <div class="contact-item">
+
+                                    <i class="fa-solid fa-location-dot"></i>
+
+                                    <span>
+                                        123 Library Street,
+                                        Knowledge City, India
+                                    </span>
+
+                                </div>
+
+                                <div class="contact-item">
+
+                                    <i class="fa-solid fa-phone"></i>
+
+                                    <span>
+                                        +91 98765 43210
+                                    </span>
+
+                                </div>
+
+                                <div class="contact-item">
+
+                                    <i class="fa-solid fa-envelope"></i>
+
+                                    <span>
+                                        support@bookverse.com
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- SOCIAL -->
+
+                        <div class="col-lg-2 col-md-6">
+
+                            <h5 class="footer-title">
+                                Connect With Us
+                            </h5>
+
+                            <div class="social-icons">
+
+                                <a href="#">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+
+                                <a href="#">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+
+                                <a href="#">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+
+                                <a href="#">
+                                    <i class="fab fa-linkedin-in"></i>
+                                </a>
+
+                                <a href="#">
+                                    <i class="fab fa-youtube"></i>
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- COPYRIGHT -->
+
+                    <div class="footer-bottom">
+
+                        <div>
+                            © @DateTime.Now.Year BookVerse Library Management System.
+                            All rights reserved.
+                        </div>
+
+                        <div>
+                            Made with ❤️ for knowledge lovers
                         </div>
 
                     </div>
 
                 </div>
 
-            </nav>
+            </div>
 
-            <!-- PAGE CONTENT -->
-            @{
-                var flashKey = (TempData["Success"] ?? TempData["success"]) != null ? "success"
-                              : (TempData["Error"] ?? TempData["error"]) != null ? "danger"
-                              : null;
-                var flashText = TempData["Success"] ?? TempData["success"]
-                              ?? TempData["Error"] ?? TempData["error"];
-            }
-            @if (flashKey != null)
-            {
-                <div class="alert alert-@flashKey alert-dismissible fade show m-3" role="alert">
-                    @flashText
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            }
-            @RenderBody()
-
-        </main>
+        </footer>
 
     </div>
 
-    <!-- BOOTSTRAP -->
+    <!-- Bootstrap -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- SIDEBAR SCRIPT -->
-
     <script>
 
-        const toggleBtn =
-            document.getElementById("mobileToggle");
+        // MOBILE SIDEBAR
 
-        const sidebar =
-            document.getElementById("sidebar");
+        const menuToggle = document.getElementById("menuToggle");
 
-        const overlay =
-            document.getElementById("sidebarOverlay");
+        const sidebar = document.querySelector(".sidebar");
 
-        toggleBtn.addEventListener("click", () => {
+        if (menuToggle) {
 
-            sidebar.classList.toggle("show");
-            overlay.classList.toggle("show");
+            menuToggle.addEventListener("click", () => {
 
-        });
+                sidebar.classList.toggle("active");
 
-        overlay.addEventListener("click", () => {
+            });
 
-            sidebar.classList.remove("show");
-            overlay.classList.remove("show");
+        }
+
+        // THEME
+
+        const themeToggle = document.getElementById("themeToggle");
+
+        if (localStorage.getItem("theme") === "light") {
+
+            document.body.classList.add("light-theme");
+
+        }
+
+        themeToggle?.addEventListener("click", () => {
+
+            document.body.classList.toggle("light-theme");
+
+            if (document.body.classList.contains("light-theme")) {
+
+                localStorage.setItem("theme", "light");
+
+            }
+            else {
+
+                localStorage.setItem("theme", "dark");
+
+            }
 
         });
 

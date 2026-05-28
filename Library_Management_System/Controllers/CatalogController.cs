@@ -138,6 +138,7 @@ namespace Library_Management_System.Controllers
                 AuthorName = book.Author?.Name,
                 CategoryName = book.Category?.Name,
                 IsAvailable = book.AvailableCopies > 0,
+                AvailableCopies = book.AvailableCopies,
                 IsWishlisted = isWishlisted
             };
 
