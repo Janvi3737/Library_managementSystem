@@ -199,7 +199,7 @@
 
             </div>
 
-            @if (item.Status == ReservationStatus.Waiting)
+            @* @if (item.Status == ReservationStatus.Waiting)
             {
                 <form asp-action="Cancel"
                       asp-route-id="@item.Id"
@@ -209,6 +209,39 @@
                     <button type="submit" class="btn btn-cancel">
                         Cancel Reservation
                     </button>
+                </form>
+            } *@
+
+            @if (item.Status == ReservationStatus.Waiting)
+            {
+                <form asp-action="Approve"
+                      asp-route-id="@item.Id"
+                      method="post"
+                      style="display:inline">
+
+                    @Html.AntiForgeryToken()
+
+                    <button class="btn btn-success">
+                        Approve & Issue Book
+                    </button>
+
+                </form>
+
+                <form asp-action="Cancel"
+                      asp-route-id="@item.Id"
+                      method="post"
+                      onsubmit="return confirm('Cancel this reservation?');"
+                      style="display:inline">
+
+                    @Html.AntiForgeryToken()
+
+                    <button type="submit"
+                            class="btn btn-cancel">
+
+                        Cancel Reservation
+
+                    </button>
+
                 </form>
             }
 

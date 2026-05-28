@@ -1,8 +1,14 @@
-﻿@model IEnumerable<LibraryManagementSystem.ClassLibrary.Models.Book>
+@model IEnumerable<LibraryManagementSystem.ClassLibrary.Models.Book>
 @{
     ViewData["Title"] = "Books";
 }
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+ <!-- Datatable plugin CSS file -->
+
+ <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css" />
+
+
+ 
 <style>
     /* =========================
        MOBILE TABLE RESPONSIVE
@@ -152,7 +158,7 @@
                                     <td>@item.Title</td>
                                     <td>@item.ISBN</td>
                                     <td>@item.Author?.Name</td>
-                                    <td>@item.Category?.Name</td>
+                                <td class="category">@item.Category?.Name</td>
                                     <td>@item.Department?.Name</td>
                                     <td>@item.TotalPages</td>
 
@@ -242,6 +248,14 @@
                 });
             });
 
+                              $(document).ready(function () {
+
+            $('#booksTable').DataTable({});
+
+        });
+        });
+
+
             // 📂 Category filter
             $("#categoryFilter").on("change", function () {
                 let value = $(this).val().toLowerCase();
@@ -256,5 +270,10 @@
                 });
             });
         });
+    </script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js">
+    </script>
+    <!-- Datatable plugin JS library file -->
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js">
     </script>
 }
