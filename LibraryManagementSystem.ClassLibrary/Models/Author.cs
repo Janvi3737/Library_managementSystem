@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 namespace LibraryManagementSystem.ClassLibrary.Models
 {
@@ -15,5 +15,9 @@ namespace LibraryManagementSystem.ClassLibrary.Models
 
         public ICollection<Book> Books { get; set; } = new List<Book>();
 
+        public object ToLower()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

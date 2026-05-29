@@ -590,7 +590,7 @@
                        class="search-input"
                        placeholder="Search books, authors..." />
 
-                <span class="search-icon">
+                <span class="search-icon" style="cursor:pointer;">
                     <i class="bi bi-search"></i>
                 </span>
 
@@ -753,4 +753,29 @@
         }
     });
 
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const searchInput = document.querySelector(".search-input");
+        const searchIcon = document.querySelector(".search-icon");
+
+        function routeSearch() {
+
+            const query = searchInput.value.trim();
+            if (!query) return;
+
+            window.location.href = `/Search/Route?query=${encodeURIComponent(query)}`;
+        }
+
+        searchInput.addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                routeSearch();
+            }
+        });
+
+        searchIcon.addEventListener("click", routeSearch);
+
+    });
 </script>

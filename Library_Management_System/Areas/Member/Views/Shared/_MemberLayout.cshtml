@@ -1077,7 +1077,7 @@
 
                             <input type="text"
                                    class="search-input"
-                                   placeholder="Search books, authors..." />
+                                   placeholder="Search books, authors, events..." />
 
                             <span class="search-icon">
                                 <i class="bi bi-search"></i>
@@ -1532,6 +1532,44 @@
                 localStorage.setItem("theme", "dark");
 
             }
+
+        });
+
+        // GLOBAL SEARCH
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const searchInput = document.querySelector(".search-input");
+
+            const searchIcon = document.querySelector(".search-icon");
+
+            function routeSearch() {
+
+                const query = searchInput.value.trim();
+
+                if (!query) return;
+
+                window.location.href =
+                    `/Search/Route?query=${encodeURIComponent(query)}`;
+            }
+
+            // ENTER KEY SEARCH
+            searchInput?.addEventListener("keydown", function (e) {
+
+                if (e.key === "Enter") {
+
+                    e.preventDefault();
+
+                    routeSearch();
+                }
+
+            });
+
+            // SEARCH ICON CLICK
+            searchIcon?.addEventListener("click", function () {
+
+                routeSearch();
+
+            });
 
         });
 

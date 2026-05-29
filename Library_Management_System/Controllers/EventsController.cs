@@ -15,10 +15,22 @@ namespace Library_Management_System.Controllers
         }
 
         // UPCOMING EVENTS
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? searchQuery)
         {
-            var upcomingEvents = await _context.Events
+            var eventsQuery = _context.Events
                 .Where(e => e.Date >= DateTime.Today)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                eventsQuery = eventsQuery.Where(e =>
+                    e.Title.Contains(searchQuery) ||
+
+                    (e.Description != null &&
+                     e.Description.Contains(searchQuery)));
+            }
+
+            var upcomingEvents = await eventsQuery
                 .OrderBy(e => e.Date)
                 .ToListAsync();
 
