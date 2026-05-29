@@ -139,6 +139,7 @@
                                 <th>Author</th>
                                 <th>Category</th>
                                 <th>Department</th>
+                                <th>PDF</th>
                                 <th>Pages</th>
                                 <th>Featured</th>
                                 <th>Total</th>
@@ -160,6 +161,26 @@
                                     <td>@item.Author?.Name</td>
                                 <td class="category">@item.Category?.Name</td>
                                     <td>@item.Department?.Name</td>
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(item.PdfUrl))
+                                    {
+                                        <a href="@item.PdfUrl"
+                                           target="_blank"
+                                           class="btn btn-sm btn-danger">
+
+                                            PDF
+
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">
+                                            No PDF
+                                        </span>
+                                    }
+
+                                </td>
                                     <td>@item.TotalPages</td>
 
                                     <td>

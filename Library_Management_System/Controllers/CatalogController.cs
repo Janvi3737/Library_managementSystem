@@ -1,8 +1,10 @@
-using LibraryManagementSystem.ClassLibrary.Data;
+using System.Security.Claims;
 using Library_Management_System.ViewModels;
+using LibraryManagementSystem.ClassLibrary.Data;
+using LibraryManagementSystem.ClassLibrary.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace Library_Management_System.Controllers
 {
@@ -117,6 +119,19 @@ namespace Library_Management_System.Controllers
             if (book == null)
                 return NotFound();
 
+            var reviews = await _context.BookReviews
+                .Include(r => r.Member)
+                .Where(r => r.BookId == id)
+                .OrderByDescending(r => r.CreatedAt)
+                .ToListAsync();
+
+            double avgRating = 0;
+
+            if (reviews.Any())
+            {
+                avgRating = reviews.Average(r => r.Rating);
+            }
+
             var userId = User.Identity?.IsAuthenticated == true
                 ? User.FindFirstValue(ClaimTypes.NameIdentifier)
                 : null;
@@ -139,7 +154,11 @@ namespace Library_Management_System.Controllers
                 CategoryName = book.Category?.Name,
                 IsAvailable = book.AvailableCopies > 0,
                 AvailableCopies = book.AvailableCopies,
-                IsWishlisted = isWishlisted
+                IsWishlisted = isWishlisted,
+
+                AverageRating = avgRating,
+                TotalReviews = reviews.Count,
+                Reviews = reviews
             };
 
             return View(vm);
@@ -251,6 +270,28 @@ namespace Library_Management_System.Controllers
                 .ToListAsync();
 
             return View(books);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> AddReview(int bookId,int rating,string comment)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var review = new BookReview
+            {
+                BookId = bookId,
+                MemberId = userId,
+                Rating = rating,
+                Comment = comment,
+                CreatedAt = DateTime.Now
+            };
+
+            _context.BookReviews.Add(review);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", new { id = bookId });
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿@model LibraryManagementSystem.ViewModels.BookDetailsViewModel
+@model LibraryManagementSystem.ViewModels.BookDetailsViewModel
 
 @{
     ViewData["Title"] = "Book Details";
@@ -126,6 +126,42 @@
                         </p>
 
                     </div>
+
+                    <!-- PDF SECTION -->
+                    @if (!string.IsNullOrWhiteSpace(Model.Book.PdfUrl))
+                    {
+                        <div class="mb-4">
+
+                            <h5 class="fw-bold text-primary">
+                                📄 Digital Book
+                            </h5>
+
+                            <div class="d-flex gap-2 flex-wrap">
+
+                                <!-- VIEW PDF -->
+
+                                <a href="@Model.Book.PdfUrl"
+                                   target="_blank"
+                                   class="btn btn-danger">
+
+                                    📖 Read PDF
+
+                                </a>
+
+                                <!-- DOWNLOAD PDF -->
+
+                                <a href="@Model.Book.PdfUrl"
+                                   download
+                                   class="btn btn-outline-dark">
+
+                                    ⬇ Download PDF
+
+                                </a>
+
+                            </div>
+
+                        </div>
+                    }
 
                     <!-- AUTHOR -->
                     <div class="mb-4">

@@ -6,11 +6,16 @@
 }
 
 <style>
+
     @@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
     .details-page,
     .details-page * {
         box-sizing: border-box;
+    }
+
+    body {
+        background: radial-gradient(circle at top left,rgba(124,58,237,.12),transparent 25%), radial-gradient(circle at bottom right,rgba(217,70,239,.08),transparent 30%), #050816;
     }
 
     .details-page {
@@ -68,18 +73,19 @@
             -webkit-text-fill-color: transparent;
         }
 
-    /* CARD */
+    /* BOOK CARD */
 
     .details-book-card {
         display: grid;
         grid-template-columns: 340px 1fr;
         gap: 35px;
-        background: linear-gradient( 180deg, rgba(17,24,39,.95), rgba(15,23,42,.95) );
+        background: linear-gradient( 180deg, rgba(17,24,39,.95), rgba(15,23,42,.95));
         border: 1px solid rgba(255,255,255,.08);
         border-radius: 30px;
         padding: 30px;
         backdrop-filter: blur(16px);
         box-shadow: 0 25px 60px rgba(0,0,0,.35);
+        margin-bottom: 40px;
     }
 
     /* IMAGE */
@@ -238,7 +244,7 @@
         height: 58px;
         padding: 0 18px;
         border-radius: 18px;
-        background: linear-gradient( 135deg, rgba(124,58,237,.95), rgba(168,85,247,.92) );
+        background: linear-gradient( 135deg, rgba(124,58,237,.95), rgba(168,85,247,.92));
         border: 1px solid rgba(255,255,255,.08);
         box-shadow: 0 18px 40px rgba(124,58,237,.35);
     }
@@ -267,6 +273,283 @@
         color: white;
         font-size: 20px;
         font-weight: 700;
+    }
+
+    /* REVIEW SECTION */
+
+    .review-section {
+        margin-top: 50px;
+    }
+
+    /* SUMMARY */
+
+    .rating-summary {
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        padding: 30px;
+        margin-bottom: 35px;
+        border-radius: 30px;
+        background: linear-gradient( 180deg, rgba(17,24,39,.96), rgba(15,23,42,.96));
+        border: 1px solid rgba(255,255,255,.08);
+        box-shadow: 0 20px 50px rgba(0,0,0,.30);
+    }
+
+        .rating-summary::before {
+            content: "";
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            background: rgba(168,85,247,.18);
+            top: -120px;
+            right: -120px;
+            filter: blur(90px);
+        }
+
+    .big-rating {
+        position: relative;
+        z-index: 2;
+        font-size: 82px;
+        font-weight: 900;
+        line-height: 1;
+        background: linear-gradient(135deg,#c084fc,#f472b6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .rating-info {
+        position: relative;
+        z-index: 2;
+    }
+
+    .rating-stars {
+        display: flex;
+        gap: 5px;
+        margin-bottom: 10px;
+    }
+
+        .rating-stars span {
+            color: #facc15;
+            font-size: 26px;
+        }
+
+    .rating-text {
+        color: #d1d5db;
+        font-size: 15px;
+        line-height: 1.7;
+    }
+
+    /* REVIEW CARD */
+
+    .review-card {
+        position: relative;
+        overflow: hidden;
+        padding: 28px;
+        margin-bottom: 22px;
+        border-radius: 28px;
+        background: linear-gradient( 180deg, rgba(17,24,39,.96), rgba(10,15,28,.98));
+        border: 1px solid rgba(255,255,255,.08);
+        box-shadow: 0 18px 45px rgba(0,0,0,.25);
+        transition: .35s ease;
+    }
+
+        .review-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(168,85,247,.28);
+            box-shadow: 0 25px 55px rgba(124,58,237,.18);
+        }
+
+    .review-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+    }
+
+    .review-user {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .review-avatar {
+        width: 52px;
+        height: 52px;
+        border-radius: 16px;
+        background: linear-gradient(135deg,#7c3aed,#c026d3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: 800;
+        color: white;
+        box-shadow: 0 10px 25px rgba(124,58,237,.35);
+    }
+
+    .review-user-info h4 {
+        margin: 0;
+        font-size: 17px;
+        font-weight: 700;
+        color: white;
+    }
+
+    .review-user-info small {
+        color: #9ca3af;
+        font-size: 13px;
+    }
+
+    .review-stars {
+        display: flex;
+        gap: 4px;
+    }
+
+        .review-stars span {
+            font-size: 22px;
+            color: #facc15;
+        }
+
+    .review-comment {
+        color: #d1d5db;
+        font-size: 15px;
+        line-height: 1.9;
+    }
+
+    /* REVIEW FORM */
+
+    .review-form-card {
+        position: relative;
+        overflow: hidden;
+        margin-top: 35px;
+        padding: 35px;
+        border-radius: 32px;
+        background: linear-gradient( 180deg, rgba(17,24,39,.97), rgba(10,15,28,.98));
+        border: 1px solid rgba(255,255,255,.08);
+        box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    }
+
+        .review-form-card::before {
+            content: "";
+            position: absolute;
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            background: rgba(168,85,247,.12);
+            top: -120px;
+            right: -120px;
+            filter: blur(100px);
+        }
+
+    .review-form-title {
+        position: relative;
+        z-index: 2;
+        font-size: 32px;
+        font-weight: 900;
+        margin-bottom: 10px;
+        color: white;
+    }
+
+    .review-form-subtitle {
+        position: relative;
+        z-index: 2;
+        color: #9ca3af;
+        margin-bottom: 28px;
+        line-height: 1.8;
+    }
+
+    .review-group {
+        position: relative;
+        z-index: 2;
+        margin-bottom: 22px;
+    }
+
+    .review-label {
+        display: block;
+        margin-bottom: 10px;
+        color: #d8b4fe;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: .5px;
+        text-transform: uppercase;
+    }
+
+    .review-select,
+    .review-textarea {
+        width: 100%;
+        border: 1px solid rgba(255,255,255,.08);
+        background: rgba(255,255,255,.04);
+        color: white;
+        border-radius: 22px;
+        transition: .3s ease;
+    }
+
+    .review-select {
+        height: 60px;
+        padding: 0 20px;
+        font-size: 15px;
+    }
+
+    .review-textarea {
+        padding: 20px;
+        min-height: 170px;
+        resize: none;
+        line-height: 1.8;
+        font-size: 15px;
+    }
+
+        .review-select:focus,
+        .review-textarea:focus {
+            outline: none;
+            border-color: #a855f7;
+            background: rgba(255,255,255,.06);
+            box-shadow: 0 0 0 4px rgba(168,85,247,.15);
+        }
+
+    .review-select option {
+        background: #111827;
+        color: white;
+    }
+
+    .review-textarea::placeholder {
+        color: #9ca3af;
+    }
+
+    .review-submit-btn {
+        position: relative;
+        z-index: 2;
+        min-width: 220px;
+        height: 60px;
+        border: none;
+        border-radius: 20px;
+        background: linear-gradient(135deg,#7c3aed,#d946ef);
+        color: white;
+        font-size: 15px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        cursor: pointer;
+        transition: .35s ease;
+        box-shadow: 0 18px 35px rgba(124,58,237,.35);
+    }
+
+        .review-submit-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 25px 50px rgba(124,58,237,.45);
+        }
+
+    .empty-review-box {
+        padding: 40px;
+        text-align: center;
+        border-radius: 26px;
+        background: rgba(255,255,255,.03);
+        border: 1px solid rgba(255,255,255,.08);
+        color: #9ca3af;
     }
 
     /* RESPONSIVE */
@@ -329,20 +612,26 @@
         .quantity-wrapper {
             width: 100%;
         }
-    }
 
-    @@media(max-width:480px) {
-
-        .details-title {
-            font-size: 30px;
+        .rating-summary {
+            flex-direction: column;
+            text-align: center;
         }
 
-        .details-book-name {
+        .big-rating {
+            font-size: 62px;
+        }
+
+        .review-form-card {
+            padding: 24px;
+        }
+
+        .review-form-title {
             font-size: 26px;
         }
 
-        .details-book-cover img {
-            height: 320px;
+        .review-submit-btn {
+            width: 100%;
         }
     }
 </style>
@@ -370,8 +659,8 @@
             <div class="details-book-cover">
 
                 <img src="@(string.IsNullOrEmpty(Model.CoverImageUrl)
-                                         ? "/images/default-book.jpg"
-                                         : Model.CoverImageUrl)"
+                                                             ? "/images/default-book.jpg"
+                                                             : Model.CoverImageUrl)"
                      alt="@Model.Title" />
 
             </div>
@@ -439,8 +728,8 @@
                             data-bookid="@Model.Id">
 
                         <i class="wishlist-icon @(Model.IsWishlisted
-                                                       ? "fa-solid fa-heart"
-                                                       : "fa-regular fa-heart")"></i>
+                                                           ? "fa-solid fa-heart"
+                                                           : "fa-regular fa-heart")"></i>
 
                         <span class="wishlist-text">
                             @(Model.IsWishlisted
@@ -477,38 +766,234 @@
                         </button>
                     }
 
-                    <!-- QUANTITY -->
+                </div>
 
-                    <div class="quantity-wrapper">
+            </div>
 
-                        <button type="button"
-                                class="qty-btn"
-                                onclick="decreaseQty()">
+        </div>
 
-                            −
+        <!-- REVIEW SECTION -->
 
-                        </button>
+        <div class="review-section">
 
-                        <span class="qty-number"
-                              id="qtyValue">
+            <!-- SUMMARY -->
 
-                            0
+            <div class="rating-summary">
 
-                        </span>
+                <div class="big-rating">
+                    @Model.AverageRating.ToString("0.0")
+                </div>
 
-                        <button type="button"
-                                class="qty-btn"
-                                onclick="increaseQty()">
+                <div class="rating-info">
 
-                            +
+                    <div class="rating-stars">
 
-                        </button>
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            if (i <= Math.Round(Model.AverageRating))
+                            {
+                                <span>★</span>
+                            }
+                            else
+                            {
+                                <span style="opacity:.25;">★</span>
+                            }
+                        }
+
+                    </div>
+
+                    <div class="rating-text">
+
+                        Based on
+                        <strong>@Model.TotalReviews</strong>
+                        reader reviews.
 
                     </div>
 
                 </div>
 
             </div>
+
+            <!-- TITLE -->
+
+            <h2 style="
+                font-size:38px;
+                font-weight:900;
+                margin-bottom:28px;">
+
+                Reader Reviews
+
+            </h2>
+
+            <!-- REVIEWS -->
+            @if (Model.Reviews != null && Model.Reviews.Any())
+            {
+                @foreach (var review in Model.Reviews)
+                {
+                    <div class="review-card">
+
+                        <div class="review-top">
+
+                            <div class="review-user">
+
+                                <div class="review-avatar">
+
+                                    @review.Member.FullName.Substring(0, 1)
+
+                                </div>
+
+                                <div class="review-user-info">
+
+                                    <h4>
+                                        @review.Member.FullName
+                                    </h4>
+
+                                    <small>
+                                        BookVerse Reader
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                            <div class="review-stars">
+
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    if (i <= review.Rating)
+                                    {
+                                        <span>★</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="opacity:.20;">★</span>
+                                    }
+                                }
+
+                            </div>
+
+                        </div>
+
+                        <div class="review-comment">
+
+                            @review.Comment
+
+                        </div>
+
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="empty-review-box">
+
+                    <h3 style="
+                            color:white;
+                            margin-bottom:10px;">
+
+                        No Reviews Yet
+
+                    </h3>
+
+                    <p>
+                        Be the first reader to review this book.
+                    </p>
+
+                </div>
+            }
+
+            <!-- REVIEW FORM -->
+            @if (User.Identity.IsAuthenticated)
+            {
+                <form asp-action="AddReview"
+                      method="post"
+                      class="review-form-card">
+
+                    <input type="hidden"
+                           name="BookId"
+                           value="@Model.Id" />
+
+                    <h3 class="review-form-title">
+                        Write Your Review
+                    </h3>
+
+                    <p class="review-form-subtitle">
+
+                        Share your reading experience and help
+                        other readers discover great books.
+
+                    </p>
+
+                    <!-- RATING -->
+
+                    <div class="review-group">
+
+                        <label class="review-label">
+
+                            Select Rating
+
+                        </label>
+
+                        <select name="Rating"
+                                class="review-select"
+                                required>
+
+                            <option value="">
+                                Choose Rating
+                            </option>
+
+                            <option value="5">
+                                ★★★★★ Excellent
+                            </option>
+
+                            <option value="4">
+                                ★★★★ Very Good
+                            </option>
+
+                            <option value="3">
+                                ★★★ Good
+                            </option>
+
+                            <option value="2">
+                                ★★ Average
+                            </option>
+
+                            <option value="1">
+                                ★ Poor
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- COMMENT -->
+
+                    <div class="review-group">
+
+                        <label class="review-label">
+
+                            Your Review
+
+                        </label>
+
+                        <textarea name="Comment"
+                              class="review-textarea"
+                              placeholder="Write your thoughts about this book..."
+                              required></textarea>
+
+                    </div>
+
+                    <!-- BUTTON -->
+
+                    <button type="submit"
+                            class="review-submit-btn">
+
+                        ✨ Submit Review
+
+                    </button>
+
+                </form>
+            }
 
         </div>
 
@@ -517,54 +1002,54 @@
 </div>
 
 <script src="~/js/wishlist.js"></script>
+  <script>  
 
-<script>
+        let qty = 0;
 
-    let qty = 0;
+        // Original stock from database
+        let totalAvailableCopies = @Model.AvailableCopies;
 
-    // Original stock from database
-    let totalAvailableCopies = @Model.AvailableCopies;
+        // Current remaining stock
+        let remainingCopies = totalAvailableCopies - qty;
 
-    // Current remaining stock
-    let remainingCopies = totalAvailableCopies - qty;
+        // Initial load
+        updateUI();
 
-    // Initial load
-    updateUI();
+        function increaseQty() {
 
-    function increaseQty() {
+            // Quantity cannot exceed available copies
+            if (qty < totalAvailableCopies) {
 
-        // Quantity cannot exceed available copies
-        if (qty < totalAvailableCopies) {
+                qty++;
 
-            qty++;
+                updateUI();
+            }
+            else {
 
-            updateUI();
+                alert("Only " + totalAvailableCopies + " copies available.");
+            }
         }
-        else {
 
-            alert("Only " + totalAvailableCopies + " copies available.");
+        function decreaseQty() {
+
+            if (qty > 1) {
+
+                qty--;
+
+                updateUI();
+            }
         }
-    }
 
-    function decreaseQty() {
+        function updateUI() {
 
-        if (qty > 1) {
+            document.getElementById("qtyValue").innerText = qty;
 
-            qty--;
+            remainingCopies = totalAvailableCopies - qty;
 
-            updateUI();
+            document.getElementById("availableCopiesText").innerText =
+                remainingCopies + " Books";
+
         }
-    }
 
-    function updateUI() {
 
-        document.getElementById("qtyValue").innerText = qty;
-
-        remainingCopies = totalAvailableCopies - qty;
-
-        document.getElementById("availableCopiesText").innerText =
-            remainingCopies + " Books";
-
-    }
-
-</script>
+  </script>

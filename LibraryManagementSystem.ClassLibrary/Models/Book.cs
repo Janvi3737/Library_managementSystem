@@ -1,4 +1,4 @@
-﻿
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
@@ -48,6 +48,7 @@ namespace LibraryManagementSystem.ClassLibrary.Models
 
         [StringLength(500)]
         public string? CoverImageUrl { get; set; }
+        public string? PdfUrl { get; set; }
 
         public int BorrowCount { get; set; }
 

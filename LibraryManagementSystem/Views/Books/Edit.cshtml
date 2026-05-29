@@ -1,4 +1,4 @@
-﻿@model LibraryManagementSystem.ClassLibrary.Models.Book
+@model LibraryManagementSystem.ClassLibrary.Models.Book
 
 @{
     ViewData["Title"] = "Edit Book";
@@ -6,89 +6,181 @@
 
 <div class="container mt-4">
 
-    <div class="card shadow-sm">
-        <div class="card-header bg-warning">
-            <h4 class="mb-0">✏ Edit Book</h4>
+    <div class="card shadow-sm border-0 rounded-4">
+
+        <!-- HEADER -->
+        <div class="card-header bg-warning text-dark rounded-top-4">
+
+            <h4 class="mb-0 fw-bold">
+                ✏ Edit Book
+            </h4>
+
         </div>
 
-        <div class="card-body">
+        <!-- BODY -->
+        <div class="card-body p-4">
+
             @if (TempData["Error"] != null)
             {
-                <div class="alert alert-danger">
+                <div class="alert alert-danger alert-dismissible fade show">
+
                     @TempData["Error"]
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="alert"></button>
+
                 </div>
             }
-            <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+
+            <form asp-action="Edit"
+                  asp-route-id="@Model.Id"
+                  method="post"
+                  enctype="multipart/form-data">
+
+                <!-- HIDDEN -->
 
                 <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="PdfUrl" />
 
-                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <!-- VALIDATION -->
 
-                <!-- Title -->
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3"></div>
+
+                <!-- TITLE -->
+
                 <div class="mb-3">
-                    <label asp-for="Title"></label>
-                    <input asp-for="Title" class="form-control" />
-                    <span asp-validation-for="Title" class="text-danger"></span>
+
+                    <label asp-for="Title"
+                           class="form-label fw-semibold"></label>
+
+                    <input asp-for="Title"
+                           class="form-control" />
+
+                    <span asp-validation-for="Title"
+                          class="text-danger"></span>
+
                 </div>
 
                 <!-- ISBN -->
+
                 <div class="mb-3">
-                    <label asp-for="ISBN"></label>
-                    <input asp-for="ISBN" class="form-control" />
-                    <span asp-validation-for="ISBN" class="text-danger"></span>
+
+                    <label asp-for="ISBN"
+                           class="form-label fw-semibold"></label>
+
+                    <input asp-for="ISBN"
+                           class="form-control" />
+
+                    <span asp-validation-for="ISBN"
+                          class="text-danger"></span>
+
                 </div>
 
-                <!-- Author -->
+                <!-- AUTHOR -->
+
                 <div class="mb-3">
-                    <label>Author</label>
-                    <select asp-for="AuthorId" class="form-select" asp-items="ViewBag.AuthorList">
-                        <option value="">-- Select Author --</option>
+
+                    <label class="form-label fw-semibold">
+                        Author
+                    </label>
+
+                    <select asp-for="AuthorId"
+                            class="form-select"
+                            asp-items="ViewBag.AuthorList">
+
+                        <option value="">
+                            -- Select Author --
+                        </option>
+
                     </select>
 
-                    <span asp-validation-for="AuthorId" class="text-danger"></span>
+                    <span asp-validation-for="AuthorId"
+                          class="text-danger"></span>
+
                 </div>
 
-                <!-- Category -->
+                <!-- CATEGORY -->
+
                 <div class="mb-3">
-                    <label>Category</label>
-                    <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.CategoryList">
-                        <option value="">-- Select Category --</option>
+
+                    <label class="form-label fw-semibold">
+                        Category
+                    </label>
+
+                    <select asp-for="CategoryId"
+                            class="form-select"
+                            asp-items="ViewBag.CategoryList">
+
+                        <option value="">
+                            -- Select Category --
+                        </option>
+
                     </select>
 
-                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                    <span asp-validation-for="CategoryId"
+                          class="text-danger"></span>
+
                 </div>
 
-                <!-- Department -->
+                <!-- DEPARTMENT -->
+
                 <div class="mb-3">
-                    <label>Department</label>
+
+                    <label class="form-label fw-semibold">
+                        Department
+                    </label>
 
                     <select asp-for="DepartmentId"
                             class="form-select"
                             asp-items="ViewBag.DepartmentList">
 
-                        <option value="">-- Select Department --</option>
+                        <option value="">
+                            -- Select Department --
+                        </option>
 
                     </select>
+
                 </div>
 
-                <!-- Total Pages -->
+                <!-- TOTAL PAGES -->
+
                 <div class="mb-3">
-                    <label asp-for="TotalPages"></label>
-                    <input asp-for="TotalPages" class="form-control" />
+
+                    <label asp-for="TotalPages"
+                           class="form-label fw-semibold"></label>
+
+                    <input asp-for="TotalPages"
+                           class="form-control" />
+
+                    <span asp-validation-for="TotalPages"
+                          class="text-danger"></span>
+
                 </div>
 
-                <!-- Description -->
+                <!-- DESCRIPTION -->
+
                 <div class="mb-3">
-                    <label asp-for="Description"></label>
+
+                    <label asp-for="Description"
+                           class="form-label fw-semibold"></label>
+
                     <textarea asp-for="Description"
                               class="form-control"
-                              rows="4"></textarea>
+                              rows="5"></textarea>
+
+                    <span asp-validation-for="Description"
+                          class="text-danger"></span>
+
                 </div>
 
-                <!-- Cover Image -->
+                <!-- COVER IMAGE -->
+
                 <div class="mb-3">
 
-                    <label asp-for="CoverImageUrl"></label>
+                    <label asp-for="CoverImageUrl"
+                           class="form-label fw-semibold"></label>
 
                     <input asp-for="CoverImageUrl"
                            class="form-control" />
@@ -98,52 +190,155 @@
 
                 </div>
 
+                <!-- CURRENT COVER -->
                 @if (!string.IsNullOrWhiteSpace(Model.CoverImageUrl))
                 {
-                    <div class="mb-3">
+                    <div class="mb-4">
+
+                        <label class="form-label fw-bold d-block">
+                            Current Cover
+                        </label>
 
                         <img src="@Model.CoverImageUrl"
-                             width="150"
-                             class="img-thumbnail" />
+                             width="160"
+                             class="img-thumbnail shadow-sm rounded-3" />
 
                     </div>
                 }
 
-                <!-- Total Copies -->
-                <div class="mb-3">
-                    <label asp-for="TotalCopies"></label>
-                    <input asp-for="TotalCopies" class="form-control" />
-                </div>
+                <!-- PDF UPLOAD -->
 
-                <!-- Available Copies -->
                 <div class="mb-3">
-                    <label asp-for="AvailableCopies"></label>
-                    <input asp-for="AvailableCopies" class="form-control" />
-                    <span asp-validation-for="AvailableCopies" class="text-danger"></span>
-                </div>
 
-                <div class="form-check mb-3">
-                    <input asp-for="IsFeatured" class="form-check-input" />
-                    <label asp-for="IsFeatured" class="form-check-label">
-                        Editor's Pick
+                    <label class="form-label fw-bold">
+                        Upload PDF
                     </label>
+
+                    <input type="file"
+                           name="PdfFile"
+                           class="form-control"
+                           accept=".pdf" />
+
+                    <small class="text-muted">
+                        Only PDF files allowed.
+                    </small>
+
                 </div>
 
-                <!-- Buttons -->
-                <div class="d-flex justify-content-between">
-                    <a asp-action="Index" class="btn btn-secondary">⬅ Back</a>
-                    <button type="submit" class="btn btn-success">Update</button>
+                <!-- CURRENT PDF -->
+                @if (!string.IsNullOrWhiteSpace(Model.PdfUrl))
+                {
+                    <div class="mb-4">
+
+                        <label class="form-label fw-bold d-block">
+                            Current PDF
+                        </label>
+
+                        <div class="d-flex flex-wrap gap-2">
+
+                            <!-- VIEW -->
+
+                            <a href="@Model.PdfUrl"
+                               target="_blank"
+                               class="btn btn-danger">
+
+                                📄 View PDF
+
+                            </a>
+
+                            <!-- DOWNLOAD -->
+
+                            <a href="@Model.PdfUrl"
+                               download
+                               class="btn btn-outline-dark">
+
+                                ⬇ Download PDF
+
+                            </a>
+
+                        </div>
+
+                    </div>
+                }
+
+                <!-- TOTAL COPIES -->
+
+                <div class="mb-3">
+
+                    <label asp-for="TotalCopies"
+                           class="form-label fw-semibold"></label>
+
+                    <input asp-for="TotalCopies"
+                           class="form-control" />
+
+                    <span asp-validation-for="TotalCopies"
+                          class="text-danger"></span>
+
+                </div>
+
+                <!-- AVAILABLE COPIES -->
+
+                <div class="mb-3">
+
+                    <label asp-for="AvailableCopies"
+                           class="form-label fw-semibold"></label>
+
+                    <input asp-for="AvailableCopies"
+                           class="form-control" />
+
+                    <span asp-validation-for="AvailableCopies"
+                          class="text-danger"></span>
+
+                </div>
+
+                <!-- FEATURED -->
+
+                <div class="form-check mb-4">
+
+                    <input asp-for="IsFeatured"
+                           class="form-check-input" />
+
+                    <label asp-for="IsFeatured"
+                           class="form-check-label fw-semibold">
+
+                        ⭐ Editor's Pick
+
+                    </label>
+
+                </div>
+
+                <!-- BUTTONS -->
+
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+                    <a asp-action="Index"
+                       class="btn btn-secondary px-4">
+
+                        ⬅ Back
+
+                    </a>
+
+                    <button type="submit"
+                            class="btn btn-success px-4">
+
+                        💾 Update Book
+
+                    </button>
+
                 </div>
 
             </form>
 
         </div>
+
     </div>
 
 </div>
 
 @section Scripts {
+
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
 }

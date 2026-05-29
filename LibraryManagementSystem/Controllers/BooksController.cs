@@ -112,7 +112,9 @@ namespace LibraryManagementSystem.Controllers
         // =========================
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Book book)
+        public async Task<IActionResult> Create(
+            Book book,
+            IFormFile? PdfFile)
         {
             ValidateBook(book);
 
@@ -123,11 +125,54 @@ namespace LibraryManagementSystem.Controllers
             {
                 ModelState.AddModelError(
                     "ISBN",
-                    "This ISBN already exists."
-                );
+                    "This ISBN already exists.");
             }
 
             book.AvailableCopies = book.TotalCopies;
+
+            // PDF UPLOAD
+            if (PdfFile != null && PdfFile.Length > 0)
+            {
+                // CHECK PDF EXTENSION
+                if (Path.GetExtension(PdfFile.FileName)
+                    .ToLower() != ".pdf")
+                {
+                    ModelState.AddModelError(
+                        "PdfFile",
+                        "Only PDF files are allowed.");
+                }
+                else
+                {
+                    string pdfFolder = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "wwwroot",
+                        "pdfs");
+
+                    // CREATE FOLDER
+                    if (!Directory.Exists(pdfFolder))
+                    {
+                        Directory.CreateDirectory(pdfFolder);
+                    }
+
+                    // UNIQUE FILE NAME
+                    string fileName =
+                        Guid.NewGuid().ToString()
+                        + Path.GetExtension(PdfFile.FileName);
+
+                    string filePath =
+                        Path.Combine(pdfFolder, fileName);
+
+                    // SAVE FILE
+                    using (var stream =
+                           new FileStream(filePath, FileMode.Create))
+                    {
+                        await PdfFile.CopyToAsync(stream);
+                    }
+
+                    // SAVE URL
+                    book.PdfUrl = "/pdfs/" + fileName;
+                }
+            }
 
             if (ModelState.IsValid)
             {
@@ -166,7 +211,7 @@ namespace LibraryManagementSystem.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             var book = await _context.Books
-                .FindAsync(id);
+                .FirstOrDefaultAsync(b => b.Id == id);
 
             if (book == null)
                 return NotFound();
@@ -184,14 +229,16 @@ namespace LibraryManagementSystem.Controllers
         // =========================
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Book book)
+        public async Task<IActionResult> Edit(
+            int id,
+            Book book,
+            IFormFile? PdfFile)
         {
             if (id != book.Id)
             {
                 return NotFound();
             }
 
-            // VALIDATION
             ValidateBook(book);
 
             // CHECK DUPLICATE ISBN
@@ -207,7 +254,7 @@ namespace LibraryManagementSystem.Controllers
                     "This ISBN already exists.");
             }
 
-            // CHECK AVAILABLE COPIES
+            // AVAILABLE COPIES VALIDATION
             if (book.AvailableCopies > book.TotalCopies)
             {
                 ModelState.AddModelError(
@@ -215,7 +262,6 @@ namespace LibraryManagementSystem.Controllers
                     "Available copies cannot exceed total copies.");
             }
 
-            // MODEL VALIDATION
             if (!ModelState.IsValid)
             {
                 LoadDropdowns(
@@ -229,14 +275,14 @@ namespace LibraryManagementSystem.Controllers
             try
             {
                 var existingBook = await _context.Books
-                    .FirstOrDefaultAsync(x => x.Id == id);
+                    .FirstOrDefaultAsync(b => b.Id == id);
 
                 if (existingBook == null)
                 {
                     return NotFound();
                 }
 
-                // UPDATE
+                // UPDATE BOOK
                 existingBook.Title = book.Title;
                 existingBook.ISBN = book.ISBN;
                 existingBook.AuthorId = book.AuthorId;
@@ -248,6 +294,71 @@ namespace LibraryManagementSystem.Controllers
                 existingBook.TotalCopies = book.TotalCopies;
                 existingBook.AvailableCopies = book.AvailableCopies;
                 existingBook.IsFeatured = book.IsFeatured;
+
+                // PDF UPLOAD
+                if (PdfFile != null && PdfFile.Length > 0)
+                {
+                    // VALIDATE PDF
+                    if (Path.GetExtension(PdfFile.FileName)
+                        .ToLower() != ".pdf")
+                    {
+                        ModelState.AddModelError(
+                            "PdfFile",
+                            "Only PDF files are allowed.");
+
+                        LoadDropdowns(
+                            book.CategoryId,
+                            book.AuthorId,
+                            book.DepartmentId);
+
+                        return View(book);
+                    }
+
+                    string pdfFolder = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "wwwroot",
+                        "pdfs");
+
+                    // CREATE FOLDER
+                    if (!Directory.Exists(pdfFolder))
+                    {
+                        Directory.CreateDirectory(pdfFolder);
+                    }
+
+                    // DELETE OLD PDF
+                    if (!string.IsNullOrWhiteSpace(existingBook.PdfUrl))
+                    {
+                        string oldPdfPath = Path.Combine(
+                            Directory.GetCurrentDirectory(),
+                            "wwwroot",
+                            existingBook.PdfUrl.TrimStart('/'));
+
+                        if (System.IO.File.Exists(oldPdfPath))
+                        {
+                            System.IO.File.Delete(oldPdfPath);
+                        }
+                    }
+
+                    // NEW FILE NAME
+                    string fileName =
+                        Guid.NewGuid().ToString()
+                        + Path.GetExtension(PdfFile.FileName);
+
+                    string filePath =
+                        Path.Combine(pdfFolder, fileName);
+
+                    // SAVE NEW PDF
+                    using (var stream =
+                           new FileStream(filePath, FileMode.Create))
+                    {
+                        await PdfFile.CopyToAsync(stream);
+                    }
+
+                    // UPDATE PDF URL
+                    existingBook.PdfUrl = "/pdfs/" + fileName;
+                }
+
+                _context.Books.Update(existingBook);
 
                 await _context.SaveChangesAsync();
 
@@ -311,6 +422,20 @@ namespace LibraryManagementSystem.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            // DELETE PDF
+            if (!string.IsNullOrWhiteSpace(book.PdfUrl))
+            {
+                string pdfPath = Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    "wwwroot",
+                    book.PdfUrl.TrimStart('/'));
+
+                if (System.IO.File.Exists(pdfPath))
+                {
+                    System.IO.File.Delete(pdfPath);
+                }
+            }
+
             _context.Books.Remove(book);
 
             await _context.SaveChangesAsync();
@@ -320,7 +445,6 @@ namespace LibraryManagementSystem.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
 
         // =========================
         // EXPORT EXCEL
@@ -365,20 +489,46 @@ namespace LibraryManagementSystem.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            int deleted = 0, skipped = 0;
+            int deleted = 0;
+            int skipped = 0;
+
             foreach (var bookId in ids)
             {
-                // FK Restrict on BorrowRecord -> Book — try delete and catch.
                 try
                 {
-                    var b = await _context.Books.FindAsync(bookId);
-                    if (b == null) continue;
+                    var b = await _context.Books
+                        .FindAsync(bookId);
 
-                    var inUse = await _context.BorrowRecords.AnyAsync(br => br.BookId == bookId);
-                    if (inUse) { skipped++; continue; }
+                    if (b == null)
+                        continue;
+
+                    bool inUse = await _context.BorrowRecords
+                        .AnyAsync(br => br.BookId == bookId);
+
+                    if (inUse)
+                    {
+                        skipped++;
+                        continue;
+                    }
+
+                    // DELETE PDF
+                    if (!string.IsNullOrWhiteSpace(b.PdfUrl))
+                    {
+                        string pdfPath = Path.Combine(
+                            Directory.GetCurrentDirectory(),
+                            "wwwroot",
+                            b.PdfUrl.TrimStart('/'));
+
+                        if (System.IO.File.Exists(pdfPath))
+                        {
+                            System.IO.File.Delete(pdfPath);
+                        }
+                    }
 
                     _context.Books.Remove(b);
+
                     await _context.SaveChangesAsync();
+
                     deleted++;
                 }
                 catch
@@ -388,8 +538,9 @@ namespace LibraryManagementSystem.Controllers
             }
 
             TempData["Success"] = skipped > 0
-                ? $"Deleted {deleted}. Skipped {skipped} (in use)."
+                ? $"Deleted {deleted}. Skipped {skipped}."
                 : $"Deleted {deleted}.";
+
             return RedirectToAction(nameof(Index));
         }
 

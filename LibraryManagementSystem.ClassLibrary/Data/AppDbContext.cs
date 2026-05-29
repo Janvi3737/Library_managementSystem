@@ -45,6 +45,8 @@ namespace LibraryManagementSystem.ClassLibrary.Data
 
         public DbSet<AuditLog> AuditLogs { get; set; }
 
+        public DbSet<BookReview> BookReviews { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

@@ -1,3 +1,5 @@
+using LibraryManagementSystem.ClassLibrary.Models;
+
 namespace Library_Management_System.ViewModels
 {
     public class BookDetailsViewModel
@@ -18,7 +20,16 @@ namespace Library_Management_System.ViewModels
 
         public bool IsWishlisted { get; set; }
 
-        // ADD THIS
         public int AvailableCopies { get; set; }
+
+        public double AverageRating { get; set; }
+
+        public int TotalReviews { get; set; }
+
+        public List<BookReview>? Reviews { get; set; }
+
+        public int UserRating { get; set; }
+
+        public string? UserComment { get; set; }
     }
 }

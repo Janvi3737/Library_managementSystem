@@ -1,4 +1,4 @@
-﻿@model LibraryManagementSystem.ClassLibrary.Models.Book
+@model LibraryManagementSystem.ClassLibrary.Models.Book
 
 @{
     ViewData["Title"] = "Add New Book";
@@ -13,7 +13,7 @@
 
         <div class="card-body">
 
-            <form asp-action="Create" method="post">
+            <form asp-action="Create" method="post" enctype="multipart/form-data">
 
                 <!-- VALIDATION -->
                 <div asp-validation-summary="All" class="text-danger mb-3"></div>
@@ -72,6 +72,11 @@
                     <input asp-for="TotalPages" class="form-control" />
                 </div>
 
+                <div class="mb-3">
+                    <label asp-for="Reservations"></label>
+                    <input asp-for="Reservations" class="form-control" />
+                </div>
+
                 <!-- Description -->
                 <div class="mb-3">
                     <label asp-for="Description"></label>
@@ -82,6 +87,19 @@
                 <div class="mb-3">
                     <label asp-for="CoverImageUrl"></label>
                     <input asp-for="CoverImageUrl" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Upload PDF
+                    </label>
+
+                    <input type="file"
+                           name="PdfFile"
+                           class="form-control"
+                           accept=".pdf" />
+
                 </div>
 
                 <!-- Total Copies -->
