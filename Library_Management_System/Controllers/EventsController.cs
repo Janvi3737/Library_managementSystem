@@ -15,8 +15,10 @@ namespace Library_Management_System.Controllers
         }
 
         // UPCOMING EVENTS
-        public async Task<IActionResult> Index(string? searchQuery)
+        public async Task<IActionResult> Index(string? searchQuery, int page = 1)
         {
+            int pageSize = 6;
+
             var eventsQuery = _context.Events
                 .Where(e => e.Date >= DateTime.Today)
                 .AsQueryable();
@@ -30,13 +32,22 @@ namespace Library_Management_System.Controllers
                      e.Description.Contains(searchQuery)));
             }
 
+            int totalEvents = await eventsQuery.CountAsync();
+
             var upcomingEvents = await eventsQuery
-                .OrderBy(e => e.Date)
+                .OrderByDescending(e => e.Date) 
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+
+            ViewBag.CurrentPage = page;
+
+            ViewBag.TotalPages = (int)Math.Ceiling((double)totalEvents / pageSize);
+
+            ViewBag.SearchQuery = searchQuery;
 
             return View(upcomingEvents);
         }
-
         // EVENT DETAILS
         public async Task<IActionResult> Details(int id)
         {
@@ -50,12 +61,26 @@ namespace Library_Management_System.Controllers
         }
 
         // PAST EVENTS
-        public async Task<IActionResult> Past()
+        public async Task<IActionResult> Past(int page = 1)
         {
-            var pastEvents = await _context.Events
+            int pageSize = 6;
+
+            var query = _context.Events
                 .Where(e => e.Date < DateTime.Today)
-                .OrderByDescending(e => e.Date)
+                .OrderByDescending(e => e.Date);
+
+            int totalEvents = await query.CountAsync();
+
+            var pastEvents = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+
+            ViewBag.CurrentPage = page;
+
+            ViewBag.TotalPages = (int)Math.Ceiling(
+                totalEvents / (double)pageSize
+            );
 
             return View(pastEvents);
         }
