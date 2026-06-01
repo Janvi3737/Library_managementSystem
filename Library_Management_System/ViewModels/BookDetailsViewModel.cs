@@ -31,5 +31,6 @@ namespace Library_Management_System.ViewModels
         public int UserRating { get; set; }
 
         public string? UserComment { get; set; }
+        public string? PdfUrl { get; set; }
     }
 }

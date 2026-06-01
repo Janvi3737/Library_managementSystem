@@ -150,8 +150,11 @@ namespace Library_Management_System.Controllers
                 Title = book.Title,
                 Description = book.Description,
                 CoverImageUrl = book.CoverImageUrl,
+                PdfUrl = book.PdfUrl, // ADD THIS
+
                 AuthorName = book.Author?.Name,
                 CategoryName = book.Category?.Name,
+
                 IsAvailable = book.AvailableCopies > 0,
                 AvailableCopies = book.AvailableCopies,
                 IsWishlisted = isWishlisted,

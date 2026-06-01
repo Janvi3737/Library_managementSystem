@@ -47,6 +47,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Folder Include="wwwroot\pdfs\" />
 	  <Folder Include="wwwroot\paymentproof\" />
 	</ItemGroup>
 
