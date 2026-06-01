@@ -1,0 +1,365 @@
+@model LibraryManagementSystem.ClassLibrary.Models.BorrowRecord
+
+@{
+    Layout = "~/Areas/Member/Views/Shared/_MemberLayout.cshtml";
+}
+
+<style>
+
+    body {
+        background: #050816;
+        font-family: 'Poppins', sans-serif;
+        color: white;
+        overflow-x: hidden;
+    }
+
+    .return-section {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 50px 20px;
+    }
+
+    .return-card {
+        width: 100%;
+        max-width: 900px;
+        background: linear-gradient(145deg,#0f172a,#111827);
+        border-radius: 35px;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.05);
+        box-shadow: 0 25px 60px rgba(124,58,237,0.18);
+        position: relative;
+    }
+
+    /* TOP AREA */
+
+    .top-section {
+        background: linear-gradient(135deg,#7c3aed,#9333ea);
+        padding: 50px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .top-section::before {
+            content: "";
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+            top: -120px;
+            right: -120px;
+        }
+
+        .top-section::after {
+            content: "";
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            bottom: -100px;
+            left: -100px;
+        }
+
+    .header-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .return-icon {
+        width: 90px;
+        height: 90px;
+        border-radius: 24px;
+        background: rgba(255,255,255,0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 42px;
+        margin-bottom: 25px;
+        backdrop-filter: blur(8px);
+    }
+
+    .page-title {
+        font-size: 38px;
+        font-weight: 800;
+        margin-bottom: 10px;
+    }
+
+    .page-subtitle {
+        color: rgba(255,255,255,0.85);
+        max-width: 550px;
+        line-height: 1.7;
+        font-size: 15px;
+    }
+
+    /* BODY */
+
+    .card-body-custom {
+        padding: 40px;
+    }
+
+    .book-container {
+        background: rgba(255,255,255,0.03);
+        border-radius: 28px;
+        padding: 30px;
+        border: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .book-title {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .book-author {
+        color: #9ca3af;
+        margin-bottom: 35px;
+        font-size: 16px;
+    }
+
+    /* INFO GRID */
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
+        gap: 20px;
+    }
+
+    .info-card {
+        background: linear-gradient(145deg,#111827,#1f2937);
+        border-radius: 22px;
+        padding: 24px;
+        transition: 0.3s;
+        border: 1px solid rgba(255,255,255,0.04);
+    }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(124,58,237,0.45);
+            box-shadow: 0 10px 30px rgba(124,58,237,0.15);
+        }
+
+    .info-label {
+        color: #9ca3af;
+        font-size: 13px;
+        margin-bottom: 10px;
+    }
+
+    .info-value {
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    /* ALERT */
+
+    .alert-box {
+        margin-top: 30px;
+        background: rgba(220,38,38,0.12);
+        border: 1px solid rgba(220,38,38,0.25);
+        color: #fca5a5;
+        padding: 20px;
+        border-radius: 18px;
+        line-height: 1.7;
+    }
+
+    /* BUTTONS */
+
+    .button-group {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 40px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .back-btn {
+        color: #9ca3af;
+        text-decoration: none;
+        transition: 0.3s;
+        font-weight: 500;
+    }
+
+        .back-btn:hover {
+            color: white;
+        }
+
+    .confirm-btn {
+        border: none;
+        background: linear-gradient(90deg,#7c3aed,#9333ea);
+        color: white;
+        padding: 15px 34px;
+        border-radius: 18px;
+        font-weight: 700;
+        font-size: 15px;
+        transition: 0.3s;
+        box-shadow: 0 15px 30px rgba(124,58,237,0.30);
+    }
+
+        .confirm-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 35px rgba(124,58,237,0.40);
+        }
+
+    /* RESPONSIVE */
+
+    @@media(max-width:768px) {
+
+        .top-section {
+            padding: 35px 25px;
+        }
+
+        .card-body-custom {
+            padding: 25px;
+        }
+
+        .page-title {
+            font-size: 30px;
+        }
+
+        .book-title {
+            font-size: 24px;
+        }
+
+        .button-group {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .confirm-btn {
+            width: 100%;
+        }
+    }
+
+</style>
+
+<div class="return-section">
+
+    <div class="return-card">
+
+        <!-- TOP -->
+
+        <div class="top-section">
+
+            <div class="header-content">
+
+                <div class="return-icon">
+                    📚
+                </div>
+
+                <div class="page-title">
+                    Return Book
+                </div>
+
+                <div class="page-subtitle">
+
+                    Please review your borrowing information
+                    carefully before confirming the return process.
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- BODY -->
+
+        <div class="card-body-custom">
+
+            <div class="book-container">
+
+                <div class="book-title">
+                    @Model.Book.Title
+                </div>
+
+                <div class="book-author">
+                    by @Model.Book.Author.Name
+                </div>
+
+                <div class="info-grid">
+
+                    <div class="info-card">
+
+                        <div class="info-label">
+                            Borrow Date
+                        </div>
+
+                        <div class="info-value">
+                            @Model.IssuedOn.ToShortDateString()
+                        </div>
+
+                    </div>
+
+                    <div class="info-card">
+
+                        <div class="info-label">
+                            Due Date
+                        </div>
+
+                        <div class="info-value">
+                            @Model.DueDate.ToShortDateString()
+                        </div>
+
+                    </div>
+
+                    <div class="info-card">
+
+                        <div class="info-label">
+                            Fine Per Day
+                        </div>
+
+                        <div class="info-value">
+                            ₹@Model.FinePerDay
+                        </div>
+
+                    </div>
+
+                </div>
+
+                @if (Model.DueDate < DateTime.Now)
+                {
+                    <div class="alert-box">
+
+                        ⚠ This book is overdue.
+                        Additional fine charges may apply
+                        after confirming the return process.
+
+                    </div>
+                }
+
+                <form asp-action="ReturnBookConfirmed"
+                      method="post">
+
+                    <input type="hidden"
+                           name="id"
+                           value="@Model.Id" />
+
+                    <div class="button-group">
+
+                        <a asp-action="Index"
+                           class="back-btn">
+
+                            ← Back to Borrow History
+
+                        </a>
+
+                        <button type="submit"
+                                class="confirm-btn">
+
+                            Confirm Return
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

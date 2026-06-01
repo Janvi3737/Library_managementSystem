@@ -1,4 +1,4 @@
-﻿@{
+@{
     Layout = "~/Areas/Member/Views/Shared/_MemberLayout.cshtml";
 }
 @model List<Library_Management_System.ViewModels.BorrowHistoryViewModel>
@@ -296,6 +296,21 @@
                             </div>
 
                         </div>
+                        @if (item.Status != "Returned")
+                        {
+                            <div class="mt-4 d-flex justify-content-end">
+
+                                <a asp-action="ReturnBook"
+                                   asp-controller="BorrowHistory"
+                                   asp-route-id="@item.Id"
+                                   class="btn btn-danger px-4">
+
+                                    Return Book
+
+                                </a>
+
+                            </div>
+                        }
 
                     </div>
 

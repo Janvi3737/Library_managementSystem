@@ -47,6 +47,8 @@ namespace LibraryManagementSystem.ClassLibrary.Data
 
         public DbSet<BookReview> BookReviews { get; set; }
 
+        public DbSet<EventReservation> EventReservations { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

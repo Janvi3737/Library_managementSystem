@@ -1,0 +1,231 @@
+@model List<LibraryManagementSystem.ClassLibrary.Models.EventReservation>
+
+@{
+    Layout = "~/Areas/Member/Views/Shared/_MemberLayout.cshtml";
+    ViewData["Title"] = "My Event Reservations";
+}
+
+<style>
+
+    body {
+        background: #050816;
+        color: white;
+    }
+
+    .reservation-wrapper {
+        padding: 30px;
+    }
+
+    .page-title {
+        font-size: 34px;
+        font-weight: 800;
+        margin-bottom: 30px;
+    }
+
+    .reservation-card {
+        background: linear-gradient(145deg,#0f172a,#111827);
+        border-radius: 24px;
+        padding: 24px;
+        margin-bottom: 22px;
+        border: 1px solid rgba(255,255,255,0.05);
+        transition: 0.3s;
+    }
+
+        .reservation-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .event-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: white;
+    }
+
+    .event-location {
+        color: #9ca3af;
+        margin-top: 5px;
+    }
+
+    .reservation-info {
+        margin-top: 20px;
+        display: flex;
+        gap: 40px;
+        flex-wrap: wrap;
+    }
+
+    .info-box {
+        background: rgba(255,255,255,0.04);
+        padding: 14px 18px;
+        border-radius: 14px;
+        min-width: 180px;
+    }
+
+    .info-title {
+        color: #9ca3af;
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+
+    .info-value {
+        font-size: 18px;
+        font-weight: 700;
+        color: white;
+    }
+
+    .status-badge {
+        padding: 8px 16px;
+        border-radius: 30px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .pending {
+        background: #f59e0b;
+        color: #111827;
+    }
+
+    .approved {
+        background: #10b981;
+        color: white;
+    }
+
+    .rejected {
+        background: #ef4444;
+        color: white;
+    }
+
+    .empty-box {
+        background: rgba(255,255,255,0.03);
+        border-radius: 20px;
+        padding: 50px;
+        text-align: center;
+        color: #9ca3af;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    @@media(max-width:768px) {
+
+        .reservation-wrapper {
+            padding: 20px;
+        }
+
+        .reservation-info {
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .info-box {
+            width: 100%;
+        }
+
+        .page-title {
+            font-size: 28px;
+        }
+
+        .event-title {
+            font-size: 20px;
+        }
+    }
+
+</style>
+
+<div class="reservation-wrapper">
+
+    <div class="page-title">
+        🎟️ My Event Reservations
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="empty-box">
+            No event reservations found.
+        </div>
+    }
+
+    @foreach (var item in Model)
+    {
+        <div class="reservation-card">
+
+            <div class="d-flex justify-content-between align-items-start">
+
+                <div>
+
+                    <div class="event-title">
+                        @item.Event?.Title
+                    </div>
+
+                    <div class="event-location">
+                        📍 @item.Event?.Location
+                    </div>
+
+                </div>
+
+                <div>
+
+                    @if (item.Status.ToString() == "Pending")
+                    {
+                        <span class="status-badge pending">
+                            Pending
+                        </span>
+                    }
+                    else if (item.Status.ToString() == "Approved")
+                    {
+                        <span class="status-badge approved">
+                            Approved
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="status-badge rejected">
+                            Rejected
+                        </span>
+                    }
+
+                </div>
+
+            </div>
+
+            <div class="reservation-info">
+
+                <div class="info-box">
+
+                    <div class="info-title">
+                        Event Date
+                    </div>
+
+                    <div class="info-value">
+                        @(item.Event?.Date.ToString("dd MMM yyyy"))
+                    </div>
+
+                </div>
+
+                <div class="info-box">
+
+                    <div class="info-title">
+                        Reserved On
+                    </div>
+
+                    <div class="info-value">
+                        @item.ReservedOn.ToString("dd MMM yyyy")
+                    </div>
+
+                </div>
+
+                <div class="info-box">
+
+                    <div class="info-title">
+                        Status
+                    </div>
+
+                    <div class="info-value">
+                        @item.Status
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+
+</div>

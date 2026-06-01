@@ -144,14 +144,31 @@ namespace Library_Management_System.Controllers
                     .AnyAsync(w => w.BookId == id && w.MemberId == userId);
             }
 
+            bool hasMembership = false;
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                var member = await _context.Members
+                    .FirstOrDefaultAsync(m => m.ApplicationUserId == userId);
+
+                if (member != null)
+                {
+                    hasMembership = await _context.Memberships
+                        .AnyAsync(m =>
+                            m.MemberId == member.Id &&
+                            m.IsActive &&
+                            m.EndDate >= DateTime.Now);
+                }
+            }
+
             var vm = new BookDetailsViewModel
             {
                 Id = book.Id,
                 Title = book.Title,
                 Description = book.Description,
                 CoverImageUrl = book.CoverImageUrl,
-                PdfUrl = book.PdfUrl, // ADD THIS
-
+                PdfUrl = book.PdfUrl,
+                PreviewPdfUrl = book.PreviewPdfUrl,
                 AuthorName = book.Author?.Name,
                 CategoryName = book.Category?.Name,
 
@@ -161,7 +178,9 @@ namespace Library_Management_System.Controllers
 
                 AverageRating = avgRating,
                 TotalReviews = reviews.Count,
-                Reviews = reviews
+                Reviews = reviews,
+
+                HasMembership = hasMembership
             };
 
             return View(vm);

@@ -1,0 +1,111 @@
+@model LibraryManagementSystem.ClassLibrary.Models.Event
+
+@{
+    Layout = "~/Areas/Member/Views/Shared/_MemberLayout.cshtml";
+}
+
+<style>
+    body {
+        background: #050816;
+        color: white;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .confirm-wrapper {
+        display: flex;
+        justify-content: center;
+        padding: 60px 20px;
+    }
+
+    .confirm-card {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        max-width: 1100px;
+        width: 100%;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 28px;
+        overflow: hidden;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+    }
+
+    .left {
+        padding: 40px;
+        background: linear-gradient(135deg,#7c3aed,#d946ef);
+    }
+
+        .left h1 {
+            font-size: 36px;
+            font-weight: 900;
+        }
+
+        .left p {
+            margin-top: 12px;
+            opacity: 0.9;
+        }
+
+    .right {
+        padding: 40px;
+    }
+
+    .info-box {
+        background: rgba(255,255,255,0.05);
+        padding: 16px;
+        border-radius: 14px;
+        margin-bottom: 12px;
+    }
+
+    .btn-confirm {
+        width: 100%;
+        padding: 16px;
+        border: none;
+        border-radius: 14px;
+        background: #22c55e;
+        font-weight: 700;
+        color: white;
+        margin-top: 20px;
+    }
+</style>
+
+<div class="confirm-wrapper">
+
+    <div class="confirm-card">
+
+        <div class="left">
+            <h1>@Model.Title</h1>
+            <p>@Model.Description</p>
+        </div>
+
+        <div class="right">
+
+            <div class="info-box">
+                <b>Date:</b> @Model.Date.ToString("dd MMM yyyy")
+            </div>
+
+            <div class="info-box">
+                <b>Location:</b> @Model.Location
+            </div>
+
+            <div class="info-box">
+                <b>Status:</b> Confirm reservation to continue
+            </div>
+
+            <form asp-area="Member"
+                  asp-controller="EventReservation"
+                  asp-action="ConfirmReservation"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="eventId" value="@Model.Id" />
+
+                <button class="btn-confirm">
+                    Confirm Reservation
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>

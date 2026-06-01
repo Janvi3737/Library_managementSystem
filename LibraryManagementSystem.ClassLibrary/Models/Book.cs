@@ -49,6 +49,7 @@ namespace LibraryManagementSystem.ClassLibrary.Models
         [StringLength(500)]
         public string? CoverImageUrl { get; set; }
         public string? PdfUrl { get; set; }
+        public string? PreviewPdfUrl { get; set; }
 
         public int BorrowCount { get; set; }
 

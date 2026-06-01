@@ -201,6 +201,9 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                     b.Property<string>("PdfUrl")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PreviewPdfUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -423,6 +426,36 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("LibraryManagementSystem.ClassLibrary.Models.EventReservation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MemberId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ReservedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.HasIndex("MemberId");
+
+                    b.ToTable("EventReservations");
                 });
 
             modelBuilder.Entity("LibraryManagementSystem.ClassLibrary.Models.LibrarySettings", b =>
@@ -871,6 +904,25 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                         .IsRequired();
 
                     b.Navigation("Book");
+
+                    b.Navigation("Member");
+                });
+
+            modelBuilder.Entity("LibraryManagementSystem.ClassLibrary.Models.EventReservation", b =>
+                {
+                    b.HasOne("LibraryManagementSystem.ClassLibrary.Models.Event", "Event")
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LibraryManagementSystem.ClassLibrary.Models.Member", "Member")
+                        .WithMany()
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
 
                     b.Navigation("Member");
                 });

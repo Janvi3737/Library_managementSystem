@@ -146,6 +146,7 @@ namespace LibraryManagementSystem.Controllers
                     string pdfFolder = Path.Combine(
                         Directory.GetCurrentDirectory(),
                         "wwwroot",
+                        "uploads",
                         "pdfs");
 
                     // CREATE FOLDER
@@ -166,11 +167,11 @@ namespace LibraryManagementSystem.Controllers
                     using (var stream =
                            new FileStream(filePath, FileMode.Create))
                     {
-                        await PdfFile.CopyToAsync(stream);
+                        await PdfFile .CopyToAsync(stream);
                     }
 
                     // SAVE URL
-                    book.PdfUrl = "/pdfs/" + fileName;
+                    book.PdfUrl = "/uploads/pdfs/" + fileName;
                 }
             }
 
@@ -275,7 +276,7 @@ namespace LibraryManagementSystem.Controllers
             try
             {
                 var existingBook = await _context.Books
-                    .FirstOrDefaultAsync(b => b.Id == id);
+     .FirstOrDefaultAsync(b => b.Id == id);
 
                 if (existingBook == null)
                 {
@@ -317,6 +318,7 @@ namespace LibraryManagementSystem.Controllers
                     string pdfFolder = Path.Combine(
                         Directory.GetCurrentDirectory(),
                         "wwwroot",
+                        "uploads",
                         "pdfs");
 
                     // CREATE FOLDER
@@ -352,10 +354,14 @@ namespace LibraryManagementSystem.Controllers
                            new FileStream(filePath, FileMode.Create))
                     {
                         await PdfFile.CopyToAsync(stream);
+                        if (!System.IO.File.Exists(filePath))
+                        {
+                            throw new Exception("PDF not saved.");
+                        }
                     }
 
                     // UPDATE PDF URL
-                    existingBook.PdfUrl = "/pdfs/" + fileName;
+                    existingBook.PdfUrl = "/uploads/pdfs/" + fileName;
                 }
 
                 _context.Books.Update(existingBook);
@@ -753,6 +759,21 @@ namespace LibraryManagementSystem.Controllers
                     "TotalPages",
                     "Enter valid total pages");
             }
+        }
+
+        public IActionResult ViewPdf(int id)
+        {
+            var book = _context.Books.FirstOrDefault(b => b.Id == id);
+
+            if (book == null || string.IsNullOrEmpty(book.PdfUrl))
+                return NotFound();
+
+            string path = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "wwwroot",
+                book.PdfUrl.TrimStart('/'));
+
+            return PhysicalFile(path, "application/pdf");
         }
     }
 }

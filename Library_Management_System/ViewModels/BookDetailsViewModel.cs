@@ -32,5 +32,9 @@ namespace Library_Management_System.ViewModels
 
         public string? UserComment { get; set; }
         public string? PdfUrl { get; set; }
+
+        public string? PreviewPdfUrl { get; set; }
+
+        public bool HasMembership { get; set; }
     }
 }

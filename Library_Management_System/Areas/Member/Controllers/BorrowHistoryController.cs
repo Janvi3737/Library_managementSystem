@@ -97,5 +97,56 @@ namespace Library_Management_System.Areas.Member.Controllers
 
             return View(history);
         }
+        [HttpGet]
+        public async Task<IActionResult> ReturnBook(int id)
+        {
+            var borrow = await _context.BorrowRecords
+                .Include(x => x.Book)
+                .ThenInclude(x => x.Author)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (borrow == null)
+            {
+                return NotFound();
+            }
+
+            return View(borrow);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ReturnBookConfirmed(int id)
+        {
+            var borrow = await _context.BorrowRecords
+                .Include(x => x.Book)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (borrow == null)
+            {
+                return NotFound();
+            }
+
+            // Already returned check
+
+            if (borrow.ReturnedOn != null)
+            {
+                TempData["Error"] = "Book already returned.";
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Return process
+
+            borrow.ReturnedOn = DateTime.Now;
+
+            // Increase available copies
+
+            borrow.Book.AvailableCopies += 1;
+
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Book returned successfully.";
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

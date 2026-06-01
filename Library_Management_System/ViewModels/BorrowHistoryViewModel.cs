@@ -1,4 +1,4 @@
-﻿namespace Library_Management_System.ViewModels
+namespace Library_Management_System.ViewModels
 {
     public class BorrowHistoryViewModel
     {
@@ -17,5 +17,6 @@
         public decimal FineAmount { get; set; }
 
         public string Status { get; set; }
+        public int BorrowId { get; set; }
     }
 }

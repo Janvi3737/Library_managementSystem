@@ -37,7 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\pdfs\" />
+    <Folder Include="wwwroot\uploads\pdfs\" />
   </ItemGroup>
 
 </Project>
