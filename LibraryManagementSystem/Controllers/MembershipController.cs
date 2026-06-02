@@ -67,40 +67,22 @@ namespace LibraryManagementSystem.Controllers
             membership.IsActive = true;
 
             // ================= FEES =================
+            // Pulls from LibrarySettings so the admin-editable Settings page
+            // actually controls fees — the previous hardcoded ladder ignored
+            // edits and produced different fees from the user-app Buy flow.
+            var settings = await _context.LibrarySettings.FirstOrDefaultAsync()
+                           ?? new LibrarySettings();
 
-            if (membership.MembershipType == "Student")
+            membership.Fee = (membership.MembershipType, membership.DurationMonths) switch
             {
-                if (membership.DurationMonths == 3)
-                    membership.Fee = 400;
-
-                else if (membership.DurationMonths == 6)
-                    membership.Fee = 600;
-
-                else if (membership.DurationMonths == 12)
-                    membership.Fee = 1000;
-            }
-            else if (membership.MembershipType == "Regular")
-            {
-                if (membership.DurationMonths == 3)
-                    membership.Fee = 600;
-
-                else if (membership.DurationMonths == 6)
-                    membership.Fee = 1000;
-
-                else if (membership.DurationMonths == 12)
-                    membership.Fee = 1500;
-            }
-            else if (membership.MembershipType == "Premium")
-            {
-                if (membership.DurationMonths == 3)
-                    membership.Fee = 1000;
-
-                else if (membership.DurationMonths == 6)
-                    membership.Fee = 1800;
-
-                else if (membership.DurationMonths == 12)
-                    membership.Fee = 3000;
-            }
+                ("Student", 1)  => settings.StudentMonthly,
+                ("Student", _)  => settings.StudentAnnual,
+                ("Regular", 1)  => settings.RegularMonthly,
+                ("Regular", _)  => settings.RegularAnnual,
+                ("Premium", 1)  => settings.PremiumMonthly,
+                ("Premium", _)  => settings.PremiumAnnual,
+                _               => 0m
+            };
 
             _context.Memberships.Add(membership);
 

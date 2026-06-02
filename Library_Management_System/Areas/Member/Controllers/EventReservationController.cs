@@ -57,19 +57,26 @@ namespace Library_Management_System.Areas.Member.Controllers
             var already = await _context.EventReservations
                 .AnyAsync(x => x.EventId == eventId && x.MemberId == memberId);
 
-            if (!already)
+            if (already)
             {
-                var reservation = new EventReservation
-                {
-                    EventId = eventId,
-                    MemberId = memberId,
-                    ReservedOn = DateTime.Now,
-                    Status = "Reserved"
-                };
-
-                _context.EventReservations.Add(reservation);
-                await _context.SaveChangesAsync();
+                // Tell the user the truth instead of pretending a no-op
+                // succeeded. The old code silently skipped the insert AND
+                // claimed "Seat reserved successfully" — confusing retries.
+                TempData["Info"] =
+                    "You already reserved a seat for this event.";
+                return RedirectToAction(nameof(MyReservations));
             }
+
+            var reservation = new EventReservation
+            {
+                EventId = eventId,
+                MemberId = memberId,
+                ReservedOn = DateTime.Now,
+                Status = "Reserved"
+            };
+
+            _context.EventReservations.Add(reservation);
+            await _context.SaveChangesAsync();
 
             TempData["Success"] = "Seat reserved successfully.";
 

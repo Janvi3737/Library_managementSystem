@@ -366,7 +366,7 @@ namespace LibraryManagementSystem.Controllers
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            TempData["success"] = "Logged out successfully.";
+            TempData["Success"] = "Logged out successfully.";
             return RedirectToAction("Login");
         }
 

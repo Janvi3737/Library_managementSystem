@@ -179,6 +179,28 @@ namespace Library_Management_System.Controllers
                 await _context.SaveChangesAsync();
             }
 
+            // ================= GUARD: ALREADY ACTIVE MEMBERSHIP =================
+            // Without this check, double-submitting the checkout form (or
+            // simply going through Buy a second time before the first
+            // membership expires) creates duplicate Membership rows + a
+            // duplicate MembershipPayment "Pending" row.
+            var alreadyActive =
+                await _context.Memberships.AnyAsync(m =>
+                    m.MemberId == member.Id &&
+                    m.IsActive &&
+                    m.EndDate >= DateTime.Now);
+
+            if (alreadyActive)
+            {
+                TempData["Error"] =
+                    "You already have an active membership. " +
+                    "Wait until it expires before buying another.";
+                return RedirectToAction(
+                    "Index",
+                    "Dashboard",
+                    new { area = "Member" });
+            }
+
             // ================= CREATE MEMBERSHIP =================
 
             var membership = new Membership

@@ -21,11 +21,15 @@ namespace LibraryManagementSystem.Controllers
         // OVERDUE BOOKS REPORT
         public async Task<IActionResult> OverdueBooks()
         {
+            // ReturnedOn == null is the canonical "still out" signal.
+            // Filtering by Status == "Issued" relied on a string field that
+            // could drift (e.g., "Renewed", "Lost") and produced a stale
+            // report whenever Status was set to anything other than "Issued".
             var overdueBooks = await _context.BorrowRecords
                 .Include(b => b.Book)
                 .Include(b => b.Member)
                 .Where(b =>
-                    b.Status == "Issued" &&
+                    b.ReturnedOn == null &&
                     b.DueDate < DateTime.Now)
                 .OrderBy(b => b.DueDate)
                 .ToListAsync();

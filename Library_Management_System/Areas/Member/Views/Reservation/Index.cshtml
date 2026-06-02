@@ -225,19 +225,6 @@
 
             @if (item.Status == ReservationStatus.Waiting)
             {
-                <form asp-action="Approve"
-                      asp-route-id="@item.Id"
-                      method="post"
-                      style="display:inline">
-
-                    @Html.AntiForgeryToken()
-
-                    <button class="btn btn-success">
-                        Final Reservation
-                    </button>
-
-                </form>
-
                 <form asp-action="Cancel"
                       asp-route-id="@item.Id"
                       method="post"

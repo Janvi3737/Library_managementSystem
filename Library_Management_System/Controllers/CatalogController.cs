@@ -157,7 +157,7 @@ namespace Library_Management_System.Controllers
                         .AnyAsync(m =>
                             m.MemberId == member.Id &&
                             m.IsActive &&
-                            m.EndDate >= DateTime.Now);
+                            m.EndDate >= DateTime.UtcNow);
                 }
             }
 
@@ -306,7 +306,7 @@ namespace Library_Management_System.Controllers
                 MemberId = userId,
                 Rating = rating,
                 Comment = comment,
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.UtcNow
             };
 
             _context.BookReviews.Add(review);

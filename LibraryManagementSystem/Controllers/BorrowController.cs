@@ -88,17 +88,34 @@ namespace LibraryManagementSystem.Controllers
                 return RedirectToAction(nameof(Issue));
             }
 
-            if (borrowDays <= 0)
+            // Block issuing the same book to a member who already holds an
+            // unreturned copy — otherwise a single member can drain
+            // AvailableCopies on one title with repeated submissions.
+            var alreadyHolds = await _context.BorrowRecords.AnyAsync(b =>
+                b.BookId == Record.BookId &&
+                b.MemberId == Record.MemberId &&
+                b.ReturnedOn == null);
+
+            if (alreadyHolds)
             {
-                TempData["Error"] = "Invalid borrow duration.";
+                TempData["Error"] =
+                    "❌ This member already has an unreturned copy of this book.";
                 return RedirectToAction(nameof(Issue));
             }
+
+            // Admin can edit defaults via /Settings — use them here instead
+            // of hardcoded values.
+            var settings = await _context.LibrarySettings.FirstOrDefaultAsync()
+                           ?? new LibrarySettings();
+
+            if (borrowDays <= 0)
+                borrowDays = settings.DefaultLoanDays;
 
             Record.IssuedOn = DateTime.Now;
             Record.DueDate = DateTime.Now.AddDays(borrowDays);
             Record.Status = "Issued";
 
-            Record.FinePerDay = 10;
+            Record.FinePerDay = settings.FinePerDay;
             Record.FineAmount = 0;
             Record.DaysLate = 0;
 

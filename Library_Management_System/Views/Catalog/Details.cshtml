@@ -844,14 +844,13 @@
 
                     <div class="pdf-actions">
 
-                        <a href="@Model.PdfUrl"
+                        <a href="@Url.Action("ViewPdf", "Books", new { id = Model.Id })"
                            target="_blank"
                            class="details-btn details-reserve-btn">
                             View Full Book
                         </a>
 
-                        <a href="@Model.PdfUrl"
-                           target="_blank"
+                        <a href="@Url.Action("DownloadPdf", "Books", new { id = Model.Id })"
                            class="details-btn details-wishlist-btn">
                             Download PDF
                         </a>
@@ -860,7 +859,8 @@
 
                     <iframe src="@Url.Action("ViewPdf", "Books", new { id = Model.Id })"
                             width="100%"
-                            height="900">
+                            height="900"
+                            style="border:none;">
                     </iframe>
                 }
                 else
@@ -886,7 +886,7 @@
 
                     <div class="pdf-actions">
 
-                        <a href="@Model.PreviewPdfUrl"
+                        <a href="@Url.Action("ViewPreview", "Books", new { id = Model.Id })"
                            target="_blank"
                            class="details-btn details-reserve-btn">
                             View Preview
@@ -894,7 +894,7 @@
 
                     </div>
 
-                    <iframe src="@Model.PreviewPdfUrl"
+                    <iframe src="@Url.Action("ViewPreview", "Books", new { id = Model.Id })"
                             width="100%"
                             height="900"
                             style="border:none;">

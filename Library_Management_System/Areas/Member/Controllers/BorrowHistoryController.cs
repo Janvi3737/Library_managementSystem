@@ -114,11 +114,21 @@ namespace Library_Management_System.Areas.Member.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ReturnBookConfirmed(int id)
         {
+            // Confirm the borrow record belongs to the current user — without
+            // this, any logged-in member could craft a POST and return
+            // somebody else's book (horizontal privilege escalation).
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var memberId = await _context.Members
+                .Where(x => x.ApplicationUserId == userId)
+                .Select(x => x.Id)
+                .FirstOrDefaultAsync();
+
             var borrow = await _context.BorrowRecords
                 .Include(x => x.Book)
-                .FirstOrDefaultAsync(x => x.Id == id);
+                .FirstOrDefaultAsync(x => x.Id == id && x.MemberId == memberId);
 
             if (borrow == null)
             {

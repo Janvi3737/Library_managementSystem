@@ -90,13 +90,27 @@ namespace LibraryManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
+            // Book -> Category is OnDelete.Restrict; deleting a category that
+            // still has books would throw a 500. Pre-check + friendly message.
+            var category = await _context.Categories
+                .Include(c => c.Books)
+                .FirstOrDefaultAsync(c => c.Id == id);
 
-            if (category != null)
+            if (category == null)
             {
-                _context.Categories.Remove(category);
-                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
+
+            if (category.Books != null && category.Books.Any())
+            {
+                TempData["Error"] =
+                    $"Cannot delete \"{category.Name}\" — it has " +
+                    $"{category.Books.Count} book(s). Move or delete those first.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            _context.Categories.Remove(category);
+            await _context.SaveChangesAsync();
 
             TempData["Success"] = "Category deleted!";
             return RedirectToAction(nameof(Index));

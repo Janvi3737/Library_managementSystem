@@ -108,21 +108,30 @@ namespace LibraryManagementSystem.ClassLibrary.Data
                     if (existingCols.Contains(colName))
                         continue; // already there
 
-                    // Sqlite ALTER TABLE ADD COLUMN can't add a NOT NULL column
-                    // without a DEFAULT — skip those. They're rare in this model;
-                    // a real schema break would need a manual migration anyway.
-                    if (!prop.IsNullable)
-                        continue;
-
                     var colType = ResolveSqliteType(prop);
+
+                    // Sqlite ALTER TABLE ADD COLUMN can't add a NOT NULL column
+                    // without a DEFAULT. For nullable model properties just add
+                    // NULL; for non-nullable, derive a sensible zero-value default
+                    // from the CLR type so existing rows have a valid value.
+                    string nullability;
+                    if (prop.IsNullable)
+                    {
+                        nullability = "NULL";
+                    }
+                    else
+                    {
+                        var defaultLiteral = ResolveSqliteDefault(prop);
+                        nullability = $"NOT NULL DEFAULT {defaultLiteral}";
+                    }
 
                     try
                     {
                         await db.Database.ExecuteSqlRawAsync(
-                            $"ALTER TABLE \"{tableName}\" ADD COLUMN \"{colName}\" {colType} NULL;");
+                            $"ALTER TABLE \"{tableName}\" ADD COLUMN \"{colName}\" {colType} {nullability};");
 
                         Console.WriteLine(
-                            $"[SqliteSchemaPatcher] Added missing column {tableName}.{colName} ({colType})");
+                            $"[SqliteSchemaPatcher] Added missing column {tableName}.{colName} ({colType} {nullability})");
                     }
                     catch (Exception ex)
                     {
@@ -188,6 +197,33 @@ namespace LibraryManagementSystem.ClassLibrary.Data
 
             // DateTime, DateTimeOffset, TimeSpan, Guid, string, enum → TEXT
             return "TEXT";
+        }
+
+        private static string ResolveSqliteDefault(IProperty prop)
+        {
+            // For NOT NULL columns added retroactively, pick a "zero value"
+            // appropriate to the storage class so existing rows stay valid.
+            var t = Nullable.GetUnderlyingType(prop.ClrType) ?? prop.ClrType;
+
+            if (t == typeof(bool) ||
+                t == typeof(int) || t == typeof(long) || t == typeof(short) ||
+                t == typeof(byte))
+                return "0";
+
+            if (t == typeof(decimal) || t == typeof(double) || t == typeof(float))
+                return "0";
+
+            if (t == typeof(DateTime) || t == typeof(DateTimeOffset))
+                return "'1970-01-01 00:00:00'";
+
+            if (t == typeof(Guid))
+                return "'00000000-0000-0000-0000-000000000000'";
+
+            if (t.IsEnum)
+                return "0";
+
+            // string / TimeSpan / fallback
+            return "''";
         }
     }
 }

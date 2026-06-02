@@ -97,11 +97,22 @@ namespace Library_Management_System.Areas.Member.Controllers
             var wishlistCount = await _context.Wishlists
                 .CountAsync(x => x.MemberId == userId);
 
-            // MEMBERSHIP DETAILS
-
+            // MEMBERSHIP DETAILS — pull the real end date from the
+            // Memberships table (user chose 1 or 12 months at Buy time);
+            // the JoinedOn + 1-year shortcut was wrong for monthly plans.
             DateTime joinedDate = member.JoinedOn;
 
-            DateTime membershipTill = joinedDate.AddYears(1);
+            DateTime membershipTill = await _context.Memberships
+                .Where(m => m.MemberId == member.Id && m.IsActive)
+                .OrderByDescending(m => m.EndDate)
+                .Select(m => m.EndDate)
+                .FirstOrDefaultAsync();
+
+            // Fallback if no active membership row exists yet (legacy data).
+            if (membershipTill == default)
+            {
+                membershipTill = joinedDate.AddYears(1);
+            }
 
             int daysLeft = (membershipTill - DateTime.Now).Days;
 

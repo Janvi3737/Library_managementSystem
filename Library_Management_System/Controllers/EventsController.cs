@@ -34,8 +34,11 @@ namespace Library_Management_System.Controllers
 
             int totalEvents = await eventsQuery.CountAsync();
 
+            // Ascending so the next-upcoming event appears first, not the
+            // farthest-future one. Was OrderByDescending which pushed the
+            // most-relevant event to the bottom of page 1.
             var upcomingEvents = await eventsQuery
-                .OrderByDescending(e => e.Date) 
+                .OrderBy(e => e.Date)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();

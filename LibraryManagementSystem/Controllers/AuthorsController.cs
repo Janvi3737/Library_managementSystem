@@ -107,13 +107,28 @@ namespace LibraryManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var author = await _context.Authors.FindAsync(id);
+            // Book -> Author is OnDelete.Restrict; deleting an author who has
+            // books would throw a DbUpdateException -> 500. Block with a
+            // friendly message instead.
+            var author = await _context.Authors
+                .Include(a => a.Books)
+                .FirstOrDefaultAsync(a => a.Id == id);
 
-            if (author != null)
+            if (author == null)
             {
-                _context.Authors.Remove(author);
-                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
+
+            if (author.Books != null && author.Books.Any())
+            {
+                TempData["Error"] =
+                    $"Cannot delete \"{author.Name}\" — they have " +
+                    $"{author.Books.Count} book(s). Reassign or delete those first.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            _context.Authors.Remove(author);
+            await _context.SaveChangesAsync();
 
             TempData["Success"] = "Author deleted successfully!";
             return RedirectToAction(nameof(Index));
