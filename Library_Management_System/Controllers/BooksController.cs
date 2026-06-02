@@ -33,7 +33,8 @@ namespace Library_Management_System.Controllers
         public async Task<IActionResult> ViewPdf(int id)
         {
             var book = await _context.Books.FirstOrDefaultAsync(b => b.Id == id);
-            if (book == null) return NotFound();
+            if (book == null)
+                return PlaceholderHtml($"Book #{id} not found.");
 
             var hasMembership = await CurrentUserHasMembershipAsync();
 
@@ -45,10 +46,16 @@ namespace Library_Management_System.Controllers
                     ? book.PdfUrl
                     : (book.PreviewPdfUrl ?? book.PdfUrl);
 
-            if (string.IsNullOrEmpty(source)) return NotFound();
+            if (string.IsNullOrEmpty(source))
+                return PlaceholderHtml(
+                    $"\"{book.Title}\" has no PDF uploaded yet. " +
+                    "Open the admin app, edit this book, and upload a PDF file under \"Pdf File\".");
 
             var path = ResolvePdfPath(source);
-            if (path == null) return NotFound();
+            if (path == null)
+                return PlaceholderHtml(
+                    $"PDF file is recorded in the database ({source}) but cannot be found on disk. " +
+                    $"Expected at user-app wwwroot OR admin-app wwwroot/uploads/pdfs.");
 
             return PhysicalFile(path, "application/pdf");
         }
@@ -74,7 +81,8 @@ namespace Library_Management_System.Controllers
             var book = await _context.Books
                 .Include(b => b.Author)
                 .FirstOrDefaultAsync(b => b.Id == id);
-            if (book == null) return NotFound();
+            if (book == null)
+                return PlaceholderHtml($"Book #{id} not found.");
 
             var hasMembership = await CurrentUserHasMembershipAsync();
 
@@ -83,14 +91,38 @@ namespace Library_Management_System.Controllers
                     ? book.PdfUrl
                     : (book.PreviewPdfUrl ?? book.PdfUrl);
 
-            if (string.IsNullOrEmpty(source)) return NotFound();
+            if (string.IsNullOrEmpty(source))
+                return PlaceholderHtml(
+                    $"\"{book.Title}\" has no PDF available to download.");
 
             var path = ResolvePdfPath(source);
-            if (path == null) return NotFound();
+            if (path == null)
+                return PlaceholderHtml(
+                    $"PDF file recorded but missing on disk: {source}");
 
             var suffix = hasMembership ? "" : "-preview";
             var fileName = $"{book.Title}{suffix}.pdf";
             return PhysicalFile(path, "application/pdf", fileName);
+        }
+
+        // Renders a minimal HTML page so the message is visible inside the
+        // iframe instead of a bare 404 / blank PDF reader.
+        private IActionResult PlaceholderHtml(string message)
+        {
+            var html = $@"<!doctype html>
+<html><head><meta charset='utf-8'><title>PDF unavailable</title>
+<style>
+  body {{ margin:0; font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+          background:#0f172a; color:#e2e8f0; display:flex;
+          align-items:center; justify-content:center; min-height:100vh; padding:24px; }}
+  .box {{ max-width:560px; text-align:center; padding:32px;
+          background:#1e293b; border-radius:16px; }}
+  h2 {{ margin:0 0 12px; font-size:20px; color:#fbbf24; }}
+  p  {{ margin:0; line-height:1.6; color:#cbd5e1; }}
+</style></head><body><div class='box'>
+<h2>PDF not available</h2><p>{System.Net.WebUtility.HtmlEncode(message)}</p>
+</div></body></html>";
+            return Content(html, "text/html");
         }
 
         // ───── helpers ─────
