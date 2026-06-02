@@ -150,28 +150,29 @@
 
                 </div>
 
+
+
                 <!-- CONTACT -->
 
-                <div class="col-lg-2 col-md-6">
+                <div class="col-lg-3 col-md-4">
 
-                    <h5 class="footer-title">
-                        Contact Us
+                    <h5 class="footer-heading">
+                        Get In Touch
                     </h5>
 
-                    <div class="footer-contact">
+                    <div class="contact-list">
 
-                        <div class="contact-item">
+                        <div class="contact-row">
 
                             <i class="fa-solid fa-location-dot"></i>
 
                             <span>
-                                123 Library Street,
-                                Knowledge City, India
+                                Surat, Gujarat, India
                             </span>
 
                         </div>
 
-                        <div class="contact-item">
+                        <div class="contact-row">
 
                             <i class="fa-solid fa-phone"></i>
 
@@ -181,7 +182,7 @@
 
                         </div>
 
-                        <div class="contact-item">
+                        <div class="contact-row">
 
                             <i class="fa-solid fa-envelope"></i>
 
@@ -193,24 +194,10 @@
 
                     </div>
 
-                </div>
-
-                <!-- SOCIAL -->
-
-                <div class="col-lg-2 col-md-6">
-
-                    <h5 class="footer-title">
-                        Connect With Us
-                    </h5>
-
-                    <div class="social-icons">
+                    <div class="footer-social">
 
                         <a href="#">
                             <i class="fab fa-facebook-f"></i>
-                        </a>
-
-                        <a href="#">
-                            <i class="fab fa-twitter"></i>
                         </a>
 
                         <a href="#">
@@ -218,35 +205,37 @@
                         </a>
 
                         <a href="#">
-                            <i class="fab fa-linkedin-in"></i>
+                            <i class="fab fa-twitter"></i>
                         </a>
 
                         <a href="#">
-                            <i class="fab fa-youtube"></i>
+                            <i class="fab fa-linkedin-in"></i>
                         </a>
 
                     </div>
 
                 </div>
-
             </div>
 
-            <!-- COPYRIGHT -->
 
-            <div class="footer-bottom">
+        </div>
 
-                <div>
-                    © 2026 BookVerse Library Management System.
-                    All rights reserved.
-                </div>
+        <!-- COPYRIGHT -->
 
-                <div>
-                    Made with ❤️ for knowledge lovers
-                </div>
+        <div class="footer-bottom">
 
+            <div>
+                © 2026 BookVerse Library Management System.
+                All rights reserved.
+            </div>
+
+            <div>
+                Made with ❤️ for knowledge lovers
             </div>
 
         </div>
+
+    </div>
 
     </div>
 
@@ -254,8 +243,8 @@
 
 <style>
     /* =========================================
-       PREMIUM FOOTER
-    ========================================= */
+           PREMIUM FOOTER
+        ========================================= */
 
     .premium-footer {
         margin-top: 60px;
@@ -286,8 +275,8 @@
         }
 
     /* =========================================
-       BRAND
-    ========================================= */
+           BRAND
+        ========================================= */
 
     .footer-brand {
         position: relative;
@@ -304,10 +293,10 @@
 
     .footer-logo-icon {
         /* width: 62px;
-        height: 62px;
-        min-width: 62px;  */
+            height: 62px;
+            min-width: 62px;  */
         /* border-radius: 20px;
-        /* background: linear-gradient(135deg,#7c3aed,#d946ef); */
+            /* background: linear-gradient(135deg,#7c3aed,#d946ef); */
         display: flex;
         align-items: center;
         justify-content: center;
@@ -344,8 +333,8 @@
     }
 
     /* =========================================
-       FOOTER TITLES
-    ========================================= */
+           FOOTER TITLES
+        ========================================= */
 
     .footer-title {
         color: white;
@@ -367,8 +356,8 @@
         }
 
     /* =========================================
-       LINKS
-    ========================================= */
+           LINKS
+        ========================================= */
 
     .footer-links {
         list-style: none;
@@ -394,65 +383,90 @@
             }
 
     /* =========================================
-       CONTACT
-    ========================================= */
-
-    .footer-contact {
+           CONTACT
+        ========================================= */
+    .contact-list {
         display: flex;
         flex-direction: column;
         gap: 18px;
     }
 
-    .contact-item {
+    .contact-row {
         display: flex;
         align-items: flex-start;
-        gap: 12px;
-        color: #cbd5e1;
+        gap: 14px;
+        color: #e2e8f0;
+        line-height: 1.8;
         font-size: 14px;
-        line-height: 1.7;
+        transition: .3s;
     }
 
-        .contact-item i {
-            color: #a855f7;
-            margin-top: 4px;
-            min-width: 18px;
+        .contact-row:hover {
+            transform: translateX(4px);
         }
 
-    /* =========================================
-       SOCIAL ICONS
-    ========================================= */
-
-    .social-icons {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 14px;
-    }
-
-        .social-icons a {
-            width: 48px;
-            height: 48px;
-            border-radius: 16px;
-            background: rgba(255,255,255,.05);
-            border: 1px solid rgba(255,255,255,.08);
+        .contact-row i {
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
+            background: linear-gradient(135deg,#7c3aed,#d946ef);
+            color: white;
+            font-size: 14px;
+            box-shadow: 0 10px 20px rgba(124,58,237,.25);
+        }
+
+    .footer-social {
+        display: flex;
+        gap: 14px;
+        margin-top: 30px;
+    }
+
+        .footer-social a {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,.05);
+            border: 1px solid rgba(255,255,255,.08);
             color: white;
             text-decoration: none;
-            font-size: 18px;
             transition: .35s;
         }
 
-            .social-icons a:hover {
+            .footer-social a:hover {
                 transform: translateY(-6px);
-                background: linear-gradient(135deg,#7c3aed,#9333ea);
-                color: white;
-                box-shadow: 0 12px 25px rgba(124,58,237,.35);
+                background: linear-gradient(135deg,#7c3aed,#d946ef);
+                box-shadow: 0 12px 24px rgba(124,58,237,.35);
             }
 
+    .footer-heading {
+        color: white;
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 28px;
+        position: relative;
+    }
+
+        .footer-heading::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -10px;
+            width: 42px;
+            height: 3px;
+            border-radius: 20px;
+            background: linear-gradient(135deg,#7c3aed,#d946ef);
+        }
+
     /* =========================================
-       FOOTER BOTTOM
-    ========================================= */
+           FOOTER BOTTOM
+        ========================================= */
 
     .footer-bottom {
         margin-top: 50px;
@@ -468,8 +482,8 @@
     }
 
     /* =========================================
-       RESPONSIVE
-    ========================================= */
+           RESPONSIVE
+        ========================================= */
 
     @@media (max-width: 1200px) {
 

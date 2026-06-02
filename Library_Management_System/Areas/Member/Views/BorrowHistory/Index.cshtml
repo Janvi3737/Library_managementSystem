@@ -1,6 +1,7 @@
 @{
     Layout = "~/Areas/Member/Views/Shared/_MemberLayout.cshtml";
 }
+
 @model List<Library_Management_System.ViewModels.BorrowHistoryViewModel>
 
 @{
@@ -16,37 +17,38 @@
     }
 
     .history-wrapper {
-        padding: 30px;
+        padding: 35px;
     }
 
     .page-title {
-        font-size: 30px;
-        font-weight: 700;
-        margin-bottom: 25px;
+        font-size: 34px;
+        font-weight: 800;
+        margin-bottom: 30px;
     }
 
-    /* FILTERS */
+    /* FILTER */
 
     .filter-box {
         display: flex;
         gap: 15px;
-        margin-bottom: 30px;
+        margin-bottom: 35px;
         flex-wrap: wrap;
     }
 
     .filter-btn {
-        padding: 10px 18px;
-        border-radius: 12px;
+        padding: 11px 20px;
+        border-radius: 14px;
         text-decoration: none;
         color: white;
         background: #111827;
-        transition: 0.3s;
-        border: 1px solid rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,.08);
+        transition: .3s;
+        font-weight: 600;
     }
 
         .filter-btn:hover,
         .filter-btn.active {
-            background: linear-gradient(90deg,#7c3aed,#9333ea);
+            background: linear-gradient(135deg,#7c3aed,#9333ea);
             color: white;
         }
 
@@ -54,20 +56,20 @@
 
     .timeline {
         position: relative;
-        margin-left: 15px;
+        margin-left: 12px;
         padding-left: 30px;
         border-left: 3px solid #7c3aed;
     }
 
     .timeline-item {
         position: relative;
-        margin-bottom: 30px;
+        margin-bottom: 35px;
     }
 
     .timeline-dot {
         position: absolute;
         left: -42px;
-        top: 12px;
+        top: 14px;
         width: 18px;
         height: 18px;
         border-radius: 50%;
@@ -79,57 +81,62 @@
 
     .history-card {
         background: linear-gradient(145deg,#0f172a,#111827);
-        border-radius: 20px;
-        padding: 22px;
-        border: 1px solid rgba(255,255,255,0.05);
-        box-shadow: 0 0 25px rgba(139,92,246,0.08);
-        transition: 0.3s;
+        border-radius: 24px;
+        padding: 24px;
+        border: 1px solid rgba(255,255,255,.06);
+        box-shadow: 0 0 30px rgba(124,58,237,.12);
+        transition: .3s;
     }
 
         .history-card:hover {
-            transform: translateY(-4px);
+            transform: translateY(-5px);
         }
 
     .book-title {
-        font-size: 20px;
-        font-weight: 700;
+        font-size: 22px;
+        font-weight: 800;
         margin-bottom: 6px;
     }
 
     .author-name {
         color: #9ca3af;
-        margin-bottom: 18px;
+        margin-bottom: 20px;
     }
+
+    /* INFO GRID */
 
     .info-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
-        gap: 15px;
+        gap: 16px;
+        margin-top: 20px;
     }
 
     .info-box {
-        background: rgba(255,255,255,0.03);
-        border-radius: 14px;
-        padding: 14px;
+        background: rgba(255,255,255,.04);
+        border-radius: 16px;
+        padding: 16px;
+        border: 1px solid rgba(255,255,255,.04);
     }
 
     .info-title {
         color: #9ca3af;
         font-size: 13px;
-        margin-bottom: 5px;
+        margin-bottom: 6px;
     }
 
     .info-value {
-        font-weight: 600;
+        font-size: 15px;
+        font-weight: 700;
     }
 
     /* STATUS */
 
     .badge-status {
-        padding: 8px 14px;
+        padding: 8px 16px;
         border-radius: 30px;
         font-size: 12px;
-        font-weight: 600;
+        font-weight: 700;
     }
 
     .active-status {
@@ -144,12 +151,45 @@
         background: #dc2626;
     }
 
+    /* FINE */
+
+    .fine-paid {
+        color: #22c55e;
+        font-weight: 700;
+    }
+
+    .fine-unpaid {
+        color: #ef4444;
+        font-weight: 700;
+    }
+
+    /* BUTTON */
+
+    .return-btn {
+        background: linear-gradient(135deg,#dc2626,#ef4444);
+        border: none;
+        padding: 12px 22px;
+        border-radius: 14px;
+        color: white;
+        text-decoration: none;
+        font-weight: 700;
+        transition: .3s;
+    }
+
+        .return-btn:hover {
+            transform: translateY(-3px);
+            color: white;
+        }
+
+    /* EMPTY */
+
     .empty-box {
         background: #111827;
-        padding: 30px;
         border-radius: 20px;
+        padding: 40px;
         text-align: center;
         color: #9ca3af;
+        border: 1px solid rgba(255,255,255,.05);
     }
 
 </style>
@@ -189,7 +229,6 @@
 
     </div>
 
-    <!-- TIMELINE -->
     @if (Model.Any())
     {
         <div class="timeline">
@@ -241,7 +280,9 @@
 
                         </div>
 
-                        <div class="info-grid mt-3">
+                        <!-- INFO GRID -->
+
+                        <div class="info-grid">
 
                             <div class="info-box">
 
@@ -286,7 +327,7 @@
                             <div class="info-box">
 
                                 <div class="info-title">
-                                    Fine
+                                    Fine Amount
                                 </div>
 
                                 <div class="info-value">
@@ -295,7 +336,58 @@
 
                             </div>
 
+                            <div class="info-box">
+
+                                <div class="info-title">
+                                    Fine Per Day
+                                </div>
+
+                                <div class="info-value">
+                                    ₹@item.FinePerDay
+                                </div>
+
+                            </div>
+
+                            <div class="info-box">
+
+                                <div class="info-title">
+                                    Days Late
+                                </div>
+
+                                <div class="info-value">
+                                    @item.DaysLate Days
+                                </div>
+
+                            </div>
+
+                            <div class="info-box">
+
+                                <div class="info-title">
+                                    Fine Payment
+                                </div>
+
+                                <div class="info-value">
+
+                                    @if (item.FinePaid)
+                                    {
+                                        <span class="fine-paid">
+                                            Paid
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="fine-unpaid">
+                                            Unpaid
+                                        </span>
+                                    }
+
+                                </div>
+
+                            </div>
+
                         </div>
+
+                        <!-- RETURN BUTTON -->
                         @if (item.Status != "Returned")
                         {
                             <div class="mt-4 d-flex justify-content-end">
@@ -303,7 +395,7 @@
                                 <a asp-action="ReturnBook"
                                    asp-controller="BorrowHistory"
                                    asp-route-id="@item.Id"
-                                   class="btn btn-danger px-4">
+                                   class="return-btn">
 
                                     Return Book
 

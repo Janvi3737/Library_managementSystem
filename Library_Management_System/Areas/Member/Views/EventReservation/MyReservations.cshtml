@@ -10,6 +10,7 @@
     body {
         background: #050816;
         color: white;
+        font-family: 'Inter', sans-serif;
     }
 
     .reservation-wrapper {
@@ -28,12 +29,7 @@
         padding: 24px;
         margin-bottom: 22px;
         border: 1px solid rgba(255,255,255,0.05);
-        transition: 0.3s;
     }
-
-        .reservation-card:hover {
-            transform: translateY(-5px);
-        }
 
     .event-title {
         font-size: 24px;
@@ -49,7 +45,7 @@
     .reservation-info {
         margin-top: 20px;
         display: flex;
-        gap: 40px;
+        gap: 20px;
         flex-wrap: wrap;
     }
 
@@ -58,6 +54,7 @@
         padding: 14px 18px;
         border-radius: 14px;
         min-width: 180px;
+        flex: 1;
     }
 
     .info-title {
@@ -77,11 +74,12 @@
         border-radius: 30px;
         font-size: 12px;
         font-weight: 700;
+        display: inline-block;
     }
 
     .pending {
         background: #f59e0b;
-        color: #111827;
+        color: black;
     }
 
     .approved {
@@ -94,37 +92,22 @@
         color: white;
     }
 
+    .btn-cancel {
+        background: #ef4444;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 12px;
+        font-weight: 700;
+        margin-top: 20px;
+    }
+
     .empty-box {
         background: rgba(255,255,255,0.03);
         border-radius: 20px;
         padding: 50px;
         text-align: center;
         color: #9ca3af;
-        border: 1px solid rgba(255,255,255,0.05);
-    }
-
-    @@media(max-width:768px) {
-
-        .reservation-wrapper {
-            padding: 20px;
-        }
-
-        .reservation-info {
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .info-box {
-            width: 100%;
-        }
-
-        .page-title {
-            font-size: 28px;
-        }
-
-        .event-title {
-            font-size: 20px;
-        }
     }
 
 </style>
@@ -141,91 +124,116 @@
             No event reservations found.
         </div>
     }
-
-    @foreach (var item in Model)
+    else
     {
-        <div class="reservation-card">
+        @foreach (var item in Model)
+        {
+            var status = item.Status?.Trim().ToLower();
 
-            <div class="d-flex justify-content-between align-items-start">
+            <div class="reservation-card">
 
-                <div>
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
 
-                    <div class="event-title">
-                        @item.Event?.Title
+                    <div>
+
+                        <div class="event-title">
+                            @item.Event?.Title
+                        </div>
+
+                        <div class="event-location">
+                            📍 @item.Event?.Location
+                        </div>
+
                     </div>
 
-                    <div class="event-location">
-                        📍 @item.Event?.Location
+                    <div>
+
+                        @if (status == "pending")
+                        {
+                            <span class="status-badge pending">
+                                Pending
+                            </span>
+                        }
+                        else if (status == "approved")
+                        {
+                            <span class="status-badge approved">
+                                Approved
+                            </span>
+                        }
+                        else if (status == "rejected")
+                        {
+                            <span class="status-badge rejected">
+                                Rejected
+                            </span>
+                        }
+
                     </div>
 
                 </div>
 
-                <div>
+                <div class="reservation-info">
 
-                    @if (item.Status.ToString() == "Pending")
-                    {
-                        <span class="status-badge pending">
-                            Pending
-                        </span>
-                    }
-                    else if (item.Status.ToString() == "Approved")
-                    {
-                        <span class="status-badge approved">
-                            Approved
-                        </span>
-                    }
-                    else
-                    {
-                        <span class="status-badge rejected">
-                            Rejected
-                        </span>
-                    }
+                    <div class="info-box">
+
+                        <div class="info-title">
+                            Event Date
+                        </div>
+
+                        <div class="info-value">
+                            @(item.Event?.Date.ToString("dd MMM yyyy"))
+                        </div>
+
+                    </div>
+
+                    <div class="info-box">
+
+                        <div class="info-title">
+                            Reserved On
+                        </div>
+
+                        <div class="info-value">
+                            @item.ReservedOn.ToString("dd MMM yyyy")
+                        </div>
+
+                    </div>
+
+                    <div class="info-box">
+
+                        <div class="info-title">
+                            Status
+                        </div>
+
+                        <div class="info-value">
+                            @item.Status
+                        </div>
+
+                    </div>
 
                 </div>
+
+                @if (status == "pending")
+                {
+                    <form asp-area="Member"
+                          asp-controller="EventReservation"
+                          asp-action="Cancel"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="id"
+                               value="@item.Id" />
+
+                        <button type="submit"
+                                class="btn-cancel">
+                            Cancel Reservation
+                        </button>
+
+                    </form>
+                }
 
             </div>
-
-            <div class="reservation-info">
-
-                <div class="info-box">
-
-                    <div class="info-title">
-                        Event Date
-                    </div>
-
-                    <div class="info-value">
-                        @(item.Event?.Date.ToString("dd MMM yyyy"))
-                    </div>
-
-                </div>
-
-                <div class="info-box">
-
-                    <div class="info-title">
-                        Reserved On
-                    </div>
-
-                    <div class="info-value">
-                        @item.ReservedOn.ToString("dd MMM yyyy")
-                    </div>
-
-                </div>
-
-                <div class="info-box">
-
-                    <div class="info-title">
-                        Status
-                    </div>
-
-                    <div class="info-value">
-                        @item.Status
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
+        }
     }
 
 </div>

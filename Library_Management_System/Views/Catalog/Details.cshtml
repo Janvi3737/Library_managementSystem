@@ -686,8 +686,8 @@
             <div class="details-book-cover">
 
                 <img src="@(string.IsNullOrEmpty(Model.CoverImageUrl)
-                                                             ? "/images/default-book.jpg"
-                                                             : Model.CoverImageUrl)"
+                                                                                  ? "/images/default-book.jpg"
+                                                                                  : Model.CoverImageUrl)"
                      alt="@Model.Title" />
 
             </div>
@@ -755,8 +755,8 @@
                             data-bookid="@Model.Id">
 
                         <i class="wishlist-icon @(Model.IsWishlisted
-                                                           ? "fa-solid fa-heart"
-                                                           : "fa-regular fa-heart")"></i>
+                                                                                      ? "fa-solid fa-heart"
+                                                                                      : "fa-regular fa-heart")"></i>
 
                         <span class="wishlist-text">
                             @(Model.IsWishlisted
@@ -822,7 +822,7 @@
                         </button>
                     }
 
-                
+
 
                 </div>
 
@@ -838,28 +838,8 @@
                     📖 Read Book Online
                 </h2>
 
-                @if (!Model.HasMembership)
-                {
-                    <!-- Members get the full book; everyone else gets the
-                         preview. Buttons are shown to all users so the CTA
-                         is consistent; the controller picks the file. -->
-                    <div class="alert alert-warning p-4 rounded-4 mb-3">
 
-                        <h5>Preview Mode</h5>
-
-                        <p>
-                            You're viewing only the first few pages.
-                            Purchase a membership to read the complete book.
-                        </p>
-
-                        <a asp-controller="Membership"
-                           asp-action="Index"
-                           class="btn btn-warning">
-                            Get Membership
-                        </a>
-
-                    </div>
-                }
+                <!-- FULL ACCESS -->
 
                 <div class="pdf-actions">
 
@@ -881,6 +861,61 @@
                         height="900"
                         style="border:none;">
                 </iframe>
+
+                @if (Model.HasMembership)
+                {
+                    <div class="pdf-actions">
+
+                        <a href="@Url.Action("ViewPdf", "Books", new { id = Model.Id })"
+                           target="_blank"
+                           class="details-btn details-reserve-btn">
+                            View Full Book
+                        </a>
+
+                        <a href="@Url.Action("DownloadPdf", "Books", new { id = Model.Id })"
+                           class="details-btn details-wishlist-btn">
+                            Download PDF
+                        </a>
+
+                    </div>
+                }
+                else
+                {
+                    <!-- PREVIEW ACCESS -->
+
+                    <div class="alert alert-warning p-4 rounded-4 mb-3">
+
+                        <h5>Preview Mode</h5>
+
+                        <p>
+                            You're viewing only the first 20 pages.
+                            Purchase a membership to unlock the complete book.
+                        </p>
+
+                        <a asp-controller="Membership"
+                           asp-action="Plans"
+                           class="btn btn-warning">
+                            Get Membership
+                        </a>
+
+                    </div>
+
+                    <div class="pdf-actions">
+
+                        <a href="@Url.Action("ViewPreview", "Books", new { id = Model.Id })"
+                           target="_blank"
+                           class="details-btn details-reserve-btn">
+                            View Preview
+                        </a>
+
+                    </div>
+
+                    <iframe src="@Url.Action("ViewPreview", "Books", new { id = Model.Id })"
+                            width="100%"
+                            height="900"
+                            style="border:none;">
+                    </iframe>
+                }
 
             </div>
         }
@@ -1000,8 +1035,8 @@
                 <div class="empty-review-box">
 
                     <h3 style="
-                            color:white;
-                            margin-bottom:10px;">
+                                color:white;
+                                margin-bottom:10px;">
 
                         No Reviews Yet
 
@@ -1114,54 +1149,54 @@
 </div>
 
 <script src="~/js/wishlist.js"></script>
-  <script>  
+<script>
 
-        let qty = 1;
+    let qty = 1;
 
-        // Original stock from database
-        let totalAvailableCopies = @Model.AvailableCopies;
+    // Original stock from database
+    let totalAvailableCopies = @Model.AvailableCopies;
 
-        // Current remaining stock
-        let remainingCopies = totalAvailableCopies - qty;
+    // Current remaining stock
+    let remainingCopies = totalAvailableCopies - qty;
 
-        // Initial load
-        updateUI();
+    // Initial load
+    updateUI();
 
-        function increaseQty() {
+    function increaseQty() {
 
-            // Quantity cannot exceed available copies
-            if (qty < totalAvailableCopies) {
+        // Quantity cannot exceed available copies
+        if (qty < totalAvailableCopies) {
 
-                qty++;
+            qty++;
 
-                updateUI();
-            }
-            else {
-
-                alert("Only " + totalAvailableCopies + " copies available.");
-            }
+            updateUI();
         }
+        else {
 
-        function decreaseQty() {
-
-            if (qty > 1) {
-
-                qty--;
-
-                updateUI();
-            }
+            alert("Only " + totalAvailableCopies + " copies available.");
         }
+    }
 
-        function updateUI() {
+    function decreaseQty() {
 
-            document.getElementById("qtyValue").innerText = qty;
+        if (qty > 1) {
 
-            remainingCopies = totalAvailableCopies - qty;
+            qty--;
 
-            document.getElementById("availableCopiesText").innerText =
-                remainingCopies + " Books";
-
+            updateUI();
         }
+    }
+
+    function updateUI() {
+
+        document.getElementById("qtyValue").innerText = qty;
+
+        remainingCopies = totalAvailableCopies - qty;
+
+        document.getElementById("availableCopiesText").innerText =
+            remainingCopies + " Books";
+
+    }
 
 
-  </script>
+</script>

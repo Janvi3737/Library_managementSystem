@@ -4,25 +4,31 @@
 }
 
 <style>
-
+    @@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
     body {
         background: #050816;
-        font-family: 'Inter',sans-serif;
+        font-family: 'Inter', sans-serif;
         color: white;
+        margin: 0;
+        padding: 0;
     }
+
+    /* PAGE */
 
     .payment-page {
         min-height: 100vh;
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 40px;
+        padding: 40px 20px;
     }
+
+    /* CARD */
 
     .payment-card {
         width: 100%;
-        max-width: 620px;
+        max-width: 650px;
         background: linear-gradient(180deg,#0f172a,#081120);
         border-radius: 32px;
         padding: 40px;
@@ -31,11 +37,13 @@
         box-shadow: 0 20px 60px rgba(0,0,0,.45);
     }
 
+    /* TITLE */
+
     .title {
         font-size: 42px;
         font-weight: 900;
         margin-bottom: 10px;
-        background: linear-gradient(135deg,#fff,#d8b4fe);
+        background: linear-gradient(135deg,#ffffff,#d8b4fe);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
@@ -46,6 +54,8 @@
         color: #c084fc;
         margin-bottom: 30px;
     }
+
+    /* PAYMENT METHODS */
 
     .payment-methods {
         display: grid;
@@ -59,14 +69,13 @@
         border: 1px solid rgba(255,255,255,.08);
         border-radius: 22px;
         padding: 22px;
-        text-align: center;
         cursor: pointer;
         transition: .3s;
+        text-align: center;
     }
 
         .method-card:hover {
-            transform: translateY(-4px);
-            border-color: #a855f7;
+            transform: translateY(-5px);
         }
 
         .method-card.active {
@@ -75,16 +84,51 @@
             box-shadow: 0 12px 30px rgba(168,85,247,.25);
         }
 
-        .method-card img {
-            width: 46px;
-            margin-bottom: 12px;
+    /* ICON BOX */
+
+    .method-icon {
+        width: 70px;
+        height: 70px;
+        margin: 0 auto 14px;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(255,255,255,0.15);
+    }
+
+        .method-icon img {
+            width: 42px;
+            height: 42px;
+            object-fit: contain;
         }
 
-        .method-card span {
-            display: block;
-            font-weight: 700;
-            color: white;
-        }
+    /* BRAND COLORS */
+
+    .phonepe-icon {
+        background: linear-gradient(135deg,#f3e8ff,#ede9fe);
+    }
+
+    .gpay-icon {
+        background: linear-gradient(135deg,#e8f0fe,#dbeafe);
+    }
+
+    .paytm-icon {
+        background: linear-gradient(135deg,#e0f7ff,#cffafe);
+    }
+
+    .bhim-icon {
+        background: linear-gradient(135deg,#fff1e6,#ffedd5);
+    }
+
+    .method-card span {
+        display: block;
+        font-size: 15px;
+        font-weight: 700;
+        color: white;
+    }
+
+    /* DYNAMIC BOX */
 
     .dynamic-box {
         background: rgba(255,255,255,.04);
@@ -97,10 +141,13 @@
     .dynamic-title {
         font-size: 18px;
         font-weight: 800;
-        margin-bottom: 14px;
+        margin-bottom: 15px;
     }
 
-    .dynamic-input {
+    /* INPUTS */
+
+    .dynamic-input,
+    .upload-input {
         width: 100%;
         padding: 16px;
         border-radius: 16px;
@@ -108,7 +155,20 @@
         border: 1px solid rgba(255,255,255,.08);
         color: white;
         outline: none;
+        transition: .3s;
     }
+
+        .dynamic-input:focus,
+        .upload-input:focus {
+            border-color: #a855f7;
+            box-shadow: 0 0 0 4px rgba(168,85,247,.15);
+        }
+
+    .upload-input {
+        margin-bottom: 20px;
+    }
+
+    /* QR BOX */
 
     .qr-box {
         background: white;
@@ -116,21 +176,36 @@
         border-radius: 24px;
         display: inline-block;
         margin-bottom: 25px;
+        box-shadow: 0 10px 25px rgba(0,0,0,.2);
     }
+
+        .qr-box img {
+            display: block;
+        }
+
+    /* UPI BOX */
 
     .upi-box {
         background: rgba(255,255,255,.04);
         border: 1px solid rgba(255,255,255,.08);
-        padding: 16px;
-        border-radius: 16px;
+        border-radius: 18px;
+        padding: 18px;
         margin-bottom: 25px;
     }
 
+        .upi-box div:first-child {
+            color: #9ca3af;
+            margin-bottom: 8px;
+        }
+
     .upi-id {
         color: #d8b4fe;
-        font-size: 18px;
-        font-weight: 700;
+        font-size: 20px;
+        font-weight: 800;
+        word-break: break-all;
     }
+
+    /* INFO */
 
     .info {
         color: #9ca3af;
@@ -138,15 +213,7 @@
         margin-bottom: 30px;
     }
 
-    .upload-input {
-        width: 100%;
-        padding: 16px;
-        border-radius: 16px;
-        background: #111827;
-        color: white;
-        border: 1px solid rgba(255,255,255,.08);
-        margin-bottom: 20px;
-    }
+    /* BUTTON */
 
     .pay-btn {
         width: 100%;
@@ -166,6 +233,36 @@
             box-shadow: 0 15px 35px rgba(168,85,247,.3);
         }
 
+    /* RESPONSIVE */
+
+    @@media (max-width: 768px) {
+
+        .payment-card {
+            padding: 25px;
+        }
+
+        .title {
+            font-size: 32px;
+        }
+
+        .price {
+            font-size: 42px;
+        }
+
+        .payment-methods {
+            grid-template-columns: 1fr;
+        }
+
+        .method-icon {
+            width: 60px;
+            height: 60px;
+        }
+
+            .method-icon img {
+                width: 35px;
+                height: 35px;
+            }
+    }
 </style>
 
 <div class="payment-page">
@@ -186,46 +283,32 @@
 
             <!-- PHONEPE -->
 
-            <div class="method-card active"
-                 data-method="phonepe">
-
-                <img src="https://cdn-icons-png.flaticon.com/512/5968/5968144.png">
-
+            <div class="method-card active" data-method="phonepe">
+                <div class="method-icon phonepe-icon">
+                    <img src="~/images/payment/phonepe.png" alt="PhonePe">
+                </div>
                 <span>PhonePe</span>
-
             </div>
 
-            <!-- GPAY -->
-
-            <div class="method-card"
-                 data-method="gpay">
-
-                <img src="https://cdn-icons-png.flaticon.com/512/6124/6124998.png">
-
+            <div class="method-card" data-method="gpay">
+                <div class="method-icon gpay-icon">
+                    <img src="~/images/payment/gpay.png" alt="Google Pay">
+                </div>
                 <span>Google Pay</span>
-
             </div>
 
-            <!-- PAYTM -->
-
-            <div class="method-card"
-                 data-method="paytm">
-
-                <img src="https://cdn-icons-png.flaticon.com/512/825/825454.png">
-
+            <div class="method-card" data-method="paytm">
+                <div class="method-icon paytm-icon">
+                    <img src="~/images/payment/paytm.png" alt="Paytm">
+                </div>
                 <span>Paytm</span>
-
             </div>
 
-            <!-- BHIM -->
-
-            <div class="method-card"
-                 data-method="bhim">
-
-                <img src="https://cdn-icons-png.flaticon.com/512/196/196578.png">
-
+            <div class="method-card" data-method="bhim">
+                <div class="method-icon bhim-icon">
+                    <img src="~/images/payment/bhim.png" alt="BHIM">
+                </div>
                 <span>BHIM UPI</span>
-
             </div>
 
         </div>
