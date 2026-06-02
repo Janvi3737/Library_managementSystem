@@ -152,6 +152,16 @@ namespace Library_Management_System.Controllers
         // copied them), then fall back to the sibling admin wwwroot.
         private string? ResolvePdfPath(string pdfUrl)
         {
+            // The admin SHOULD store relative paths like "/uploads/pdfs/abc.pdf",
+            // but defensively handle absolute URLs too (older rows often
+            // contain "https://localhost:7113/uploads/pdfs/abc.pdf" because
+            // the field was edited via a tool that captured the full URL).
+            // Extract just the path portion in that case.
+            if (Uri.TryCreate(pdfUrl, UriKind.Absolute, out var uri))
+            {
+                pdfUrl = uri.AbsolutePath;
+            }
+
             var relPath = pdfUrl.TrimStart('/')
                                 .Replace('/', Path.DirectorySeparatorChar);
 
