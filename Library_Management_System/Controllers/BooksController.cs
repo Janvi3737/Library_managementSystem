@@ -51,13 +51,13 @@ namespace Library_Management_System.Controllers
                     $"\"{book.Title}\" has no PDF uploaded yet. " +
                     "Open the admin app, edit this book, and upload a PDF file under \"Pdf File\".");
 
-            var path = ResolvePdfPath(source);
-            if (path == null)
+            var resolved = ResolvePdfPathWithDiag(source);
+            if (resolved.Found == null)
                 return PlaceholderHtml(
-                    $"PDF file is recorded in the database ({source}) but cannot be found on disk. " +
-                    $"Expected at user-app wwwroot OR admin-app wwwroot/uploads/pdfs.");
+                    $"PDF for \"{book.Title}\" could not be located on disk.\n\n" +
+                    resolved.Diagnostic);
 
-            return PhysicalFile(path, "application/pdf");
+            return PhysicalFile(resolved.Found, "application/pdf");
         }
 
         // GET: /Books/ViewPreview/5  — explicit preview endpoint
@@ -114,13 +114,14 @@ namespace Library_Management_System.Controllers
 <style>
   body {{ margin:0; font-family: -apple-system, Segoe UI, Roboto, sans-serif;
           background:#0f172a; color:#e2e8f0; display:flex;
-          align-items:center; justify-content:center; min-height:100vh; padding:24px; }}
-  .box {{ max-width:560px; text-align:center; padding:32px;
-          background:#1e293b; border-radius:16px; }}
-  h2 {{ margin:0 0 12px; font-size:20px; color:#fbbf24; }}
-  p  {{ margin:0; line-height:1.6; color:#cbd5e1; }}
+          align-items:flex-start; justify-content:center; min-height:100vh; padding:36px 24px; }}
+  .box {{ max-width:760px; padding:32px; background:#1e293b; border-radius:16px; }}
+  h2 {{ margin:0 0 16px; font-size:20px; color:#fbbf24; }}
+  pre {{ margin:0; white-space:pre-wrap; word-break:break-all;
+         font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+         font-size:13px; line-height:1.6; color:#cbd5e1; }}
 </style></head><body><div class='box'>
-<h2>PDF not available</h2><p>{System.Net.WebUtility.HtmlEncode(message)}</p>
+<h2>PDF not available</h2><pre>{System.Net.WebUtility.HtmlEncode(message)}</pre>
 </div></body></html>";
             return Content(html, "text/html");
         }
@@ -150,24 +151,32 @@ namespace Library_Management_System.Controllers
         // PDF files are uploaded by the admin app into ITS wwwroot. From the
         // user app we look in our own wwwroot first (in case a deployment
         // copied them), then fall back to the sibling admin wwwroot.
-        private string? ResolvePdfPath(string pdfUrl)
+        private (string? Found, string Diagnostic) ResolvePdfPathWithDiag(string pdfUrl)
         {
+            var diag = new System.Text.StringBuilder();
+            diag.AppendLine($"DB value: {pdfUrl}");
+
             // The admin SHOULD store relative paths like "/uploads/pdfs/abc.pdf",
             // but defensively handle absolute URLs too (older rows often
             // contain "https://localhost:7113/uploads/pdfs/abc.pdf" because
             // the field was edited via a tool that captured the full URL).
-            // Extract just the path portion in that case.
             if (Uri.TryCreate(pdfUrl, UriKind.Absolute, out var uri))
             {
+                diag.AppendLine($"Parsed as absolute URI -> AbsolutePath: {uri.AbsolutePath}");
                 pdfUrl = uri.AbsolutePath;
+            }
+            else
+            {
+                diag.AppendLine("Treated as relative path.");
             }
 
             var relPath = pdfUrl.TrimStart('/')
                                 .Replace('/', Path.DirectorySeparatorChar);
 
             var local = Path.Combine(_env.WebRootPath, relPath);
+            diag.AppendLine($"Tried user-app wwwroot: {local} (exists={System.IO.File.Exists(local)})");
             if (System.IO.File.Exists(local))
-                return local;
+                return (local, diag.ToString());
 
             // user-app ContentRoot = .../Library_Management_System
             // admin-app wwwroot    = .../LibraryManagementSystem/wwwroot
@@ -176,7 +185,12 @@ namespace Library_Management_System.Controllers
                 "LibraryManagementSystem", "wwwroot"));
 
             var admin = Path.Combine(adminWwwroot, relPath);
-            return System.IO.File.Exists(admin) ? admin : null;
+            diag.AppendLine($"Tried admin-app wwwroot: {admin} (exists={System.IO.File.Exists(admin)})");
+            return (System.IO.File.Exists(admin) ? admin : null, diag.ToString());
         }
+
+        // Convenience wrapper that drops the diagnostic.
+        private string? ResolvePdfPath(string pdfUrl) =>
+            ResolvePdfPathWithDiag(pdfUrl).Found;
     }
 }
