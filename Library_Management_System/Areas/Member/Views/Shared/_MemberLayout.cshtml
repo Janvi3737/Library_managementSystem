@@ -490,8 +490,8 @@
             flex: 1;
         }
         /* =========================================
-                   PREMIUM FOOTER
-                ========================================= */
+                           PREMIUM FOOTER
+                        ========================================= */
 
         .premium-footer {
             margin-top: 70px;
@@ -522,8 +522,8 @@
             }
 
         /* =========================================
-                   BRAND
-                ========================================= */
+                           BRAND
+                        ========================================= */
 
         .footer-brand {
             position: relative;
@@ -574,8 +574,8 @@
         }
 
         /* =========================================
-                   FOOTER TITLES
-                ========================================= */
+                           FOOTER TITLES
+                        ========================================= */
 
         .footer-title {
             color: white;
@@ -597,8 +597,8 @@
             }
 
         /* =========================================
-                   LINKS
-                ========================================= */
+                           LINKS
+                        ========================================= */
 
         .footer-links {
             list-style: none;
@@ -624,10 +624,10 @@
                 }
 
         /* =========================================
-                   CONTACT
-                ========================================= */
+                           CONTACT
+                        ========================================= */
 
-        .footer-contact {
+        @* .footer-contact {
             display: flex;
             flex-direction: column;
             gap: 18px;
@@ -678,11 +678,92 @@
                     background: linear-gradient(135deg,#7c3aed,#9333ea);
                     color: white;
                     box-shadow: 0 12px 25px rgba(124,58,237,.35);
+                } *@
+        /* =========================================
+               CONTACT
+            ========================================= */
+        .contact-list {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .contact-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            color: #e2e8f0;
+            line-height: 1.8;
+            font-size: 14px;
+            transition: .3s;
+        }
+
+            .contact-row:hover {
+                transform: translateX(4px);
+            }
+
+            .contact-row i {
+                width: 40px;
+                height: 40px;
+                min-width: 40px;
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: linear-gradient(135deg,#7c3aed,#d946ef);
+                color: white;
+                font-size: 14px;
+                box-shadow: 0 10px 20px rgba(124,58,237,.25);
+            }
+
+        .footer-social {
+            display: flex;
+            gap: 14px;
+            margin-top: 30px;
+        }
+
+            .footer-social a {
+                width: 48px;
+                height: 48px;
+                border-radius: 16px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(255,255,255,.05);
+                border: 1px solid rgba(255,255,255,.08);
+                color: white;
+                text-decoration: none;
+                transition: .35s;
+            }
+
+                .footer-social a:hover {
+                    transform: translateY(-6px);
+                    background: linear-gradient(135deg,#7c3aed,#d946ef);
+                    box-shadow: 0 12px 24px rgba(124,58,237,.35);
                 }
 
+        .footer-heading {
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 28px;
+            position: relative;
+        }
+
+            .footer-heading::after {
+                content: "";
+                position: absolute;
+                left: 0;
+                bottom: -10px;
+                width: 42px;
+                height: 3px;
+                border-radius: 20px;
+                background: linear-gradient(135deg,#7c3aed,#d946ef);
+            }
+
         /* =========================================
-                   FOOTER BOTTOM
-                ========================================= */
+                           FOOTER BOTTOM
+                        ========================================= */
 
         .footer-bottom {
             margin-top: 50px;
@@ -698,8 +779,8 @@
         }
 
         /* =========================================
-                   LIGHT THEME SUPPORT
-                ========================================= */
+                           LIGHT THEME SUPPORT
+                        ========================================= */
 
         body.light-theme .footer-wrapper {
             background: linear-gradient(135deg,#ffffff,#f3f4f6);
@@ -725,8 +806,8 @@
         }
 
         /* =========================================
-                   RESPONSIVE
-                ========================================= */
+                           RESPONSIVE
+                        ========================================= */
 
         @@media (max-width: 1200px) {
 
@@ -948,6 +1029,16 @@
 
             <a class="menu-item"
                asp-area="Member"
+               asp-controller="Analytics"
+               asp-action="Index">
+
+                <i class="bi bi-bar-chart-line-fill"></i>
+                <span>Reports & Analytics</span>
+
+            </a>
+
+            <a class="menu-item"
+               asp-area="Member"
                asp-controller="BorrowHistory"
                asp-action="Index">
 
@@ -955,6 +1046,7 @@
                 <span>Borrow History</span>
 
             </a>
+
 
             <a class="menu-item"
                asp-area="Member"
@@ -1332,28 +1424,32 @@
                             <ul class="footer-links">
 
                                 <li>
-                                    <a asp-controller="Home"
+                                    <a asp-area=""
+                                      asp-controller="Home"
                                        asp-action="Index">
                                         Home
                                     </a>
                                 </li>
 
                                 <li>
-                                    <a asp-controller="Home"
+                                    <a asp-area=""
+                                      asp-controller="Home"
                                        asp-action="About">
                                         About Us
                                     </a>
                                 </li>
 
                                 <li>
-                                    <a asp-controller="Contact"
+                                    <a asp-area=""
+                                      asp-controller="Contact"
                                        asp-action="Index">
                                         Contact
                                     </a>
                                 </li>
 
                                 <li>
-                                    <a asp-controller="Home"
+                                    <a asp-area=""
+                                      asp-controller="Home"
                                        asp-action="FAQ">
                                         FAQs
                                     </a>
@@ -1395,28 +1491,25 @@
 
                         </div>
 
-                        <!-- CONTACT -->
+                        <div class="col-lg-3 col-md-4">
 
-                        <div class="col-lg-2 col-md-6">
-
-                            <h5 class="footer-title">
-                                Contact Us
+                            <h5 class="footer-heading">
+                                Get In Touch
                             </h5>
 
-                            <div class="footer-contact">
+                            <div class="contact-list">
 
-                                <div class="contact-item">
+                                <div class="contact-row">
 
                                     <i class="fa-solid fa-location-dot"></i>
 
                                     <span>
-                                        123 Library Street,
-                                        Knowledge City, India
+                                        Surat, Gujarat, India
                                     </span>
 
                                 </div>
 
-                                <div class="contact-item">
+                                <div class="contact-row">
 
                                     <i class="fa-solid fa-phone"></i>
 
@@ -1426,7 +1519,7 @@
 
                                 </div>
 
-                                <div class="contact-item">
+                                <div class="contact-row">
 
                                     <i class="fa-solid fa-envelope"></i>
 
@@ -1438,64 +1531,53 @@
 
                             </div>
 
-                        </div>
+                            <div class="footer-social">
 
-                        <!-- SOCIAL -->
-
-                        <div class="col-lg-2 col-md-6">
-
-                            <h5 class="footer-title">
-                                Connect With Us
-                            </h5>
-
-                            <div class="social-icons">
-
-                                <a href="#">
+                                <a href="https://www.facebook.com/">
                                     <i class="fab fa-facebook-f"></i>
                                 </a>
 
-                                <a href="#">
-                                    <i class="fab fa-twitter"></i>
-                                </a>
-
-                                <a href="#">
+                                <a href="https://www.instagram.com/">
                                     <i class="fab fa-instagram"></i>
                                 </a>
 
-                                <a href="#">
-                                    <i class="fab fa-linkedin-in"></i>
+                                <a href="https://x.com/
+                                    <i class="fab fa-twitter"></i>
                                 </a>
 
-                                <a href="#">
-                                    <i class="fab fa-youtube"></i>
+                                <a href="https://www.linkedin.com/">
+                                    <i class="fab fa-linkedin-in"></i>
                                 </a>
 
                             </div>
 
                         </div>
-
                     </div>
 
-                    <!-- COPYRIGHT -->
 
-                    <div class="footer-bottom">
+                </div>
 
-                        <div>
-                            © @DateTime.Now.Year BookVerse Library Management System.
-                            All rights reserved.
-                        </div>
 
-                        <div>
-                            Made with ❤️ for knowledge lovers
-                        </div>
+                <!-- COPYRIGHT -->
 
+                <div class="footer-bottom">
+
+                    <div>
+                        © @DateTime.Now.Year BookVerse Library Management System.
+                        All rights reserved.
+                    </div>
+
+                    <div>
+                        Made with ❤️ for knowledge lovers
                     </div>
 
                 </div>
 
             </div>
 
-        </footer>
+    </div>
+
+    </footer>
 
     </div>
 
