@@ -90,18 +90,6 @@ namespace LibraryManagementSystem.Controllers
 
                     await _userManager.AddToRoleAsync(user, "User");
 
-                    // In Development we skip email confirmation entirely so the
-                    if (_env.IsDevelopment())
-                    {
-                        user.EmailConfirmed = true;
-                        await _userManager.UpdateAsync(user);
-
-                        TempData["Success"] =
-                            "Registration successful. You can log in now (dev mode skips email confirmation).";
-
-                        return RedirectToAction("Login");
-                    }
-
                     // EMAIL CONFIRM TOKEN
 
                     var token =
@@ -219,18 +207,6 @@ namespace LibraryManagementSystem.Controllers
             {
                 TempData["Success"] =
                     "If an unconfirmed account exists for that email, a new confirmation link has been sent.";
-                return RedirectToAction("Login");
-            }
-
-            // Dev convenience: don't try to send mail, just confirm immediately.
-            if (_env.IsDevelopment())
-            {
-                user.EmailConfirmed = true;
-                await _userManager.UpdateAsync(user);
-
-                TempData["Success"] =
-                    "Email confirmed (dev mode). You can log in now.";
-
                 return RedirectToAction("Login");
             }
 

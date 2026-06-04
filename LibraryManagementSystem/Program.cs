@@ -54,7 +54,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
-    options.SignIn.RequireConfirmedEmail = false;
+    // Block login until the user has clicked the link in their confirmation
+    // email — same policy as the user-facing app.
+    options.SignIn.RequireConfirmedEmail = true;
 
     options.Password.RequireDigit = true;
     options.Password.RequiredLength = 6;
@@ -64,6 +66,11 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 })
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders();
+
+// SMTP - used by AccountController to send the confirmation email
+builder.Services.Configure<Library_Management_System.Models.EmailSettings>(
+    builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddScoped<LibraryManagementSystem.Services.EmailService>();
 
 // COOKIE SETTINGS
 builder.Services.ConfigureApplicationCookie(options =>
