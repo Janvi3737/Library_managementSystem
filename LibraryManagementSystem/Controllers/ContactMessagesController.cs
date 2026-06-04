@@ -15,6 +15,16 @@ namespace LibraryManagementSystem.Controllers
             _context = context;
         }
 
+        // Polled every 10s by the admin topbar — keep it fast + JSON-only
+        // so the badge updates without a full page load.
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetUnreadCount()
+        {
+            var count = await _context.ContactMessages.CountAsync(m => !m.IsRead);
+            return Json(new { count });
+        }
+
         // GET: /ContactMessages
         public async Task<IActionResult> Index()
         {

@@ -28,6 +28,8 @@
         return el;
     }
 
+    var safetyTimer = null;
+
     window.showPageLoader = function (msg) {
         var el = ensureOverlay();
         if (msg) {
@@ -35,14 +37,27 @@
                 msg + " <span>...</span>";
         }
         el.classList.add("visible");
+
+        // Hard safety: never keep the loader up for more than 30 seconds.
+        // Without this, an unhandled fetch rejection or a server hang could
+        // leave the user with a perma-blocked page.
+        if (safetyTimer) clearTimeout(safetyTimer);
+        safetyTimer = setTimeout(window.hidePageLoader, 30000);
     };
 
     window.hidePageLoader = function () {
         var el = document.getElementById(OVERLAY_ID);
         if (el) el.classList.remove("visible");
+        if (safetyTimer) { clearTimeout(safetyTimer); safetyTimer = null; }
     };
 
-    // Loader auto-triggers.
+    // Auto-hide on every event that signals the page is interactive again,
+    // so a script error in someone else's code can't strand the loader.
+    window.addEventListener("load", window.hidePageLoader);
+    window.addEventListener("pageshow", window.hidePageLoader);
+    window.addEventListener("error", window.hidePageLoader);
+    window.addEventListener("unhandledrejection", window.hidePageLoader);
+
     document.addEventListener("DOMContentLoaded", function () {
         ensureOverlay();
         hidePageLoader();
