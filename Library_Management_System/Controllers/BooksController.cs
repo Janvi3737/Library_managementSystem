@@ -3,6 +3,8 @@ using LibraryManagementSystem.ClassLibrary.Data;
 using LibraryManagementSystem.ClassLibrary.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PdfSharpCore.Pdf;
+using PdfSharpCore.Pdf.IO;
 
 namespace Library_Management_System.Controllers
 {
@@ -14,10 +16,16 @@ namespace Library_Management_System.Controllers
     /// Access policy (set by the user, not the framework):
     ///   - Anyone can hit the actions (no [Authorize] gate).
     ///   - If the user has an active Membership, they get the FULL book.
-    ///   - Otherwise they get the PREVIEW PDF (limited pages).
+    ///   - Otherwise they get the first 20 pages of the book ONLY
+    ///     (extracted server-side via PdfSharpCore so the full file
+    ///     never reaches the client).
     /// </summary>
     public class BooksController : Controller
     {
+        // Non-members get this many pages of any book, full stop.
+        // Tweak here (or move to LibrarySettings later) if 20 isn't right.
+        private const int PreviewPageCount = 20;
+
         private readonly AppDbContext _context;
         private readonly IWebHostEnvironment _env;
 
@@ -38,13 +46,13 @@ namespace Library_Management_System.Controllers
 
             var hasMembership = await CurrentUserHasMembershipAsync();
 
-            // Member -> full PDF. Anyone else -> preview PDF if it exists, else
-            // fall back to full PDF only if there's no preview (so the page
-            // still shows something useful for guests).
-            string? source =
-                hasMembership
-                    ? book.PdfUrl
-                    : (book.PreviewPdfUrl ?? book.PdfUrl);
+            // We always serve from book.PdfUrl — for non-members we shrink
+            // it to PreviewPageCount on the fly. No separate preview upload
+            // is needed. (PreviewPdfUrl is still respected when it exists,
+            // letting an admin force a custom preview if they want.)
+            string? source = (!hasMembership && !string.IsNullOrEmpty(book.PreviewPdfUrl))
+                ? book.PreviewPdfUrl
+                : book.PdfUrl;
 
             if (string.IsNullOrEmpty(source))
                 return PlaceholderHtml(
@@ -57,7 +65,22 @@ namespace Library_Management_System.Controllers
                     $"PDF for \"{book.Title}\" could not be located on disk.\n\n" +
                     resolved.Diagnostic);
 
-            return PhysicalFile(resolved.Found, "application/pdf");
+            // Members get the file as-is.
+            if (hasMembership)
+                return PhysicalFile(resolved.Found, "application/pdf");
+
+            // Non-members get the first PreviewPageCount pages, copied into
+            // a fresh PDF in memory and streamed back.
+            try
+            {
+                var trimmedBytes = ExtractFirstPages(resolved.Found, PreviewPageCount);
+                return File(trimmedBytes, "application/pdf");
+            }
+            catch (Exception ex)
+            {
+                return PlaceholderHtml(
+                    $"Could not generate preview for \"{book.Title}\".\n\n{ex.Message}");
+            }
         }
 
         // GET: /Books/ViewPreview/5  — explicit preview endpoint
@@ -86,10 +109,9 @@ namespace Library_Management_System.Controllers
 
             var hasMembership = await CurrentUserHasMembershipAsync();
 
-            string? source =
-                hasMembership
-                    ? book.PdfUrl
-                    : (book.PreviewPdfUrl ?? book.PdfUrl);
+            string? source = (!hasMembership && !string.IsNullOrEmpty(book.PreviewPdfUrl))
+                ? book.PreviewPdfUrl
+                : book.PdfUrl;
 
             if (string.IsNullOrEmpty(source))
                 return PlaceholderHtml(
@@ -102,7 +124,42 @@ namespace Library_Management_System.Controllers
 
             var suffix = hasMembership ? "" : "-preview";
             var fileName = $"{book.Title}{suffix}.pdf";
-            return PhysicalFile(path, "application/pdf", fileName);
+
+            // Members download the full file. Non-members can ONLY download
+            // the first PreviewPageCount pages — extracted server-side so
+            // the full PDF never crosses the wire.
+            if (hasMembership)
+                return PhysicalFile(path, "application/pdf", fileName);
+
+            try
+            {
+                var trimmedBytes = ExtractFirstPages(path, PreviewPageCount);
+                return File(trimmedBytes, "application/pdf", fileName);
+            }
+            catch (Exception ex)
+            {
+                return PlaceholderHtml(
+                    $"Could not generate preview for \"{book.Title}\".\n\n{ex.Message}");
+            }
+        }
+
+        // Reads the PDF on disk and returns a new in-memory PDF containing
+        // only the first `count` pages. Used to enforce the non-member
+        // preview cap WITHOUT ever streaming the full file to the browser.
+        private static byte[] ExtractFirstPages(string sourcePath, int count)
+        {
+            using var input = PdfReader.Open(sourcePath, PdfDocumentOpenMode.Import);
+            using var output = new PdfDocument();
+            output.Info.Title = input.Info.Title;
+            output.Info.Subject = "Preview - first " + count + " pages";
+
+            var pages = Math.Min(count, input.PageCount);
+            for (int i = 0; i < pages; i++)
+                output.AddPage(input.Pages[i]);
+
+            using var ms = new MemoryStream();
+            output.Save(ms, false);
+            return ms.ToArray();
         }
 
         // Renders a minimal HTML page so the message is visible inside the

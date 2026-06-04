@@ -1,4 +1,4 @@
-@model IEnumerable<LibraryManagementSystem.ClassLibrary.Models.Notification>
+﻿@model IEnumerable<LibraryManagementSystem.ClassLibrary.Models.Notification>
 
 @{
     ViewData["Title"] = "Notifications";
@@ -12,11 +12,11 @@
 </style>
 
 <div class="container mt-4">
-    <h2 class="mb-3">🔔 Notifications</h2>
+    <h2 class="mb-3">ðŸ”” Notifications</h2>
 
     <div class="card shadow-sm mb-4">
         <div class="card-body">
-            <h5 class="card-title">📣 Broadcast to all members + users</h5>
+            <h5 class="card-title">ðŸ“£ Broadcast to all members + users</h5>
             <form asp-action="Broadcast" method="post">
                 <div class="mb-2">
                     <label class="form-label">Message</label>
@@ -70,17 +70,17 @@
                                 <td>
                                     @if (n.IsRead)
                                     {
-                                        <span class="text-muted">✓</span>
+                                        <span class="text-muted">âœ“</span>
                                     }
                                     else
                                     {
-                                        <span class="text-warning">●</span>
+                                        <span class="text-warning">â—</span>
                                     }
                                 </td>
                                 <td>
                                     <form asp-action="Delete" asp-route-id="@n.Id"
                                           method="post"
-                                          onsubmit="return confirm('Delete this notification?');"
+                                          data-swal-confirm="Delete this notification?"
                                           style="display:inline;">
                                         <button class="btn btn-sm btn-danger">
                                             <i class="bi bi-trash"></i>
@@ -95,3 +95,4 @@
         </div>
     </div>
 </div>
+

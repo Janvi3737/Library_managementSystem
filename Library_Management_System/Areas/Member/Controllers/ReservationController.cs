@@ -48,7 +48,7 @@ namespace Library_Management_System.Areas.Member.Controllers
         // RESERVE BOOK PAGE
         // =========================
 
-        public async Task<IActionResult> Create(int bookId)
+        public async Task<IActionResult> Create(int bookId, int quantity = 1)
         {
             var book = await _context.Books
                 .Include(b => b.Author)
@@ -57,6 +57,13 @@ namespace Library_Management_System.Areas.Member.Controllers
 
             if (book == null)
                 return NotFound();
+
+            // Clamp + pass through to the confirm page so the hidden input
+            // can echo it. Server-side clamp prevents users hand-editing
+            // the URL to reserve more than what's in stock.
+            if (quantity < 1) quantity = 1;
+            if (quantity > book.AvailableCopies) quantity = book.AvailableCopies;
+            ViewBag.Quantity = quantity;
 
             return View(book);
         }
@@ -67,9 +74,18 @@ namespace Library_Management_System.Areas.Member.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateReservation(int bookId)
+        public async Task<IActionResult> CreateReservation(int bookId, int quantity = 1)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Server-side validation — never trust the form. Clamp to what's
+            // actually available so an attacker hand-editing the post can't
+            // reserve more than stock.
+            var book = await _context.Books.FindAsync(bookId);
+            if (book == null) return NotFound();
+
+            if (quantity < 1) quantity = 1;
+            if (quantity > book.AvailableCopies) quantity = book.AvailableCopies;
 
             var alreadyReserved = await _context.Reservations
                 .AnyAsync(r =>
@@ -88,6 +104,7 @@ namespace Library_Management_System.Areas.Member.Controllers
             {
                 BookId = bookId,
                 MemberId = userId,
+                Quantity = quantity,
                 ReservedOn = DateTime.Now,
                 Status = ReservationStatus.Waiting
             };

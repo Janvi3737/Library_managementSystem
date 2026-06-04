@@ -49,22 +49,72 @@ namespace LibraryManagementSystem.Controllers
 
             if (r == null) return NotFound();
 
+            if (r.Status != ReservationStatus.Waiting)
+            {
+                TempData["Error"] = "Only waiting reservations can be fulfilled.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Look up the Member.Id (int) from the reservation's ApplicationUserId
+            // (string). BorrowRecord.MemberId is an int FK to Members.
+            var memberId = await _context.Members
+                .Where(m => m.ApplicationUserId == r.MemberId)
+                .Select(m => (int?)m.Id)
+                .FirstOrDefaultAsync();
+
+            if (memberId == null || r.Book == null)
+            {
+                TempData["Error"] = "Cannot fulfill — member or book record missing.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var quantity = r.Quantity > 0 ? r.Quantity : 1;
+            if (r.Book.AvailableCopies < quantity)
+            {
+                TempData["Error"] = $"Only {r.Book.AvailableCopies} cop{(r.Book.AvailableCopies == 1 ? "y" : "ies")} available; cannot issue {quantity}.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Loan defaults — read from admin-editable settings when present.
+            var settings = await _context.LibrarySettings.FirstOrDefaultAsync()
+                           ?? new LibrarySettings();
+
+            // Create one BorrowRecord per quantity requested. This is what
+            // makes the user's Borrow History page actually show the issued
+            // book — without this the reservation just got stamped Completed
+            // and the user had no record of being issued anything.
+            for (int i = 0; i < quantity; i++)
+            {
+                _context.BorrowRecords.Add(new BorrowRecord
+                {
+                    BookId = r.BookId,
+                    MemberId = memberId.Value,
+                    IssuedOn = DateTime.Now,
+                    DueDate = DateTime.Now.AddDays(settings.DefaultLoanDays),
+                    FinePerDay = settings.FinePerDay,
+                    FineAmount = 0,
+                    DaysLate = 0,
+                    Status = "Issued"
+                });
+            }
+
+            r.Book.AvailableCopies -= quantity;
             r.Status = ReservationStatus.Completed;
 
             // Notify the member their book is ready. The user app's bell icon
             // will pick this up on next page load.
-            if (!string.IsNullOrEmpty(r.MemberId) && r.Book != null)
+            if (!string.IsNullOrEmpty(r.MemberId))
             {
                 _context.Notifications.Add(new Notification
                 {
                     MemberId = r.MemberId,
-                    Message = $"Your reserved book \"{r.Book.Title}\" is now available — please pick it up.",
-                    Link = "/Member/Reservation/Index"
+                    Message = $"Your reserved book \"{r.Book.Title}\" (qty {quantity}) has been issued — check Borrow History.",
+                    Link = "/Member/BorrowHistory/Index"
                 });
             }
 
             await _context.SaveChangesAsync();
-            TempData["Success"] = "Reservation marked fulfilled and member notified.";
+            TempData["Success"] = $"Reservation fulfilled — {quantity} cop{(quantity == 1 ? "y" : "ies")} issued.";
             return RedirectToAction(nameof(Index));
         }
 
