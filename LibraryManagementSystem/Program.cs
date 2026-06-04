@@ -133,7 +133,7 @@ using (var scope = app.Services.CreateScope())
     }
     else
     {
-        await db.Database.MigrateAsync();
+        //await db.Database.MigrateAsync();
     }
 
     await DbSeeder.SeedAsync(db);

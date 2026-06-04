@@ -43,7 +43,7 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTimeOffset?>("LockoutEnd")
+                    b.Property<string>("LockoutEnd")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("NormalizedEmail")
@@ -114,7 +114,8 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("Timestamp")
+                    b.Property<string>("Timestamp")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UserEmail")
@@ -123,7 +124,7 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AuditLogs");
+                    b.ToTable("AuditLogs", (string)null);
                 });
 
             modelBuilder.Entity("LibraryManagementSystem.ClassLibrary.Models.Author", b =>
@@ -143,7 +144,7 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Authors");
+                    b.ToTable("Authors", (string)null);
                 });
 
             modelBuilder.Entity("LibraryManagementSystem.ClassLibrary.Models.Book", b =>
@@ -168,7 +169,8 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<string>("CreatedAt")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("DepartmentId")
@@ -211,7 +213,7 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
 
                     b.HasIndex("DepartmentId");
 
-                    b.ToTable("Books");
+                    b.ToTable("Books", (string)null);
                 });
 
             modelBuilder.Entity("LibraryManagementSystem.ClassLibrary.Models.BookReview", b =>
@@ -227,7 +229,8 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<string>("CreatedAt")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("MemberId")
@@ -243,7 +246,7 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
 
                     b.HasIndex("MemberId");
 
-                    b.ToTable("BookReviews");
+                    b.ToTable("BookReviews", (string)null);
                 });
 
             modelBuilder.Entity("LibraryManagementSystem.ClassLibrary.Models.BorrowRecord", b =>
@@ -258,7 +261,8 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                     b.Property<int>("DaysLate")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("DueDate")
+                    b.Property<string>("DueDate")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("FineAmount")
@@ -270,7 +274,8 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                     b.Property<decimal>("FinePerDay")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime>("IssuedOn")
+                    b.Property<string>("IssuedOn")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("MemberId")
@@ -279,7 +284,7 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                     b.Property<int>("RenewCount")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime?>("ReturnedOn")
+                    b.Property<string>("ReturnedOn")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Status")
@@ -297,7 +302,7 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
 
                     b.HasIndex("ReturnedOn");
 
-                    b.ToTable("BorrowRecords");
+                    b.ToTable("BorrowRecords", (string)null);
                 });
 
             modelBuilder.Entity("LibraryManagementSystem.ClassLibrary.Models.Category", b =>
@@ -313,7 +318,7 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("LibraryManagementSystem.ClassLibrary.Models.ContactMessage", b =>
@@ -340,7 +345,8 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("ReceivedOn")
+                    b.Property<string>("ReceivedOn")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Subject")
@@ -350,7 +356,7 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ContactMessages");
+                    b.ToTable("ContactMessages", (string)null);
                 });
 
             modelBuilder.Entity("LibraryManagementSystem.ClassLibrary.Models.Department", b =>
@@ -369,7 +375,7 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Departments");
+                    b.ToTable("Departments", (string)null);
                 });
 
             modelBuilder.Entity("LibraryManagementSystem.ClassLibrary.Models.Event", b =>
@@ -378,7 +384,8 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("Date")
+                    b.Property<string>("Date")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
@@ -401,7 +408,7 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Events");
+                    b.ToTable("Events", (string)null);
                 });
 
             modelBuilder.Entity("LibraryManagementSystem.ClassLibrary.Models.EventReservation", b =>
@@ -416,7 +423,8 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                     b.Property<int>("MemberId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("ReservedOn")
+                    b.Property<string>("ReservedOn")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Status")
@@ -429,7 +437,7 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
 
                     b.HasIndex("MemberId");
 
-                    b.ToTable("EventReservations");
+                    b.ToTable("EventReservations", (string)null);
                 });
 
             modelBuilder.Entity("LibraryManagementSystem.ClassLibrary.Models.LibrarySettings", b =>
@@ -472,7 +480,7 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("LibrarySettings");
+                    b.ToTable("LibrarySettings", (string)null);
                 });
 
             modelBuilder.Entity("LibraryManagementSystem.ClassLibrary.Models.Member", b =>
@@ -489,7 +497,8 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("JoinedOn")
+                    b.Property<string>("JoinedOn")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -505,7 +514,7 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.ToTable("Members");
+                    b.ToTable("Members", (string)null);
                 });
 
             modelBuilder.Entity("LibraryManagementSystem.ClassLibrary.Models.Membership", b =>
@@ -517,7 +526,8 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                     b.Property<int>("DurationMonths")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("EndDate")
+                    b.Property<string>("EndDate")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("Fee")
@@ -536,14 +546,15 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("StartDate")
+                    b.Property<string>("StartDate")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.HasIndex("MemberId");
 
-                    b.ToTable("Memberships");
+                    b.ToTable("Memberships", (string)null);
                 });
 
             modelBuilder.Entity("LibraryManagementSystem.ClassLibrary.Models.MembershipPayment", b =>
@@ -558,7 +569,8 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                     b.Property<int>("MembershipId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("PaymentDate")
+                    b.Property<string>("PaymentDate")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PaymentMethod")
@@ -580,7 +592,7 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
 
                     b.HasIndex("MembershipId");
 
-                    b.ToTable("MembershipPayments");
+                    b.ToTable("MembershipPayments", (string)null);
                 });
 
             modelBuilder.Entity("LibraryManagementSystem.ClassLibrary.Models.Notification", b =>
@@ -589,7 +601,8 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("CreatedOn")
+                    b.Property<string>("CreatedOn")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("IsRead")
@@ -612,7 +625,7 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
 
                     b.HasIndex("MemberId");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notifications", (string)null);
                 });
 
             modelBuilder.Entity("LibraryManagementSystem.ClassLibrary.Models.Reservation", b =>
@@ -631,7 +644,8 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("ReservedOn")
+                    b.Property<string>("ReservedOn")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Status")
@@ -643,7 +657,7 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
 
                     b.HasIndex("MemberId");
 
-                    b.ToTable("Reservations");
+                    b.ToTable("Reservations", (string)null);
                 });
 
             modelBuilder.Entity("LibraryManagementSystem.ClassLibrary.Models.Wishlist", b =>
@@ -652,7 +666,8 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("AddedOn")
+                    b.Property<string>("AddedOn")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("BookId")
@@ -674,7 +689,7 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
 
                     b.HasIndex("MemberId");
 
-                    b.ToTable("Wishlists");
+                    b.ToTable("Wishlists", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
