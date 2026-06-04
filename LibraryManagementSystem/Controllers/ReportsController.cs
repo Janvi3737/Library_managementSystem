@@ -1,4 +1,4 @@
-﻿using LibraryManagementSystem.ClassLibrary.Data;
+using LibraryManagementSystem.ClassLibrary.Data;
 using LibraryManagementSystem.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -134,22 +134,10 @@ namespace LibraryManagementSystem.Controllers
             // PENDING RESERVATIONS
 
             // model.PendingReservations = await _context.Reservations
-            //     .Include(x => x.Book)
-            //     .Include(x => x.Member)
-            //     .Where(x => x.Status.ToString() == "Pending")
-            //     .Select(x => new PendingReservationVM
-            //     {
-            //         BookName = x.Book.Title,
 
             //         MemberName =
-            //             x.Member.FullName ??
-            //             x.Member.UserName,
 
             //         ReservedOn = x.ReservedOn
-            //     })
-            //     .OrderByDescending(x => x.ReservedOn)
-            //     .Take(10)
-            //     .ToListAsync();
 
             // PENDING RESERVATIONS
 

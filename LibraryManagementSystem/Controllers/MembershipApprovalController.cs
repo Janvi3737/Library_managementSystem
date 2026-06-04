@@ -24,9 +24,7 @@ namespace LibraryManagementSystem.Controllers
             _userManager = userManager;
         }
 
-        // ============================================
         // MEMBERSHIP PAYMENTS LIST
-        // ============================================
 
         public async Task<IActionResult> Index()
         {
@@ -44,9 +42,7 @@ namespace LibraryManagementSystem.Controllers
             return View(payments);
         }
 
-        // ============================================
         // APPROVE MEMBERSHIP
-        // ============================================
 
         [HttpPost]
         public async Task<IActionResult> Approve(int id)
@@ -65,23 +61,17 @@ namespace LibraryManagementSystem.Controllers
                 return NotFound();
             }
 
-            // =============================
             // UPDATE PAYMENT STATUS
-            // =============================
 
             payment.PaymentStatus =
                 "Approved";
 
-            // =============================
             // ACTIVATE MEMBERSHIP
-            // =============================
 
             payment.Membership.IsActive =
                 true;
 
-            // =============================
             // GET USER
-            // =============================
 
             var member =
                 payment.Membership.Member;
@@ -125,9 +115,7 @@ namespace LibraryManagementSystem.Controllers
             return RedirectToAction("Index");
         }
 
-        // ============================================
         // REJECT MEMBERSHIP
-        // ============================================
 
         [HttpPost]
         public async Task<IActionResult> Reject(int id)
@@ -146,9 +134,7 @@ namespace LibraryManagementSystem.Controllers
                 return NotFound();
             }
 
-            // =============================
             // UPDATE STATUS
-            // =============================
 
             payment.PaymentStatus =
                 "Rejected";

@@ -33,7 +33,6 @@ namespace LibraryManagementSystem.Controllers
             var users = await query.OrderBy(u => u.Email).ToListAsync();
 
             // Hydrate roles per-user. Identity stores role membership in a
-            // separate table — there's no FK navigation we can Include.
             var rows = new List<UserRowViewModel>(users.Count);
             foreach (var u in users)
             {

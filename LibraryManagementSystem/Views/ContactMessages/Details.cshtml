@@ -1,4 +1,4 @@
-@model LibraryManagementSystem.ClassLibrary.Models.ContactMessage
+﻿@model LibraryManagementSystem.ClassLibrary.Models.ContactMessage
 
 @{
     ViewData["Title"] = "Message Details";
@@ -9,8 +9,8 @@
 <div class="container mt-4">
 
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="m-0">📨 Message #@Model.Id</h2>
-        <a asp-action="Index" class="btn btn-secondary">← Back</a>
+        <h2 class="m-0">ðŸ“¨ Message #@Model.Id</h2>
+        <a asp-action="Index" class="btn btn-secondary">â† Back</a>
     </div>
 
     <div class="card shadow-sm">
@@ -47,7 +47,7 @@
             <form asp-action="Delete"
                   asp-route-id="@Model.Id"
                   method="post"
-                  onsubmit="return confirm('Delete this message?');"
+                  data-swal-confirm="Delete this message?"
                   style="display:inline;">
                 <button class="btn btn-danger">
                     <i class="bi bi-trash"></i> Delete
@@ -56,3 +56,4 @@
         </div>
     </div>
 </div>
+

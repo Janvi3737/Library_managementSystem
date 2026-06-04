@@ -45,7 +45,6 @@ namespace LibraryManagementSystem.Controllers
             }
 
             // Target every Member (and User). Skip admins so they don't drown
-            // in their own broadcasts.
             var memberRoleUsers = await _userManager.GetUsersInRoleAsync("Member");
             var userRoleUsers = await _userManager.GetUsersInRoleAsync("User");
             var recipients = memberRoleUsers

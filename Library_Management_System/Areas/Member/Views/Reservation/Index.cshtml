@@ -1,4 +1,4 @@
-@{
+﻿@{
     Layout = "~/Areas/Member/Views/Shared/_MemberLayout.cshtml";
 }
 @using LibraryManagementSystem.ClassLibrary.Models
@@ -130,7 +130,7 @@
 <div class="reservation-wrapper">
 
     <div class="page-title">
-        📚 My Reservations
+        ðŸ“š My Reservations
     </div>
 
     @if (!Model.Any())
@@ -228,7 +228,7 @@
                 <form asp-action="Cancel"
                       asp-route-id="@item.Id"
                       method="post"
-                      onsubmit="return confirm('Cancel this reservation?');"
+                      data-swal-confirm="Cancel this reservation?"
                       style="display:inline">
 
                     @Html.AntiForgeryToken()
@@ -247,3 +247,4 @@
     }
 
 </div>
+

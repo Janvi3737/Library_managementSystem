@@ -1,4 +1,4 @@
-@model IEnumerable<LibraryManagementSystem.ClassLibrary.Models.BorrowRecord>
+﻿@model IEnumerable<LibraryManagementSystem.ClassLibrary.Models.BorrowRecord>
 
 @{
     ViewData["Title"] = "Fines";
@@ -24,8 +24,8 @@
 <div class="container mt-4">
     <div class="row align-items-center mb-3">
         <div class="col-md-5">
-            <h2 class="m-0">💰 Fines</h2>
-            <small class="text-muted">Outstanding total: <strong>₹@outstandingTotal.ToString("0.00")</strong></small>
+            <h2 class="m-0">ðŸ’° Fines</h2>
+            <small class="text-muted">Outstanding total: <strong>â‚¹@outstandingTotal.ToString("0.00")</strong></small>
         </div>
         <div class="col-md-7 text-end">
             <a class="filter-pill @(currentStatus == "outstanding" ? "active" : "")"
@@ -61,12 +61,12 @@
                         @foreach (var r in Model)
                         {
                             <tr>
-                                <td>@(r.Member?.Name ?? "—")</td>
-                                <td>@(r.Book?.Title ?? "—")</td>
+                                <td>@(r.Member?.Name ?? "â€”")</td>
+                                <td>@(r.Book?.Title ?? "â€”")</td>
                                 <td>@r.DueDate.ToString("dd MMM yyyy")</td>
-                                <td>@(r.ReturnedOn?.ToString("dd MMM yyyy") ?? "—")</td>
+                                <td>@(r.ReturnedOn?.ToString("dd MMM yyyy") ?? "â€”")</td>
                                 <td>@r.DaysLate</td>
-                                <td>₹@r.FineAmount.ToString("0.00")</td>
+                                <td>â‚¹@r.FineAmount.ToString("0.00")</td>
                                 <td>
                                     @if (r.FinePaid)
                                     {
@@ -83,12 +83,12 @@
                                         <form asp-action="MarkPaid" asp-route-id="@r.Id"
                                               method="post" style="display:inline;">
                                             <button class="btn btn-sm btn-success me-1">
-                                                ✓ Mark Paid
+                                                âœ“ Mark Paid
                                             </button>
                                         </form>
                                         <form asp-action="Waive" asp-route-id="@r.Id"
                                               method="post"
-                                              onsubmit="return confirm('Waive this fine?');"
+                                              data-swal-confirm="Waive this fine?"
                                               style="display:inline;">
                                             <button class="btn btn-sm btn-warning">
                                                 Waive
@@ -104,3 +104,4 @@
         </div>
     </div>
 </div>
+

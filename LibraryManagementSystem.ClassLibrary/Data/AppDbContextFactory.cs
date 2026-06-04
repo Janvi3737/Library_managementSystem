@@ -47,9 +47,6 @@ namespace LibraryManagementSystem.ClassLibrary.Data
             else
             {
                 // Resolve to the solution-root LibraryManagementDB.db.
-                // AppContext.BaseDirectory at design-time is something like
-                //   <solution>/<project>/bin/Debug/net8.0/
-                // so going up 4 levels lands at the solution root.
                 var solutionRoot = Path.GetFullPath(
                     Path.Combine(AppContext.BaseDirectory, "..", "..", "..", ".."));
                 var sqliteFile = Path.Combine(solutionRoot, "LibraryManagementDB.db");

@@ -1,4 +1,4 @@
-@model IEnumerable<LibraryManagementSystem.ClassLibrary.Models.Book>
+﻿@model IEnumerable<LibraryManagementSystem.ClassLibrary.Models.Book>
 @{
     ViewData["Title"] = "Books";
 }
@@ -64,7 +64,7 @@
 
         <!-- Left Title -->
         <div class="col-md-6">
-            <h2 class="m-0">📚 Books List</h2>
+            <h2 class="m-0">ðŸ“š Books List</h2>
         </div>
 
         <!-- Right Buttons -->
@@ -76,7 +76,7 @@
 
             <a asp-action="Import"
                class="btn btn-dark me-2">
-                ⬆️ Bulk Import
+                â¬†ï¸ Bulk Import
             </a>
 
             <a class="btn btn-primary"
@@ -89,7 +89,7 @@
     </div>
 
 
-    <!-- ✅ SUCCESS MESSAGE HERE -->
+    <!-- âœ… SUCCESS MESSAGE HERE -->
     @if (TempData["Success"] != null)
     {
         <div class="alert alert-success alert-dismissible fade show">
@@ -126,7 +126,7 @@
                 <div class="card-body">
 
             <form asp-action="BulkDelete" method="post"
-                  onsubmit="return confirm('Delete all selected books?');">
+                  data-swal-confirm="Delete all selected books?">
             <table class="table table-bordered table-striped table-hover align-middle" id="booksTable">
                         <thead class="table-dark">
                             <tr>
@@ -240,7 +240,7 @@
 
                     <div class="p-3 border-top">
                         <button type="submit" class="btn btn-danger">
-                            🗑 Delete Selected
+                            ðŸ—‘ Delete Selected
                         </button>
                         <small class="text-muted ms-2">
                             Books with borrow history will fail FK and be reported.
@@ -318,3 +318,4 @@
         });
     </script>
 }
+

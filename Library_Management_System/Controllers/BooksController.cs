@@ -3,6 +3,8 @@ using LibraryManagementSystem.ClassLibrary.Data;
 using LibraryManagementSystem.ClassLibrary.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PdfSharpCore.Pdf;
+using PdfSharpCore.Pdf.IO;
 
 namespace Library_Management_System.Controllers
 {
@@ -14,10 +16,15 @@ namespace Library_Management_System.Controllers
     /// Access policy (set by the user, not the framework):
     ///   - Anyone can hit the actions (no [Authorize] gate).
     ///   - If the user has an active Membership, they get the FULL book.
-    ///   - Otherwise they get the PREVIEW PDF (limited pages).
+    ///   - Otherwise they get the first 20 pages of the book ONLY
+    ///     (extracted server-side via PdfSharpCore so the full file
+    ///     never reaches the client).
     /// </summary>
     public class BooksController : Controller
     {
+        // Non-members get this many pages of any book, full stop.
+        private const int PreviewPageCount = 20;
+
         private readonly AppDbContext _context;
         private readonly IWebHostEnvironment _env;
 
@@ -38,13 +45,10 @@ namespace Library_Management_System.Controllers
 
             var hasMembership = await CurrentUserHasMembershipAsync();
 
-            // Member -> full PDF. Anyone else -> preview PDF if it exists, else
-            // fall back to full PDF only if there's no preview (so the page
-            // still shows something useful for guests).
-            string? source =
-                hasMembership
-                    ? book.PdfUrl
-                    : (book.PreviewPdfUrl ?? book.PdfUrl);
+            // We always serve from book.PdfUrl — for non-members we shrink
+            string? source = (!hasMembership && !string.IsNullOrEmpty(book.PreviewPdfUrl))
+                ? book.PreviewPdfUrl
+                : book.PdfUrl;
 
             if (string.IsNullOrEmpty(source))
                 return PlaceholderHtml(
@@ -57,7 +61,21 @@ namespace Library_Management_System.Controllers
                     $"PDF for \"{book.Title}\" could not be located on disk.\n\n" +
                     resolved.Diagnostic);
 
-            return PhysicalFile(resolved.Found, "application/pdf");
+            // Members get the file as-is.
+            if (hasMembership)
+                return PhysicalFile(resolved.Found, "application/pdf");
+
+            // Non-members get the first PreviewPageCount pages, copied into
+            try
+            {
+                var trimmedBytes = ExtractFirstPages(resolved.Found, PreviewPageCount);
+                return File(trimmedBytes, "application/pdf");
+            }
+            catch (Exception ex)
+            {
+                return PlaceholderHtml(
+                    $"Could not generate preview for \"{book.Title}\".\n\n{ex.Message}");
+            }
         }
 
         // GET: /Books/ViewPreview/5  — explicit preview endpoint
@@ -86,10 +104,9 @@ namespace Library_Management_System.Controllers
 
             var hasMembership = await CurrentUserHasMembershipAsync();
 
-            string? source =
-                hasMembership
-                    ? book.PdfUrl
-                    : (book.PreviewPdfUrl ?? book.PdfUrl);
+            string? source = (!hasMembership && !string.IsNullOrEmpty(book.PreviewPdfUrl))
+                ? book.PreviewPdfUrl
+                : book.PdfUrl;
 
             if (string.IsNullOrEmpty(source))
                 return PlaceholderHtml(
@@ -102,11 +119,41 @@ namespace Library_Management_System.Controllers
 
             var suffix = hasMembership ? "" : "-preview";
             var fileName = $"{book.Title}{suffix}.pdf";
-            return PhysicalFile(path, "application/pdf", fileName);
+
+            // Members download the full file. Non-members can ONLY download
+            if (hasMembership)
+                return PhysicalFile(path, "application/pdf", fileName);
+
+            try
+            {
+                var trimmedBytes = ExtractFirstPages(path, PreviewPageCount);
+                return File(trimmedBytes, "application/pdf", fileName);
+            }
+            catch (Exception ex)
+            {
+                return PlaceholderHtml(
+                    $"Could not generate preview for \"{book.Title}\".\n\n{ex.Message}");
+            }
+        }
+
+        // Reads the PDF on disk and returns a new in-memory PDF containing
+        private static byte[] ExtractFirstPages(string sourcePath, int count)
+        {
+            using var input = PdfReader.Open(sourcePath, PdfDocumentOpenMode.Import);
+            using var output = new PdfDocument();
+            output.Info.Title = input.Info.Title;
+            output.Info.Subject = "Preview - first " + count + " pages";
+
+            var pages = Math.Min(count, input.PageCount);
+            for (int i = 0; i < pages; i++)
+                output.AddPage(input.Pages[i]);
+
+            using var ms = new MemoryStream();
+            output.Save(ms, false);
+            return ms.ToArray();
         }
 
         // Renders a minimal HTML page so the message is visible inside the
-        // iframe instead of a bare 404 / blank PDF reader.
         private IActionResult PlaceholderHtml(string message)
         {
             var html = $@"<!doctype html>
@@ -149,17 +196,12 @@ namespace Library_Management_System.Controllers
         }
 
         // PDF files are uploaded by the admin app into ITS wwwroot. From the
-        // user app we look in our own wwwroot first (in case a deployment
-        // copied them), then fall back to the sibling admin wwwroot.
         private (string? Found, string Diagnostic) ResolvePdfPathWithDiag(string pdfUrl)
         {
             var diag = new System.Text.StringBuilder();
             diag.AppendLine($"DB value: {pdfUrl}");
 
             // The admin SHOULD store relative paths like "/uploads/pdfs/abc.pdf",
-            // but defensively handle absolute URLs too (older rows often
-            // contain "https://localhost:7113/uploads/pdfs/abc.pdf" because
-            // the field was edited via a tool that captured the full URL).
             if (Uri.TryCreate(pdfUrl, UriKind.Absolute, out var uri))
             {
                 diag.AppendLine($"Parsed as absolute URI -> AbsolutePath: {uri.AbsolutePath}");
@@ -179,7 +221,6 @@ namespace Library_Management_System.Controllers
                 return (local, diag.ToString());
 
             // user-app ContentRoot = .../Library_Management_System
-            // admin-app wwwroot    = .../LibraryManagementSystem/wwwroot
             var adminWwwroot = Path.GetFullPath(Path.Combine(
                 _env.ContentRootPath, "..",
                 "LibraryManagementSystem", "wwwroot"));

@@ -1,4 +1,4 @@
-@model IEnumerable<LibraryManagementSystem.ClassLibrary.Models.ContactMessage>
+﻿@model IEnumerable<LibraryManagementSystem.ClassLibrary.Models.ContactMessage>
 
 @{
     ViewData["Title"] = "Contact Messages";
@@ -36,7 +36,7 @@
 
     <div class="row align-items-center mb-3">
         <div class="col-md-12">
-            <h2 class="m-0">📨 Contact Messages</h2>
+            <h2 class="m-0">ðŸ“¨ Contact Messages</h2>
             @if (unreadCount > 0)
             {
                 <small class="text-muted">@unreadCount unread</small>
@@ -98,7 +98,7 @@
                                     <form asp-action="Delete"
                                           asp-route-id="@m.Id"
                                           method="post"
-                                          onsubmit="return confirm('Delete this message?');"
+                                          data-swal-confirm="Delete this message?"
                                           style="display:inline;">
                                         <button class="btn btn-sm btn-danger">
                                             <i class="bi bi-trash"></i>
@@ -113,3 +113,4 @@
         </div>
     </div>
 </div>
+

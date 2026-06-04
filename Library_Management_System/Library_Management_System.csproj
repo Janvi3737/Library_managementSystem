@@ -40,6 +40,8 @@
 
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.5" />
 
+		<PackageReference Include="PdfSharpCore" Version="1.3.65" />
+
 	</ItemGroup>
 
 	<ItemGroup>

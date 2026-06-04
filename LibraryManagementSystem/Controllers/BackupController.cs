@@ -37,7 +37,6 @@ namespace LibraryManagementSystem.Controllers
             }
 
             // Read into memory so we don't hold a file handle that conflicts
-            // with the running app's connection.
             byte[] bytes;
             using (var fs = new FileStream(dataSource, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             using (var ms = new MemoryStream())

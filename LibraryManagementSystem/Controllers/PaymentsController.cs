@@ -60,7 +60,6 @@ namespace LibraryManagementSystem.Controllers
             payment.PaymentStatus = "Approved";
 
             // Approval also makes the membership active in case it was rejected
-            // earlier and then re-approved.
             if (payment.Membership != null)
                 payment.Membership.IsActive = true;
 
@@ -90,7 +89,6 @@ namespace LibraryManagementSystem.Controllers
                 payment.Membership.IsActive = false;
 
                 // Demote the user back to "User" so they lose Member-area
-                // access. They keep the membership row for audit history.
                 var appUserId = payment.Membership.Member?.ApplicationUserId;
                 if (!string.IsNullOrEmpty(appUserId))
                 {

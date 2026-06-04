@@ -18,9 +18,7 @@ namespace Library_Management_System.Areas.Member.Controllers
             _context = context;
         }
 
-        // =========================
         // MY BOOK RESERVATIONS
-        // =========================
 
         public async Task<IActionResult> Index()
         {
@@ -44,11 +42,9 @@ namespace Library_Management_System.Areas.Member.Controllers
             return View(reservations);
         }
 
-        // =========================
         // RESERVE BOOK PAGE
-        // =========================
 
-        public async Task<IActionResult> Create(int bookId)
+        public async Task<IActionResult> Create(int bookId, int quantity = 1)
         {
             var book = await _context.Books
                 .Include(b => b.Author)
@@ -58,18 +54,28 @@ namespace Library_Management_System.Areas.Member.Controllers
             if (book == null)
                 return NotFound();
 
+            // Clamp + pass through to the confirm page so the hidden input
+            if (quantity < 1) quantity = 1;
+            if (quantity > book.AvailableCopies) quantity = book.AvailableCopies;
+            ViewBag.Quantity = quantity;
+
             return View(book);
         }
 
-        // =========================
         // SAVE BOOK RESERVATION
-        // =========================
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateReservation(int bookId)
+        public async Task<IActionResult> CreateReservation(int bookId, int quantity = 1)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Server-side validation — never trust the form. Clamp to what's
+            var book = await _context.Books.FindAsync(bookId);
+            if (book == null) return NotFound();
+
+            if (quantity < 1) quantity = 1;
+            if (quantity > book.AvailableCopies) quantity = book.AvailableCopies;
 
             var alreadyReserved = await _context.Reservations
                 .AnyAsync(r =>
@@ -88,6 +94,7 @@ namespace Library_Management_System.Areas.Member.Controllers
             {
                 BookId = bookId,
                 MemberId = userId,
+                Quantity = quantity,
                 ReservedOn = DateTime.Now,
                 Status = ReservationStatus.Waiting
             };
@@ -101,9 +108,7 @@ namespace Library_Management_System.Areas.Member.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // =========================
         // CANCEL RESERVATION
-        // =========================
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -120,8 +125,6 @@ namespace Library_Management_System.Areas.Member.Controllers
                 return NotFound();
 
             // A reservation that's already been completed (book issued) or
-            // already cancelled isn't a legitimate target for "cancel" — the
-            // physical book transaction has already happened.
             if (reservation.Status != ReservationStatus.Waiting)
             {
                 TempData["Error"] =
@@ -139,10 +142,5 @@ namespace Library_Management_System.Areas.Member.Controllers
         }
 
         // Note: "Approve" (mark Waiting -> Completed and issue a BorrowRecord)
-        // is an admin/librarian workflow and lives in the admin app's
-        // ReservationsController. Members cannot self-approve their own
-        // reservations from this controller — doing so would let them issue
-        // themselves books and decrement AvailableCopies without any human
-        // review (horizontal privilege escalation).
     }
 }

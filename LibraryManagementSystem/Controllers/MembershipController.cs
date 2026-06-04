@@ -1,4 +1,4 @@
-﻿using LibraryManagementSystem.ClassLibrary.Data;
+using LibraryManagementSystem.ClassLibrary.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -67,9 +67,6 @@ namespace LibraryManagementSystem.Controllers
             membership.IsActive = true;
 
             // ================= FEES =================
-            // Pulls from LibrarySettings so the admin-editable Settings page
-            // actually controls fees — the previous hardcoded ladder ignored
-            // edits and produced different fees from the user-app Buy flow.
             var settings = await _context.LibrarySettings.FirstOrDefaultAsync()
                            ?? new LibrarySettings();
 
@@ -186,7 +183,6 @@ namespace LibraryManagementSystem.Controllers
                 return RedirectToAction(nameof(Index));
 
             // MembershipPayments cascade-delete via the FK config, so any
-            // payment rows under this membership go away with it.
             _context.Memberships.Remove(membership);
             await _context.SaveChangesAsync();
 

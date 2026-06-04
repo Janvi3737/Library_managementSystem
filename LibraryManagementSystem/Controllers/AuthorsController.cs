@@ -1,4 +1,4 @@
-﻿using LibraryManagementSystem.ClassLibrary.Data;
+using LibraryManagementSystem.ClassLibrary.Data;
 using LibraryManagementSystem.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -108,8 +108,6 @@ namespace LibraryManagementSystem.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             // Book -> Author is OnDelete.Restrict; deleting an author who has
-            // books would throw a DbUpdateException -> 500. Block with a
-            // friendly message instead.
             var author = await _context.Authors
                 .Include(a => a.Books)
                 .FirstOrDefaultAsync(a => a.Id == id);

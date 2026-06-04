@@ -256,6 +256,7 @@
                 </div>
 
                 <!-- FORM -->
+                @{ var reqQty = (int)(ViewBag.Quantity ?? 1); }
                 <form asp-action="CreateReservation"
                       method="post">
 
@@ -264,6 +265,23 @@
                     <input type="hidden"
                            name="bookId"
                            value="@Model.Id" />
+
+                    <div class="info-box" style="margin-bottom:18px;">
+                        <div class="info-title">Quantity</div>
+                        <input type="number"
+                               name="quantity"
+                               id="reservationQty"
+                               value="@reqQty"
+                               min="1"
+                               max="@Model.AvailableCopies"
+                               style="width:100px; padding:8px 10px; border-radius:8px;
+                                      border:1px solid rgba(255,255,255,.15);
+                                      background:rgba(255,255,255,.04); color:white;
+                                      font-size:16px; font-weight:600;" />
+                        <div class="info-value" style="font-size:13px; color:#9ca3af;">
+                            @Model.AvailableCopies in stock
+                        </div>
+                    </div>
 
                     <button type="submit"
                             class="reserve-btn">

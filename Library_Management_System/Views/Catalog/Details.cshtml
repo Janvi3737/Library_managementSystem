@@ -798,10 +798,8 @@
                     <!-- RESERVE -->
                     @if (Model.AvailableCopies > 0)
                     {
-                        <a asp-area="Member"
-                           asp-controller="Reservation"
-                           asp-action="Create"
-                           asp-route-bookId="@Model.Id"
+                        <a href="/Member/Reservation/Create?bookId=@Model.Id&quantity=1"
+                           id="reserveBookBtn"
                            class="details-btn details-reserve-btn">
 
                             <i class="bi bi-book"></i>
@@ -839,69 +837,86 @@
                 </h2>
 
 
+                <!-- FULL ACCESS -->
 
-                @if (Model.HasMembership)
+                <div class="pdf-actions">
+
+                    <a href="@Url.Action("ViewPdf", "Books", new { id = Model.Id })"
+                       target="_blank"
+                       class="details-btn details-reserve-btn">
+                        View Full Book
+                    </a>
+
+                    <a href="@Url.Action("DownloadPdf", "Books", new { id = Model.Id })"
+                       class="details-btn details-wishlist-btn">
+                        Download PDF
+                    </a>
+
+                </div>
+
+                @if (!Model.HasMembership)
                 {
-                    <div class="pdf-actions">
-
-                        <a asp-action="ViewPdf"
-                           asp-controller="Books"
-                           asp-route-id="@Model.Id"
-                           target="_blank"
-                           class="details-btn details-reserve-btn">
-                            View Full Book
-                        </a>
-
-                        <a asp-action="DownloadPdf"
-                           asp-controller="Books"
-                           asp-route-id="@Model.Id"
-                           class="details-btn details-wishlist-btn">
-                            Download PDF
-                        </a>
-
+                    <!-- LOCK BANNER for non-members.
+                         The server already trims the PDF to the first 20
+                         pages, so even the iframe below + the download
+                         button physically can't deliver more than that. -->
+                    <div class="alert alert-warning p-4 rounded-4 mb-3"
+                         style="background:rgba(245,158,11,.12); border:1px solid rgba(245,158,11,.35); color:#fde68a;">
+                        <div style="display:flex; gap:14px; align-items:center;">
+                            <div style="font-size:32px; line-height:1;">🔒</div>
+                            <div style="flex:1;">
+                                <h5 style="margin:0 0 4px;">Preview Mode</h5>
+                                <p style="margin:0; font-size:14px;">
+                                    You're viewing the first 20 pages only.
+                                    Get a membership to read and download the complete book.
+                                </p>
+                            </div>
+                            <a asp-controller="Membership"
+                               asp-action="Index"
+                               class="btn btn-warning"
+                               style="white-space:nowrap;">
+                                Get Membership
+                            </a>
+                        </div>
                     </div>
+                }
 
+                <div class="pdf-actions">
+
+                    <a href="@Url.Action("ViewPdf", "Books", new { id = Model.Id })"
+                       target="_blank"
+                       class="details-btn details-reserve-btn">
+                        @(Model.HasMembership ? "View Full Book" : "View Preview (20 pages)")
+                    </a>
+
+                    <a href="@Url.Action("DownloadPdf", "Books", new { id = Model.Id })"
+                       class="details-btn details-wishlist-btn">
+                        @(Model.HasMembership ? "Download PDF" : "Download Preview")
+                    </a>
+
+                </div>
+
+                <div style="position:relative;">
                     <iframe src="@Url.Action("ViewPdf", "Books", new { id = Model.Id })"
                             width="100%"
                             height="900"
-                            style="border:none;">
+                            style="border:none; border-radius:12px;">
                     </iframe>
-                }
-                else
-                {
-                    <div class="alert alert-warning p-4 rounded-4 mb-3">
-                        <h5>Preview Mode</h5>
-
-                        <p>
-                            Only the first 20 pages are available.
-                            Purchase a membership to unlock the full book.
-                        </p>
-
-                        <a asp-controller="Membership"
-                           asp-action="Plans"
-                           class="btn btn-warning">
-                            Get Membership
-                        </a>
-                    </div>
-
-                    <div class="pdf-actions">
-
-                        <a asp-action="ViewPreview"
-                           asp-controller="Books"
-                           asp-route-id="@Model.Id"
-                           target="_blank"
-                           class="details-btn details-reserve-btn">
-                            View Preview
-                        </a>
-
-                    </div>
-
-                    <iframe src="@Url.Action("ViewPreview", "Books", new { id = Model.Id })"
-                            width="100%"
-                            height="900"
-                            style="border:none;">
-                    </iframe>
-                }
+                    @if (!Model.HasMembership)
+                    {
+                        <!-- Decorative lock badge so it's obvious why the
+                             PDF stops after 20 pages. -->
+                        <div style="position:absolute; top:14px; right:14px;
+                                    background:rgba(15,23,42,.85); color:#fde68a;
+                                    padding:8px 14px; border-radius:999px;
+                                    font-size:13px; font-weight:600;
+                                    border:1px solid rgba(245,158,11,.4);
+                                    backdrop-filter:blur(4px);
+                                    pointer-events:none;">
+                            🔒 Preview - first 20 pages
+                        </div>
+                    }
+                </div>
 
             </div>
         }
@@ -1157,8 +1172,15 @@
 
             updateUI();
         }
+        else if (typeof Swal !== "undefined") {
+            Swal.fire({
+                icon: "warning",
+                title: "Limit reached",
+                text: "Only " + totalAvailableCopies + " copies available.",
+                confirmButtonColor: "#7c3aed"
+            });
+        }
         else {
-
             alert("Only " + totalAvailableCopies + " copies available.");
         }
     }
@@ -1179,9 +1201,16 @@
 
         remainingCopies = totalAvailableCopies - qty;
 
-        document.getElementById("availableCopiesText").innerText =
-            remainingCopies + " Books";
+        var copiesText = document.getElementById("availableCopiesText");
+        if (copiesText) {
+            copiesText.innerText = remainingCopies + " Books";
+        }
 
+        // Sync the Reserve link's ?quantity=N so the server gets the right number.
+        var reserveBtn = document.getElementById("reserveBookBtn");
+        if (reserveBtn) {
+            reserveBtn.href = reserveBtn.href.split("&quantity=")[0] + "&quantity=" + qty;
+        }
     }
 
 

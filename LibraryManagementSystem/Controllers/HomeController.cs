@@ -62,8 +62,6 @@ namespace LibraryManagementSystem.Controllers
                 .ToList();
 
             // Was: 7 separate Count(...) queries fired sequentially inside Select.
-            // Replaced with a single GroupBy that returns a dict, then mapped to
-            // the 7-day window. Same UI output, 1 query instead of 7.
             var windowStart = last7Days.First();
             var borrowCounts = await context.BorrowRecords
                 .Where(x => x.IssuedOn >= windowStart)
@@ -98,11 +96,6 @@ namespace LibraryManagementSystem.Controllers
                 .ToList();
 
             // FineAmount sum is materialized in memory via AsEnumerable() before
-            // the Sum projection. The previous `Sum(x => (decimal?)x.FineAmount) ?? 0`
-            // worked on SqlServer but Sqlite (used on Mac/Linux dev) doesn't
-            // always translate the nullable-decimal cast cleanly. Pulling into
-            // memory first is provider-agnostic and the row count per month is
-            // small enough that there's no real perf cost.
             ViewBag.FineData = months
                 .Select(month => context.BorrowRecords
                     .Where(x => x.IssuedOn.Month == month)
@@ -119,8 +112,6 @@ namespace LibraryManagementSystem.Controllers
         }
 
         // Error pages must be reachable WITHOUT authentication, otherwise
-        // status-code re-execution (UseStatusCodePagesWithReExecute) would
-        // bounce to /Account/Login and cause a redirect loop.
         [AllowAnonymous]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

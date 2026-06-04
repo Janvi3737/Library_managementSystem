@@ -17,7 +17,7 @@
 
     <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="~/css/frontend.css" />
-
+    <link rel="stylesheet" href="~/css/page-loader.css" asp-append-version="true" />
 
 </head>
 
@@ -81,9 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const themeIcon =
         document.getElementById("themeIcon");
 
-    // =========================
     // LOAD SAVED THEME
-    // =========================
 
     let savedTheme =
         localStorage.getItem("theme");
@@ -97,9 +95,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     applyTheme(savedTheme);
 
-    // =========================
     // TOGGLE THEME
-    // =========================
 
     themeToggle?.addEventListener("click", function () {
 
@@ -122,9 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     });
 
-    // =========================
     // APPLY THEME
-    // =========================
 
     function applyTheme(theme) {
 
@@ -163,5 +157,9 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 </script>
+
+    <!-- SweetAlert2 + page-loader (themed) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/js/page-loader.js" asp-append-version="true"></script>
 </body>
 </html>

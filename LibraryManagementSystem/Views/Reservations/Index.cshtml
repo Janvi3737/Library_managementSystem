@@ -1,4 +1,4 @@
-@model IEnumerable<LibraryManagementSystem.ClassLibrary.Models.Reservation>
+﻿@model IEnumerable<LibraryManagementSystem.ClassLibrary.Models.Reservation>
 
 @{
     ViewData["Title"] = "Reservations";
@@ -25,7 +25,7 @@
 <div class="container mt-4">
     <div class="row align-items-center mb-3">
         <div class="col-md-5">
-            <h2 class="m-0">📋 Reservations</h2>
+            <h2 class="m-0">ðŸ“‹ Reservations</h2>
             @if (waitingCount > 0)
             {
                 <small class="text-muted">@waitingCount waiting</small>
@@ -66,13 +66,13 @@
                             <tr>
                                 <td>@r.ReservedOn.ToString("dd MMM yyyy HH:mm")</td>
                                 <td>
-                                    @(r.Book?.Title ?? "—")
+                                    @(r.Book?.Title ?? "â€”")
                                     <small class="text-muted d-block">
                                         @(r.Book?.Author?.Name ?? "")
                                     </small>
                                 </td>
                                 <td>
-                                    @(r.Member?.FullName ?? r.Member?.Email ?? "—")
+                                    @(r.Member?.FullName ?? r.Member?.Email ?? "â€”")
                                     <small class="text-muted d-block">@r.Member?.Email</small>
                                 </td>
                                 <td>
@@ -91,18 +91,18 @@
                                     {
                                         <form asp-action="Fulfill" asp-route-id="@r.Id"
                                               method="post"
-                                              onsubmit="return confirm('Mark fulfilled + notify member?');"
+                                              data-swal-confirm="Mark fulfilled + notify member?"
                                               style="display:inline;">
                                             <button class="btn btn-sm btn-success me-1">
-                                                ✓ Fulfill + Notify
+                                                âœ“ Fulfill + Notify
                                             </button>
                                         </form>
                                         <form asp-action="Cancel" asp-route-id="@r.Id"
                                               method="post"
-                                              onsubmit="return confirm('Cancel this reservation?');"
+                                              data-swal-confirm="Cancel this reservation?"
                                               style="display:inline;">
                                             <button class="btn btn-sm btn-danger">
-                                                ✗ Cancel
+                                                âœ— Cancel
                                             </button>
                                         </form>
                                     }
@@ -115,3 +115,4 @@
         </div>
     </div>
 </div>
+

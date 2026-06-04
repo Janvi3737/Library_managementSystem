@@ -12,7 +12,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews(opts =>
 {
     // Register the audit log filter globally so every POST/PUT/DELETE by an
-    // admin writes a row to AuditLogs. Read more in AuditLogFilter.cs.
     opts.Filters.Add<AuditLogFilter>();
 });
 
@@ -118,23 +117,18 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider
         .GetRequiredService<AppDbContext>();
 
+    // EnsureCreated builds the initial schema when none exists. We use this
+    await db.Database.EnsureCreatedAsync();
+
     if (db.Database.IsSqlite())
     {
-        await db.Database.EnsureCreatedAsync();
-
         // Concurrency fix: see SqlitePragmaInterceptor for details.
         await db.Database.ExecuteSqlRawAsync("PRAGMA journal_mode = WAL;");
         await db.Database.ExecuteSqlRawAsync("PRAGMA busy_timeout = 5000;");
+    }
 
-        // Schema patch: EnsureCreated is one-shot — if the .db already had
-        // any tables, EnsureCreated did nothing, so new tables added to the
-        // model later won't appear. Patch fills in missing tables/columns.
-        await SqliteSchemaPatcher.PatchAsync(db);
-    }
-    else
-    {
-        //await db.Database.MigrateAsync();
-    }
+    // Patch fills in tables/columns added to the model after the DB was
+    await DbSchemaPatcher.PatchAsync(db);
 
     await DbSeeder.SeedAsync(db);
 

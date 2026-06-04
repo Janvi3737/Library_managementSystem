@@ -24,7 +24,6 @@ namespace Library_Management_System.Services
         public async Task SendEmailAsync(string toEmail, string subject, string body)
         {
             // If credentials aren't configured (e.g., local dev without user-secrets),
-            // fail fast with a clear error rather than throwing a generic SMTP exception.
             if (string.IsNullOrWhiteSpace(_settings.SenderEmail) ||
                 string.IsNullOrWhiteSpace(_settings.Password))
             {
