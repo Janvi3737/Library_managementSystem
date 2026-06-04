@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using LibraryManagementSystem.ClassLibrary.Models;
 
@@ -20,7 +20,7 @@ namespace LibraryManagementSystem.ClassLibrary.Models
         public Book? Book { get; set; }
 
         // NEW
-        public int Quantity { get; set; } = 1;
+        public int Quantity { get; set; }
 
         public DateTime ReservedOn { get; set; } = DateTime.Now;
 

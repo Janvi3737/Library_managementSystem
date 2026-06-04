@@ -284,6 +284,7 @@ namespace Library_Management_System.Areas.Member.Controllers
 
         public async Task<IActionResult> Index(string status)
         {
+            status = "active";
             var userId =
                 User.FindFirstValue(ClaimTypes.NameIdentifier);
 
