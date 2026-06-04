@@ -16,15 +16,45 @@ document.addEventListener("DOMContentLoaded", function () {
         const response = await fetch('/Member/Wishlist/Toggle', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Accept': 'application/json'
           },
           body: body
         });
 
+        // Anonymous users hit a 302 to /Account/Login which is HTML, not
+        // JSON. Detect that up front so .json() doesn't blow up the catch.
+        if (!response.ok || (response.redirected && response.url.indexOf('/Login') !== -1)) {
+          if (typeof Swal !== 'undefined') {
+            Swal.fire({
+              icon: 'info',
+              title: 'Sign in to use Wishlist',
+              text: 'Log in or register to save books to your wishlist.',
+              showCancelButton: true,
+              confirmButtonText: 'Log in',
+              cancelButtonText: 'Not now'
+            }).then(r => {
+              if (r.isConfirmed) window.location.href = '/Account/Login';
+            });
+          } else {
+            window.location.href = '/Account/Login';
+          }
+          return;
+        }
+
         const result = await response.json();
 
         if (!result.success) {
-          alert(result.message || "Login required");
+          if (typeof Swal !== 'undefined') {
+            Swal.fire({
+              icon: 'warning',
+              title: 'Could not update wishlist',
+              text: result.message || 'Login required',
+              confirmButtonColor: '#7c3aed'
+            });
+          } else {
+            alert(result.message || 'Login required');
+          }
           return;
         }
 
@@ -92,7 +122,16 @@ document.addEventListener("DOMContentLoaded", function () {
       catch (err) {
 
         console.log(err);
-        alert("Something went wrong");
+        if (typeof Swal !== 'undefined') {
+          Swal.fire({
+            icon: 'error',
+            title: 'Something went wrong',
+            text: 'The wishlist could not be updated. Please try again.',
+            confirmButtonColor: '#7c3aed'
+          });
+        } else {
+          alert("Something went wrong");
+        }
       }
 
     });

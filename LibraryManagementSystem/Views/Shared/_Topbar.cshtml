@@ -308,28 +308,17 @@
 </style>
 <script>
 
-    setInterval(function () {
-
-        fetch('/ContactMessage/GetUnreadCount')
-
-            .then(response => response.json())
-
+    function refreshUnreadCount() {
+        fetch('/ContactMessages/GetUnreadCount', { headers: { 'Accept': 'application/json' } })
+            .then(r => r.ok ? r.json() : null)
             .then(data => {
-
-                const badge =
-                    document.querySelector(
-                        '.notification-count'
-                    );
-
-                if (badge) {
-
-                    badge.innerText =
-                        data.count;
-
-                }
-
-            });
-
-    }, 10000);
+                if (!data) return;
+                var badge = document.querySelector('.notification-count');
+                if (badge) badge.innerText = data.count;
+            })
+            .catch(function () { /* silently ignore — old endpoint, network blip, etc. */ });
+    }
+    refreshUnreadCount();
+    setInterval(refreshUnreadCount, 10000);
 
 </script>
