@@ -112,23 +112,25 @@ using (var scope = app.Services.CreateScope())
     // generated for Sqlite. This block was previously missing entirely —
     // that's why no tables appeared on Mac.
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    // EnsureCreated builds the initial schema when none exists. We use this
+    // for BOTH providers (Sqlite + SQL Server LocalDB) and skip EF migrations
+    // entirely — migrations are provider-specific and the SQLite-flavoured
+    // ones that existed in this project corrupted SQL Server with TEXT /
+    // INTEGER literals. The DbSchemaPatcher below keeps an EXISTING DB in
+    // sync as the model evolves, so dev workflow stays "git pull && dotnet run".
+    await db.Database.EnsureCreatedAsync();
+
     if (db.Database.IsSqlite())
     {
-        await db.Database.EnsureCreatedAsync();
-
         // Concurrency fix: see SqlitePragmaInterceptor for details.
         await db.Database.ExecuteSqlRawAsync("PRAGMA journal_mode = WAL;");
         await db.Database.ExecuteSqlRawAsync("PRAGMA busy_timeout = 5000;");
+    }
 
-        // Schema patch: EnsureCreated is one-shot — if the .db already had
-        // any tables, EnsureCreated did nothing, so new tables added to the
-        // model later won't appear. Patch fills in missing tables/columns.
-        await SqliteSchemaPatcher.PatchAsync(db);
-    }
-    else
-    {
-        await db.Database.MigrateAsync();
-    }
+    // Patch fills in tables/columns added to the model after the DB was
+    // first created — works for Sqlite (Mac/Linux) and SqlServer (Windows).
+    await DbSchemaPatcher.PatchAsync(db);
 
     // Idempotent default data — only seeds tables that are empty.
     // Lets a fresh clone show Books / Authors / Categories / Events on the
