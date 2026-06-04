@@ -12,7 +12,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews(opts =>
 {
     // Register the audit log filter globally so every POST/PUT/DELETE by an
-    // admin writes a row to AuditLogs. Read more in AuditLogFilter.cs.
     opts.Filters.Add<AuditLogFilter>();
 });
 
@@ -119,11 +118,6 @@ using (var scope = app.Services.CreateScope())
         .GetRequiredService<AppDbContext>();
 
     // EnsureCreated builds the initial schema when none exists. We use this
-    // for BOTH providers (Sqlite + SQL Server LocalDB) and skip EF migrations
-    // entirely — migrations are provider-specific and the SQLite-flavoured
-    // ones that exist in this project corrupt SQL Server with TEXT/INTEGER
-    // literals. The DbSchemaPatcher below keeps an EXISTING DB in sync as
-    // the model evolves, so dev workflow stays "git pull && dotnet run".
     await db.Database.EnsureCreatedAsync();
 
     if (db.Database.IsSqlite())
@@ -134,7 +128,6 @@ using (var scope = app.Services.CreateScope())
     }
 
     // Patch fills in tables/columns added to the model after the DB was
-    // first created — works for Sqlite (Mac/Linux) and SqlServer (Windows).
     await DbSchemaPatcher.PatchAsync(db);
 
     await DbSeeder.SeedAsync(db);

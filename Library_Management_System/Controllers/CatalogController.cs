@@ -227,7 +227,6 @@ namespace Library_Management_System.Controllers
         public async Task<IActionResult> NewArrivals()
         {
             // Book.CreatedAt is written with DateTime.UtcNow (see Book.cs); use
-            // the matching base so the 30-day window agrees with HomeController.
             var date = DateTime.UtcNow.AddDays(-30);
 
             var books = await _context.Books

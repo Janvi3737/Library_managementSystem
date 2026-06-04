@@ -62,7 +62,6 @@ namespace LibraryManagementSystem.Controllers
             if (record == null) return NotFound();
 
             // Waiving zeroes the fine AND marks it settled so it doesn't show
-            // up in "outstanding" again if days-late recompute ever runs.
             record.FineAmount = 0m;
             record.FinePaid = true;
             await _context.SaveChangesAsync();

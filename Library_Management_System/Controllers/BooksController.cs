@@ -23,7 +23,6 @@ namespace Library_Management_System.Controllers
     public class BooksController : Controller
     {
         // Non-members get this many pages of any book, full stop.
-        // Tweak here (or move to LibrarySettings later) if 20 isn't right.
         private const int PreviewPageCount = 20;
 
         private readonly AppDbContext _context;
@@ -47,9 +46,6 @@ namespace Library_Management_System.Controllers
             var hasMembership = await CurrentUserHasMembershipAsync();
 
             // We always serve from book.PdfUrl — for non-members we shrink
-            // it to PreviewPageCount on the fly. No separate preview upload
-            // is needed. (PreviewPdfUrl is still respected when it exists,
-            // letting an admin force a custom preview if they want.)
             string? source = (!hasMembership && !string.IsNullOrEmpty(book.PreviewPdfUrl))
                 ? book.PreviewPdfUrl
                 : book.PdfUrl;
@@ -70,7 +66,6 @@ namespace Library_Management_System.Controllers
                 return PhysicalFile(resolved.Found, "application/pdf");
 
             // Non-members get the first PreviewPageCount pages, copied into
-            // a fresh PDF in memory and streamed back.
             try
             {
                 var trimmedBytes = ExtractFirstPages(resolved.Found, PreviewPageCount);
@@ -126,8 +121,6 @@ namespace Library_Management_System.Controllers
             var fileName = $"{book.Title}{suffix}.pdf";
 
             // Members download the full file. Non-members can ONLY download
-            // the first PreviewPageCount pages — extracted server-side so
-            // the full PDF never crosses the wire.
             if (hasMembership)
                 return PhysicalFile(path, "application/pdf", fileName);
 
@@ -144,8 +137,6 @@ namespace Library_Management_System.Controllers
         }
 
         // Reads the PDF on disk and returns a new in-memory PDF containing
-        // only the first `count` pages. Used to enforce the non-member
-        // preview cap WITHOUT ever streaming the full file to the browser.
         private static byte[] ExtractFirstPages(string sourcePath, int count)
         {
             using var input = PdfReader.Open(sourcePath, PdfDocumentOpenMode.Import);
@@ -163,7 +154,6 @@ namespace Library_Management_System.Controllers
         }
 
         // Renders a minimal HTML page so the message is visible inside the
-        // iframe instead of a bare 404 / blank PDF reader.
         private IActionResult PlaceholderHtml(string message)
         {
             var html = $@"<!doctype html>
@@ -206,17 +196,12 @@ namespace Library_Management_System.Controllers
         }
 
         // PDF files are uploaded by the admin app into ITS wwwroot. From the
-        // user app we look in our own wwwroot first (in case a deployment
-        // copied them), then fall back to the sibling admin wwwroot.
         private (string? Found, string Diagnostic) ResolvePdfPathWithDiag(string pdfUrl)
         {
             var diag = new System.Text.StringBuilder();
             diag.AppendLine($"DB value: {pdfUrl}");
 
             // The admin SHOULD store relative paths like "/uploads/pdfs/abc.pdf",
-            // but defensively handle absolute URLs too (older rows often
-            // contain "https://localhost:7113/uploads/pdfs/abc.pdf" because
-            // the field was edited via a tool that captured the full URL).
             if (Uri.TryCreate(pdfUrl, UriKind.Absolute, out var uri))
             {
                 diag.AppendLine($"Parsed as absolute URI -> AbsolutePath: {uri.AbsolutePath}");
@@ -236,7 +221,6 @@ namespace Library_Management_System.Controllers
                 return (local, diag.ToString());
 
             // user-app ContentRoot = .../Library_Management_System
-            // admin-app wwwroot    = .../LibraryManagementSystem/wwwroot
             var adminWwwroot = Path.GetFullPath(Path.Combine(
                 _env.ContentRootPath, "..",
                 "LibraryManagementSystem", "wwwroot"));

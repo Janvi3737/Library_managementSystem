@@ -15,9 +15,7 @@ namespace LibraryManagementSystem.Controllers
             _context = context;
         }
 
-        // =========================
         // ALL RESERVATIONS
-        // =========================
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -30,9 +28,7 @@ namespace LibraryManagementSystem.Controllers
             return View(data);
         }
 
-        // =========================
         // APPROVE RESERVATION
-        // =========================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Approve(int id)
@@ -53,9 +49,7 @@ namespace LibraryManagementSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // =========================
         // REJECT RESERVATION
-        // =========================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Reject(int id)

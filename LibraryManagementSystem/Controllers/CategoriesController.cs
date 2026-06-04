@@ -1,4 +1,4 @@
-﻿using LibraryManagementSystem.ClassLibrary.Data;
+using LibraryManagementSystem.ClassLibrary.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -91,7 +91,6 @@ namespace LibraryManagementSystem.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             // Book -> Category is OnDelete.Restrict; deleting a category that
-            // still has books would throw a 500. Pre-check + friendly message.
             var category = await _context.Categories
                 .Include(c => c.Books)
                 .FirstOrDefaultAsync(c => c.Id == id);

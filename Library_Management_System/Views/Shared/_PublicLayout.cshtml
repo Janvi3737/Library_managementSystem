@@ -81,9 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const themeIcon =
         document.getElementById("themeIcon");
 
-    // =========================
     // LOAD SAVED THEME
-    // =========================
 
     let savedTheme =
         localStorage.getItem("theme");
@@ -97,9 +95,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     applyTheme(savedTheme);
 
-    // =========================
     // TOGGLE THEME
-    // =========================
 
     themeToggle?.addEventListener("click", function () {
 
@@ -122,9 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     });
 
-    // =========================
     // APPLY THEME
-    // =========================
 
     function applyTheme(theme) {
 

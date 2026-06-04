@@ -22,9 +22,7 @@ namespace Library_Management_System.Areas.Member.Controllers
             _userManager = userManager;
         }
 
-        // =========================
         // VIEW WISHLIST (BOOK ONLY)
-        // =========================
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -42,9 +40,7 @@ namespace Library_Management_System.Areas.Member.Controllers
             return View(wishlistItems);
         }
 
-        // =========================
         // TOGGLE WISHLIST (BOOK ONLY)
-        // =========================
         [HttpPost]
         public async Task<IActionResult> Toggle(int bookId)
         {
@@ -102,9 +98,7 @@ namespace Library_Management_System.Areas.Member.Controllers
             });
         }
 
-        // =========================
         // REMOVE BOOK
-        // =========================
         [HttpPost]
         public async Task<IActionResult> Remove(int bookId)
         {

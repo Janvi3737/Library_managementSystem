@@ -26,8 +26,6 @@ namespace Library_Management_System.Controllers
             var model = new HomePageViewModel();
 
             // CONTINUE READING — the user's currently-borrowed books (not yet
-            // returned). Falls back to newest books for guests / users with no
-            // active borrows so the section isn't empty.
             var currentUser = await _userManager.GetUserAsync(User);
 
             if (currentUser != null)

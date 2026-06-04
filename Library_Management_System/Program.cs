@@ -62,10 +62,6 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.ExpireTimeSpan = TimeSpan.FromDays(7);
 
     // SameAsRequest is the default but spelling it out avoids surprises:
-    // login over HTTP sets a non-Secure cookie (works on both schemes); login
-    // over HTTPS sets a Secure cookie (HTTPS-only). To prevent the
-    // "logged-in-on-one-port / logged-out-on-the-other" confusion, pin your
-    // browser to ONE of http://localhost:5255 OR https://localhost:7057.
     options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
     options.Cookie.SameSite = SameSiteMode.Lax;
 });
@@ -107,18 +103,9 @@ app.MapControllerRoute(
 using (var scope = app.Services.CreateScope())
 {
     // Create / migrate schema. Migrations target SqlServer; on Sqlite we
-    // build the schema directly from the EF model so Mac/Linux dev runs
-    // get every table the project defines without needing migration files
-    // generated for Sqlite. This block was previously missing entirely —
-    // that's why no tables appeared on Mac.
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
     // EnsureCreated builds the initial schema when none exists. We use this
-    // for BOTH providers (Sqlite + SQL Server LocalDB) and skip EF migrations
-    // entirely — migrations are provider-specific and the SQLite-flavoured
-    // ones that existed in this project corrupted SQL Server with TEXT /
-    // INTEGER literals. The DbSchemaPatcher below keeps an EXISTING DB in
-    // sync as the model evolves, so dev workflow stays "git pull && dotnet run".
     await db.Database.EnsureCreatedAsync();
 
     if (db.Database.IsSqlite())
@@ -129,12 +116,9 @@ using (var scope = app.Services.CreateScope())
     }
 
     // Patch fills in tables/columns added to the model after the DB was
-    // first created — works for Sqlite (Mac/Linux) and SqlServer (Windows).
     await DbSchemaPatcher.PatchAsync(db);
 
     // Idempotent default data — only seeds tables that are empty.
-    // Lets a fresh clone show Books / Authors / Categories / Events on the
-    // user-facing pages immediately, before the admin has added anything.
     await DbSeeder.SeedAsync(db);
 
     var roleManager =

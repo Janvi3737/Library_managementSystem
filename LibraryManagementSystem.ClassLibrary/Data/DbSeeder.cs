@@ -152,8 +152,6 @@ namespace LibraryManagementSystem.ClassLibrary.Data
             }
 
             // Events — seed both a future-dated event (visible on /Events)
-            // and a past-dated event (visible on /Events/Past) so both pages
-            // have data immediately after first run.
             if (!await db.Events.AnyAsync())
             {
                 var now = DateTime.Now;

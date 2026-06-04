@@ -167,7 +167,6 @@ namespace Library_Management_System.Areas.Member.Controllers
             }
 
             // VALIDATE FILE SIZE — 5 MB cap stops the obvious denial-of-service
-            // case where someone uploads a multi-gigabyte image.
             const long maxBytes = 5 * 1024 * 1024;
 
             if (model.AvatarFile.Length > maxBytes)

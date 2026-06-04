@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LibraryManagementSystem.ClassLibrary.Models
@@ -25,8 +25,6 @@ namespace LibraryManagementSystem.ClassLibrary.Models
         public DateTime EndDate { get; set; }
         
         // public bool IsActive { get; set; } = true;
-        // [Required]
-        // public decimal Fee { get; set; }
 
          // ✅ UPDATED: only true after admin approval
         public bool IsActive { get; set; } = false;

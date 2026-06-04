@@ -23,8 +23,6 @@ namespace LibraryManagementSystem.ClassLibrary.Models
         public string TransactionId { get; set; }
 
         // Public path under wwwroot, e.g. "/paymentproof/<guid>.jpg". Populated
-        // by the user-app PaymentSuccess action; rendered by the admin
-        // Payments page so reviewers can verify the receipt.
         public string? ScreenshotPath { get; set; }
 
         public DateTime PaymentDate { get; set; }

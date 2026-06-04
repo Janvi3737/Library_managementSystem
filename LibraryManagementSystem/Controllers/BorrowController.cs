@@ -89,8 +89,6 @@ namespace LibraryManagementSystem.Controllers
             }
 
             // Block issuing the same book to a member who already holds an
-            // unreturned copy — otherwise a single member can drain
-            // AvailableCopies on one title with repeated submissions.
             var alreadyHolds = await _context.BorrowRecords.AnyAsync(b =>
                 b.BookId == Record.BookId &&
                 b.MemberId == Record.MemberId &&
@@ -104,7 +102,6 @@ namespace LibraryManagementSystem.Controllers
             }
 
             // Admin can edit defaults via /Settings — use them here instead
-            // of hardcoded values.
             var settings = await _context.LibrarySettings.FirstOrDefaultAsync()
                            ?? new LibrarySettings();
 

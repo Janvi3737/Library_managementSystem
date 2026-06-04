@@ -1,4 +1,4 @@
-﻿using LibraryManagementSystem.ClassLibrary.Data;
+using LibraryManagementSystem.ClassLibrary.Data;
 using LibraryManagementSystem.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -84,8 +84,6 @@ namespace LibraryManagementSystem.Controllers
             [Bind("Id,Name,Email,Phone,JoinedOn")] Member member)
         {
             // Whitelist the editable fields. Without [Bind], a crafted POST
-            // could set ApplicationUserId (re-pointing the member at another
-            // user account). The line below still hardens that explicitly.
             if (id != member.Id) return NotFound();
 
             var existingMember = await _context.Members.AsNoTracking()
@@ -142,8 +140,6 @@ namespace LibraryManagementSystem.Controllers
                 return RedirectToAction(nameof(Index));
 
             // BorrowRecord.Member is OnDelete(Restrict) — deleting a member
-            // with any history would throw an FK violation 500. Block here
-            // with a clear message instead.
             if (member.BorrowRecords != null && member.BorrowRecords.Any())
             {
                 TempData["Error"] =

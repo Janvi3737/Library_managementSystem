@@ -98,8 +98,6 @@ namespace Library_Management_System.Areas.Member.Controllers
                 .CountAsync(x => x.MemberId == userId);
 
             // MEMBERSHIP DETAILS — pull the real end date from the
-            // Memberships table (user chose 1 or 12 months at Buy time);
-            // the JoinedOn + 1-year shortcut was wrong for monthly plans.
             DateTime joinedDate = member.JoinedOn;
 
             DateTime membershipTill = await _context.Memberships

@@ -91,9 +91,6 @@ namespace LibraryManagementSystem.Controllers
                     await _userManager.AddToRoleAsync(user, "User");
 
                     // In Development we skip email confirmation entirely so the
-                    // dev loop works without depending on Gmail SMTP delivery
-                    // (which silently fails on networks blocking port 587 and
-                    // leaves the user permanently unable to log in).
                     if (_env.IsDevelopment())
                     {
                         user.EmailConfirmed = true;
@@ -144,7 +141,6 @@ namespace LibraryManagementSystem.Controllers
                     catch (Exception ex)
                     {
                         // Don't swallow silently — the user would think registration
-                        // worked, then be unable to log in with no clue why.
                         _logger.LogError(ex,
                             "Failed to send confirmation email to {Email}", user.Email);
 
@@ -219,7 +215,6 @@ namespace LibraryManagementSystem.Controllers
             var user = await _userManager.FindByEmailAsync(email);
 
             // Don't disclose whether the email exists — same response either way
-            // so attackers can't enumerate registered accounts.
             if (user == null || user.EmailConfirmed)
             {
                 TempData["Success"] =
@@ -308,7 +303,6 @@ namespace LibraryManagementSystem.Controllers
                 if (!user.EmailConfirmed)
                 {
                     // Surface the resend option on the login page so the user can
-                    // recover without contacting an admin.
                     ViewBag.ShowResendConfirmation = true;
                     ViewBag.ResendEmail = model.Email;
 
@@ -427,7 +421,6 @@ namespace LibraryManagementSystem.Controllers
                 }
 
                 // Redirect so the flash banner in _PublicLayout actually fires;
-                // returning View() consumed the TempData on the empty form render.
                 return RedirectToAction("Login");
             }
 

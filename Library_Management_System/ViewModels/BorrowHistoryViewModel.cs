@@ -1,8 +1,4 @@
 // namespace Library_Management_System.ViewModels
-// {
-//     public class BorrowHistoryViewModel
-//     {
-//         public int Id { get; set; }
 
 //         public string BookTitle { get; set; }
 
@@ -23,9 +19,6 @@
 // public bool FinePaid { get; set; }
 
 //         public string Status { get; set; }
-//         public int BorrowId { get; set; }
-//     }
-// }
 
 
 namespace Library_Management_System.ViewModels

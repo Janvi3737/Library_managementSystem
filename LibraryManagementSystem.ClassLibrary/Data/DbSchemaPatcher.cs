@@ -76,8 +76,6 @@ namespace LibraryManagementSystem.ClassLibrary.Data
             else
             {
                 // SQL Server has no IF NOT EXISTS on CREATE TABLE — execute
-                // each statement individually inside a try/catch so already-
-                // present tables/indexes are silently skipped.
                 foreach (var stmt in SplitSqlServerBatches(script))
                 {
                     var trimmed = stmt.Trim();
@@ -86,7 +84,6 @@ namespace LibraryManagementSystem.ClassLibrary.Data
                     catch (Exception ex)
                     {
                         // Most common: "There is already an object named X" — fine.
-                        // We log but don't crash the app for already-existing schema.
                         Console.WriteLine($"[DbSchemaPatcher/SqlServer] skip: {ex.Message.Split('\n')[0]}");
                     }
                 }
@@ -94,8 +91,6 @@ namespace LibraryManagementSystem.ClassLibrary.Data
         }
 
         // EF's GenerateCreateScript for SQL Server uses GO separators only
-        // in some versions; here we split by semicolon at end-of-line which
-        // matches what EF emits.
         private static IEnumerable<string> SplitSqlServerBatches(string script)
         {
             return Regex.Split(script, @";\s*[\r\n]+");
@@ -131,8 +126,6 @@ namespace LibraryManagementSystem.ClassLibrary.Data
                     var colType = isSqlite ? ResolveSqliteType(prop) : ResolveSqlServerType(prop);
 
                     // Both providers reject NOT NULL adds without DEFAULT on a
-                    // table that already has rows. Use a CLR-type-appropriate
-                    // zero value so existing rows stay valid.
                     string nullability;
                     if (prop.IsNullable)
                     {
@@ -231,7 +224,6 @@ namespace LibraryManagementSystem.ClassLibrary.Data
         private static string ResolveSqlServerType(IProperty prop)
         {
             // If the EF model declares an explicit column type (e.g. via
-            // [Column(TypeName = "decimal(18,2)")]), prefer that.
             var efType = prop.GetColumnType();
             if (!string.IsNullOrWhiteSpace(efType) &&
                 !efType.Equals("INTEGER", StringComparison.OrdinalIgnoreCase) &&

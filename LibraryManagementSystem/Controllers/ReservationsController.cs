@@ -56,7 +56,6 @@ namespace LibraryManagementSystem.Controllers
             }
 
             // Look up the Member.Id (int) from the reservation's ApplicationUserId
-            // (string). BorrowRecord.MemberId is an int FK to Members.
             var memberId = await _context.Members
                 .Where(m => m.ApplicationUserId == r.MemberId)
                 .Select(m => (int?)m.Id)
@@ -80,9 +79,6 @@ namespace LibraryManagementSystem.Controllers
                            ?? new LibrarySettings();
 
             // Create one BorrowRecord per quantity requested. This is what
-            // makes the user's Borrow History page actually show the issued
-            // book — without this the reservation just got stamped Completed
-            // and the user had no record of being issued anything.
             for (int i = 0; i < quantity; i++)
             {
                 _context.BorrowRecords.Add(new BorrowRecord
@@ -102,7 +98,6 @@ namespace LibraryManagementSystem.Controllers
             r.Status = ReservationStatus.Completed;
 
             // Notify the member their book is ready. The user app's bell icon
-            // will pick this up on next page load.
             if (!string.IsNullOrEmpty(r.MemberId))
             {
                 _context.Notifications.Add(new Notification

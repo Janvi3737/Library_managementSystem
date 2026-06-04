@@ -26,7 +26,6 @@ namespace LibraryManagementSystem.Controllers
         public IActionResult Login()
         {
             // Fresh install — no admin exists yet. Send them to Register
-            // so they can create the first admin account using the admin key.
             if (!_userManager.Users.Any())
             {
                 TempData["Info"] = "No admin account exists yet. Register the first admin to get started.";

@@ -25,9 +25,7 @@ namespace LibraryManagementSystem.Controllers
             _exportService = exportService;
         }
 
-        // =========================
         // INDEX + SEARCH
-        // =========================
         public async Task<IActionResult> Index(string? search)
         {
             var query = _context.Books
@@ -65,9 +63,7 @@ namespace LibraryManagementSystem.Controllers
             return View(data);
         }
 
-        // =========================
         // DETAILS
-        // =========================
         public async Task<IActionResult> Details(int id)
         {
             var book = await _context.Books
@@ -96,9 +92,7 @@ namespace LibraryManagementSystem.Controllers
             return View(vm);
         }
 
-        // =========================
         // CREATE GET
-        // =========================
         [HttpGet]
         public IActionResult Create()
         {
@@ -107,9 +101,7 @@ namespace LibraryManagementSystem.Controllers
             return View();
         }
 
-        // =========================
         // CREATE POST
-        // =========================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
@@ -205,9 +197,7 @@ namespace LibraryManagementSystem.Controllers
             return View(book);
         }
 
-        // =========================
         // EDIT GET
-        // =========================
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -225,9 +215,7 @@ namespace LibraryManagementSystem.Controllers
             return View(book);
         }
 
-        // =========================
         // EDIT POST
-        // =========================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
@@ -386,9 +374,7 @@ namespace LibraryManagementSystem.Controllers
             }
         }
 
-        // =========================
         // DELETE GET
-        // =========================
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
@@ -405,9 +391,7 @@ namespace LibraryManagementSystem.Controllers
             return View(book);
         }
 
-        // =========================
         // DELETE POST
-        // =========================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(Book model)
@@ -452,9 +436,7 @@ namespace LibraryManagementSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // =========================
         // EXPORT EXCEL
-        // =========================
         public async Task<IActionResult> ExportExcel()
         {
             var books = await _context.Books
@@ -473,18 +455,14 @@ namespace LibraryManagementSystem.Controllers
             );
         }
 
-        // =========================
         // IMPORT GET
-        // =========================
         [HttpGet]
         public IActionResult Import()
         {
             return View();
         }
 
-        // =========================
         // BULK DELETE
-        // =========================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> BulkDelete(int[] ids)
@@ -550,9 +528,7 @@ namespace LibraryManagementSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // =========================
         // IMPORT POST
-        // =========================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Import(
@@ -699,9 +675,7 @@ namespace LibraryManagementSystem.Controllers
             }
         }
 
-        // =========================
         // PRIVATE METHODS
-        // =========================
 
         private void LoadDropdowns(
             int? categoryId = null,
