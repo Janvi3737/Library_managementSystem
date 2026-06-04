@@ -24,7 +24,15 @@ namespace LibraryManagementSystem.ClassLibrary.Models
         [Required]
         public DateTime EndDate { get; set; }
         
-        public bool IsActive { get; set; } = true;
+        // public bool IsActive { get; set; } = true;
+        // [Required]
+        // public decimal Fee { get; set; }
+
+         // ✅ UPDATED: only true after admin approval
+        public bool IsActive { get; set; } = false;
+
+        public bool IsRenewed { get; set; } = false;
+
         [Required]
         public decimal Fee { get; set; }
     }

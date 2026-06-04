@@ -17,7 +17,8 @@ namespace LibraryManagementSystem.ClassLibrary.Models
         public string PaymentMethod { get; set; }
 
         [Required]
-        public string PaymentStatus { get; set; }
+        public string PaymentStatus { get; set; } = "Pending"; 
+        // Pending / Approved / Rejected
 
         public string TransactionId { get; set; }
 
@@ -28,5 +29,7 @@ namespace LibraryManagementSystem.ClassLibrary.Models
 
         public DateTime PaymentDate { get; set; }
             = DateTime.Now;
+
+            
     }
 }

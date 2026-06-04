@@ -1,0 +1,1228 @@
+@* @model LibraryManagementSystem.ViewModels.ReportViewModel
+
+@{
+    ViewData["Title"] = "Reports & Analytics";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+    * {
+        font-family: 'Inter', sans-serif;
+    }
+
+    body {
+        background: #0f172a;
+        color: white;
+    }
+
+    .page-title {
+        font-size: 34px;
+        font-weight: 800;
+        margin-bottom: 5px;
+    }
+
+    .page-subtitle {
+        color: #94a3b8;
+        margin-bottom: 35px;
+    }
+
+    .stats-card {
+        border-radius: 22px;
+        padding: 24px;
+        color: white;
+        position: relative;
+        overflow: hidden;
+        transition: .3s;
+        height: 100%;
+    }
+
+    .stats-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .stats-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        background: rgba(255,255,255,0.15);
+        margin-bottom: 20px;
+    }
+
+    .stats-title {
+        font-size: 15px;
+        opacity: .9;
+        margin-bottom: 8px;
+    }
+
+    .stats-value {
+        font-size: 34px;
+        font-weight: 800;
+    }
+
+    .glass-card {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.08);
+        backdrop-filter: blur(10px);
+        border-radius: 24px;
+        padding: 24px;
+        margin-top: 25px;
+    }
+
+    .section-title {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    .table {
+        color: white;
+    }
+
+    .table thead {
+        background: rgba(255,255,255,0.08);
+    }
+
+    .table thead th {
+        border: none;
+        color: #cbd5e1;
+        font-size: 14px;
+        font-weight: 700;
+        padding: 16px;
+    }
+
+    .table tbody td {
+        border-color: rgba(255,255,255,0.06);
+        padding: 15px;
+        vertical-align: middle;
+    }
+
+    .table tbody tr:hover {
+        background: rgba(255,255,255,0.03);
+    }
+
+    .badge-custom {
+        padding: 8px 14px;
+        border-radius: 30px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .badge-danger {
+        background: rgba(239,68,68,.2);
+        color: #f87171;
+    }
+
+    .badge-success {
+        background: rgba(34,197,94,.2);
+        color: #4ade80;
+    }
+
+    .badge-warning {
+        background: rgba(251,191,36,.2);
+        color: #facc15;
+    }
+
+    .chart-box {
+        background: white;
+        border-radius: 18px;
+        padding: 20px;
+    }
+
+    canvas {
+        width: 100% !important;
+    }
+
+    @@media(max-width:768px){
+
+        .page-title{
+            font-size:28px;
+        }
+
+        .stats-value{
+            font-size:28px;
+        }
+
+        .table-responsive{
+            overflow-x:auto;
+        }
+
+        .table{
+            min-width:700px;
+        }
+    }
+
+    body {
+    background: #0f172a;
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+}
+
+/* CARD */
+.report-card {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 22px;
+    padding: 24px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+/* TABLE */
+.table {
+    color: white !important;
+}
+
+.table thead th {
+    color: #94a3b8 !important;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    font-weight: 600;
+}
+
+.table tbody td {
+    color: white !important;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+/* SECTION TITLE */
+.section-title {
+    color: white;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+/* LABELS */
+.text-muted {
+    color: #cbd5e1 !important;
+}
+
+/* BADGES */
+.badge-success {
+    background: rgba(34,197,94,0.2);
+    color: #4ade80;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-weight: 700;
+}
+
+/* TABLE HOVER */
+.table tbody tr:hover {
+    background: rgba(255,255,255,0.04);
+}
+
+/* CHART BOX */
+.chart-box {
+    background: rgba(255,255,255,0.06);
+    border-radius: 20px;
+    padding: 20px;
+}
+
+/* RESPONSIVE */
+.table-responsive {
+    overflow-x: auto;
+}
+
+</style>
+
+<div class="container-fluid py-4 px-lg-4">
+
+    <div class="mb-4">
+        <div class="page-title">
+            📊 Reports & Analytics
+        </div>
+
+        <div class="page-subtitle">
+            Real-time library analytics automatically updated from user activity
+        </div>
+    </div>
+
+    <!-- STATS -->
+
+    <div class="row g-4">
+
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card" style="background:linear-gradient(135deg,#2563eb,#1d4ed8)">
+                <div class="stats-icon">
+                    <i class="bi bi-book"></i>
+                </div>
+
+                <div class="stats-title">
+                    Total Books
+                </div>
+
+                <div class="stats-value">
+                    @Model.TotalBooks
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card" style="background:linear-gradient(135deg,#7c3aed,#6d28d9)">
+                <div class="stats-icon">
+                    <i class="bi bi-people"></i>
+                </div>
+
+                <div class="stats-title">
+                    Total Users
+                </div>
+
+                <div class="stats-value">
+                    @Model.TotalUsers
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card" style="background:linear-gradient(135deg,#ea580c,#c2410c)">
+                <div class="stats-icon">
+                    <i class="bi bi-arrow-repeat"></i>
+                </div>
+
+                <div class="stats-title">
+                    Issued Books
+                </div>
+
+                <div class="stats-value">
+                    @Model.TotalIssuedBooks
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card" style="background:linear-gradient(135deg,#dc2626,#991b1b)">
+                <div class="stats-icon">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+
+                <div class="stats-title">
+                    Overdue Books
+                </div>
+
+                <div class="stats-value">
+                    @Model.TotalOverdueBooks
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SECOND ROW -->
+
+    <div class="row g-4 mt-1">
+
+        <div class="col-lg-6">
+            <div class="stats-card" style="background:linear-gradient(135deg,#059669,#047857)">
+                <div class="stats-icon">
+                    <i class="bi bi-currency-rupee"></i>
+                </div>
+
+                <div class="stats-title">
+                    Total Fine Collection
+                </div>
+
+                <div class="stats-value">
+                    ₹ @Model.TotalFineCollection
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MOST BORROWED -->
+
+    <div class="glass-card">
+
+        <div class="section-title">
+            🔥 Most Borrowed Books
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table align-middle">
+
+                <thead>
+                    <tr>
+                        <th>Book Name</th>
+                        <th>Total Borrowed</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @if(Model.MostBorrowedBooks.Any())
+                    {
+                        @foreach(var item in Model.MostBorrowedBooks)
+                        {
+                            <tr>
+                                <td>@item.BookName</td>
+
+                                <td>
+                                    <span class="badge-custom badge-success">
+                                        @item.BorrowCount Times
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="2">No Data Found</td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <!-- ISSUED BOOKS -->
+
+    <div class="glass-card">
+
+        <div class="section-title">
+            📚 Issued Books Report
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table">
+
+                <thead>
+                    <tr>
+                        <th>Book</th>
+                        <th>Member</th>
+                        <th>Issued Date</th>
+                        <th>Due Date</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach(var item in Model.IssuedBooks)
+                    {
+                        <tr>
+                            <td>@item.BookName</td>
+                            <td>@item.MemberName</td>
+                            <td>@item.IssuedOn.ToString("dd MMM yyyy")</td>
+                            <td>@item.DueDate.ToString("dd MMM yyyy")</td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <!-- RETURNED BOOKS -->
+
+    <div class="glass-card">
+
+        <div class="section-title">
+            ✅ Returned Books Report
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table">
+
+                <thead>
+                    <tr>
+                        <th>Book</th>
+                        <th>Member</th>
+                        <th>Returned On</th>
+                        <th>Fine</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach(var item in Model.ReturnedBooks)
+                    {
+                        <tr>
+                            <td>@item.BookName</td>
+                            <td>@item.MemberName</td>
+                            <td>@item.ReturnedOn.ToString("dd MMM yyyy")</td>
+
+                            <td>
+                                <span class="badge-custom badge-warning">
+                                    ₹ @item.FineAmount
+                                </span>
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <!-- PENDING RESERVATIONS -->
+
+    <div class="glass-card">
+
+        <div class="section-title">
+            ⏳ Pending Reservations
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table">
+
+                <thead>
+                    <tr>
+                        <th>Book</th>
+                        <th>Member</th>
+                        <th>Reserved On</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach(var item in Model.PendingReservations)
+                    {
+                        <tr>
+                            <td>@item.BookName</td>
+                            <td>@item.MemberName</td>
+                            <td>@item.ReservedOn.ToString("dd MMM yyyy")</td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <!-- LATE RETURNS -->
+
+    <div class="glass-card">
+
+        <div class="section-title">
+            🚨 Late Return Records
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table">
+
+                <thead>
+                    <tr>
+                        <th>Book</th>
+                        <th>Member</th>
+                        <th>Late Days</th>
+                        <th>Returned On</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach(var item in Model.LateReturns)
+                    {
+                        <tr>
+                            <td>@item.BookName</td>
+
+                            <td>@item.MemberName</td>
+
+                            <td>
+                                <span class="badge-custom badge-danger">
+                                    @item.LateDays Days
+                                </span>
+                            </td>
+
+                            <td>@item.ReturnedOn.ToString("dd MMM yyyy")</td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <!-- CHARTS -->
+
+    <div class="row mt-4 g-4">
+
+        <div class="col-lg-6">
+
+            <div class="glass-card">
+
+                <div class="section-title">
+                    📈 Monthly Borrow Trend
+                </div>
+
+                <div class="chart-box">
+                    <canvas id="borrowChart"></canvas>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-6">
+
+            <div class="glass-card">
+
+                <div class="section-title">
+                    📚 Category Distribution
+                </div>
+
+                <div class="chart-box">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    // BORROW CHART
+
+    new Chart(document.getElementById('borrowChart'), {
+
+        type: 'line',
+
+        data: {
+
+            labels: @Html.Raw(Json.Serialize(Model.BorrowChartLabels)),
+
+            datasets: [{
+                label: 'Borrowed Books',
+                data: @Html.Raw(Json.Serialize(Model.BorrowChartData)),
+                borderColor: '#2563eb',
+                backgroundColor: 'rgba(37,99,235,0.2)',
+                fill: true,
+                tension: .4
+            }]
+        }
+    });
+
+    // CATEGORY CHART
+
+    new Chart(document.getElementById('categoryChart'), {
+
+        type: 'doughnut',
+
+        data: {
+
+            labels: @Html.Raw(Json.Serialize(Model.CategoryLabels)),
+
+            datasets: [{
+                data: @Html.Raw(Json.Serialize(Model.CategoryData))
+            }]
+        }
+    });
+
+</script> *@
+
+@model LibraryManagementSystem.ViewModels.ReportViewModel
+
+@{
+    ViewData["Title"] = "Reports & Analytics";
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background: #0f172a;
+        font-family: 'Inter', sans-serif;
+        color: white;
+    }
+
+    .reports-page {
+        padding: 35px;
+    }
+
+    .page-title {
+        font-size: 38px;
+        font-weight: 800;
+        margin-bottom: 10px;
+        color: black;
+    }
+
+    .page-subtitle {
+        color: #94a3b8;
+        margin-bottom: 35px;
+        font-size: 15px;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit,minmax(240px,1fr));
+        gap: 24px;
+        margin-bottom: 35px;
+    }
+
+    .stat-card {
+        border-radius: 22px;
+        padding: 28px;
+        position: relative;
+        overflow: hidden;
+        color: white;
+        box-shadow: 0 10px 30px rgba(0,0,0,.35);
+        transition: .3s;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-6px);
+        }
+
+    .card-1 {
+        background: linear-gradient(135deg,#4f46e5,#7c3aed);
+    }
+
+    .card-2 {
+        background: linear-gradient(135deg,#0891b2,#06b6d4);
+    }
+
+    .card-3 {
+        background: linear-gradient(135deg,#059669,#10b981);
+    }
+
+    .card-4 {
+        background: linear-gradient(135deg,#dc2626,#ef4444);
+    }
+
+    .stat-icon {
+        font-size: 34px;
+        margin-bottom: 18px;
+        opacity: .95;
+    }
+
+    .stat-title {
+        font-size: 15px;
+        color: rgba(255,255,255,.85);
+        margin-bottom: 10px;
+    }
+
+    .stat-value {
+        font-size: 40px;
+        font-weight: 800;
+    }
+
+    .content-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 30px;
+    }
+
+    .report-card {
+        background: #111827;
+        border-radius: 24px;
+        padding: 25px;
+        border: 1px solid rgba(255,255,255,.06);
+        box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+
+    .card-title {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 24px;
+        color: white;
+    }
+
+    table {
+        width: 100%;
+    }
+
+    thead {
+        background: #1e293b;
+    }
+
+    th {
+        padding: 16px;
+        color: #cbd5e1;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    td {
+        padding: 16px;
+        border-bottom: 1px solid rgba(255,255,255,.06);
+        color: #f8fafc;
+        font-size: 14px;
+    }
+
+    tr:hover {
+        background: rgba(255,255,255,.03);
+    }
+
+    .badge-success {
+        background: rgba(16,185,129,.15);
+        color: #10b981;
+        padding: 8px 14px;
+        border-radius: 30px;
+        font-weight: 700;
+    }
+
+    .badge-danger {
+        background: rgba(239,68,68,.15);
+        color: #ef4444;
+        padding: 8px 14px;
+        border-radius: 30px;
+        font-weight: 700;
+    }
+
+    .chart-card {
+        background: #111827;
+        border-radius: 24px;
+        padding: 25px;
+        margin-bottom: 30px;
+        border: 1px solid rgba(255,255,255,.06);
+    }
+
+    canvas {
+        width: 100% !important;
+        height: 340px !important;
+    }
+
+    .empty-text {
+        color: #94a3b8;
+        text-align: center;
+        padding: 30px;
+    }
+
+    @@media(max-width:992px) {
+
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media(max-width:768px) {
+
+        .reports-page {
+            padding: 18px;
+        }
+
+        .page-title {
+            font-size: 28px;
+        }
+
+        .stat-value {
+            font-size: 30px;
+        }
+
+        .card-title {
+            font-size: 20px;
+        }
+
+        table {
+            display: block;
+            overflow-x: auto;
+        }
+    }
+
+    
+</style>
+
+<div class="reports-page">
+
+    <div class="page-title">
+        <i class="fa-solid fa-chart-column"></i>
+        Reports & Analytics
+    </div>
+
+    <div class="page-subtitle">
+        Real-time library statistics and reports
+    </div>
+
+    <!-- STATS -->
+
+    <div class="stats-grid">
+
+        <div class="stat-card card-1">
+            <div class="stat-icon">
+                <i class="fa-solid fa-book"></i>
+            </div>
+
+            <div class="stat-title">
+                Total Books
+            </div>
+
+            <div class="stat-value">
+                @Model.TotalBooks
+            </div>
+        </div>
+
+        <div class="stat-card card-2">
+            <div class="stat-icon">
+                <i class="fa-solid fa-users"></i>
+            </div>
+
+            <div class="stat-title">
+                Total Users
+            </div>
+
+            <div class="stat-value">
+                @Model.TotalUsers
+            </div>
+        </div>
+
+        <div class="stat-card card-3">
+            <div class="stat-icon">
+                <i class="fa-solid fa-book-open-reader"></i>
+            </div>
+
+            <div class="stat-title">
+                Issued Books
+            </div>
+
+            <div class="stat-value">
+                @Model.TotalIssuedBooks
+            </div>
+        </div>
+
+        <div class="stat-card card-4">
+            <div class="stat-icon">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+
+            <div class="stat-title">
+                Overdue Books
+            </div>
+
+            <div class="stat-value">
+                @Model.TotalOverdueBooks
+            </div>
+        </div>
+
+    </div>
+
+    <!-- CHARTS -->
+
+    <div class="content-grid">
+
+        <div class="chart-card">
+            <div class="card-title">
+                📈 Borrow Trend
+            </div>
+
+            <canvas id="borrowChart"></canvas>
+        </div>
+
+        <div class="chart-card">
+            <div class="card-title">
+                📚 Category Split
+            </div>
+
+            <canvas id="categoryChart"></canvas>
+        </div>
+
+    </div>
+
+    <!-- MOST BORROWED -->
+
+    <div class="report-card mb-4">
+
+        <div class="card-title">
+            🔥 Most Borrowed Books
+        </div>
+
+        @if (Model.MostBorrowedBooks.Any())
+        {
+            <table class="table table-dark table-borderless align-middle">
+
+                <thead>
+                    <tr>
+                        <th>Book Name</th>
+                        <th>Total Borrowed</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach (var item in Model.MostBorrowedBooks)
+                    {
+                        <tr>
+                            <td>@item.BookName</td>
+
+                            <td>
+                                <span class="badge-success">
+                                    @item.BorrowCount Times
+                                </span>
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+        }
+        else
+        {
+            <div class="empty-text">
+                No data available
+            </div>
+        }
+
+    </div>
+
+    <!-- ISSUED + RETURNED -->
+
+    <div class="content-grid">
+
+        <div class="report-card">
+
+            <div class="card-title">
+                📖 Issued Books
+            </div>
+
+            @if (Model.IssuedBooks.Any())
+            {
+                <table class="table table-dark table-borderless">
+
+                    <thead>
+                        <tr>
+                            <th>Book</th>
+                            <th>Member</th>
+                            <th>Issued Date</th>
+                            <th>Due Date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model.IssuedBooks)
+                        {
+                            <tr>
+                                <td>@item.BookName</td>
+                                <td>@item.MemberName</td>
+                                <td>@item.IssuedOn.ToString("dd MMM yyyy")</td>
+                                <td>@item.DueDate.ToString("dd MMM yyyy")</td>
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+            }
+            else
+            {
+                <div class="empty-text">
+                    No issued books
+                </div>
+            }
+
+        </div>
+
+        <div class="report-card">
+
+            <div class="card-title">
+                ✅ Returned Books
+            </div>
+
+            @if (Model.ReturnedBooks.Any())
+            {
+                <table class="table table-dark table-borderless">
+
+                    <thead>
+                        <tr>
+                            <th>Book</th>
+                            <th>Member</th>
+                            <th>Returned On</th>
+                            <th>Fine</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model.ReturnedBooks)
+                        {
+                            <tr>
+                                <td>@item.BookName</td>
+                                <td>@item.MemberName</td>
+                                <td>@item.ReturnedOn.ToString("dd MMM yyyy")</td>
+
+                                <td>
+                                    ₹@item.FineAmount
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+            }
+            else
+            {
+                <div class="empty-text">
+                    No returned books
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+    <!-- PENDING + LATE -->
+
+    <div class="content-grid">
+
+        <div class="report-card">
+
+            <div class="card-title">
+                ⏳ Pending Reservations
+            </div>
+
+            @if (Model.PendingReservations.Any())
+            {
+                <table class="table table-dark table-borderless">
+
+                    <thead>
+                        <tr>
+                            <th>Book</th>
+                            <th>Member</th>
+                            <th>Reserved On</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model.PendingReservations)
+                        {
+                            <tr>
+                                <td>@item.BookName</td>
+                                <td>@item.MemberName</td>
+                                <td>@item.ReservedOn.ToString("dd MMM yyyy")</td>
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+            }
+            else
+            {
+                <div class="empty-text">
+                    No pending reservations
+                </div>
+            }
+
+        </div>
+
+        <div class="report-card">
+
+            <div class="card-title">
+                🚨 Late Returns
+            </div>
+
+            @if (Model.LateReturns.Any())
+            {
+                <table class="table table-dark table-borderless">
+
+                    <thead>
+                        <tr>
+                            <th>Book</th>
+                            <th>Member</th>
+                            <th>Late Days</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model.LateReturns)
+                        {
+                            <tr>
+                                <td>@item.BookName</td>
+                                <td>@item.MemberName</td>
+
+                                <td>
+                                    <span class="badge-danger">
+                                        @item.LateDays Days
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+            }
+            else
+            {
+                <div class="empty-text">
+                    No late returns
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    // BORROW CHART
+
+    new Chart(document.getElementById('borrowChart'), {
+        type: 'line',
+        data: {
+            labels: @Html.Raw(Json.Serialize(Model.BorrowChartLabels)),
+            datasets: [{
+                label: 'Borrowed Books',
+                data: @Html.Raw(Json.Serialize(Model.BorrowChartData)),
+                borderWidth: 3,
+                tension: .4
+            }]
+        }
+    });
+
+    // CATEGORY CHART
+
+    new Chart(document.getElementById('categoryChart'), {
+        type: 'doughnut',
+        data: {
+            labels: @Html.Raw(Json.Serialize(Model.CategoryLabels)),
+            datasets: [{
+                data: @Html.Raw(Json.Serialize(Model.CategoryData)),
+                borderWidth: 1
+            }]
+        }
+    });
+
+</script>

@@ -19,6 +19,9 @@ namespace LibraryManagementSystem.ClassLibrary.Models
         [ForeignKey("BookId")]
         public Book? Book { get; set; }
 
+        // NEW
+        public int Quantity { get; set; } = 1;
+
         public DateTime ReservedOn { get; set; } = DateTime.Now;
 
         public ReservationStatus Status { get; set; }

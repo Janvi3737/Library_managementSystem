@@ -3,6 +3,7 @@ using System;
 using LibraryManagementSystem.ClassLibrary.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LibraryManagementSystem.ClassLibrary.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260602082400_AddFineModule")]
+    partial class AddFineModule
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.5");
@@ -526,9 +529,6 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("IsRenewed")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("MemberId")
                         .HasColumnType("INTEGER");
 
@@ -627,9 +627,6 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                     b.Property<string>("MemberId")
                         .HasMaxLength(450)
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("ReservedOn")
                         .HasColumnType("TEXT");

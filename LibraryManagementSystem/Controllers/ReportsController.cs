@@ -3,8 +3,6 @@ using LibraryManagementSystem.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using LibraryManagementSystem.ClassLibrary.Models;
 
 namespace LibraryManagementSystem.Controllers
 {
@@ -18,135 +16,231 @@ namespace LibraryManagementSystem.Controllers
             _context = context;
         }
 
-        // OVERDUE BOOKS REPORT
-        public async Task<IActionResult> OverdueBooks()
+        // MAIN REPORT PAGE
+
+        public async Task<IActionResult> Index()
         {
-            // ReturnedOn == null is the canonical "still out" signal.
-            // Filtering by Status == "Issued" relied on a string field that
-            // could drift (e.g., "Renewed", "Lost") and produced a stale
-            // report whenever Status was set to anything other than "Issued".
-            var overdueBooks = await _context.BorrowRecords
-                .Include(b => b.Book)
-                .Include(b => b.Member)
-                .Where(b =>
-                    b.ReturnedOn == null &&
-                    b.DueDate < DateTime.Now)
-                .OrderBy(b => b.DueDate)
+            var model = new ReportViewModel();
+
+            // TOTAL COUNTS
+
+            model.TotalBooks = await _context.Books.CountAsync();
+
+            model.TotalUsers = await _context.Users.CountAsync();
+
+            model.TotalIssuedBooks = await _context.BorrowRecords
+                .CountAsync(x => x.ReturnedOn == null);
+
+            model.TotalOverdueBooks = await _context.BorrowRecords
+                .CountAsync(x =>
+                    x.ReturnedOn == null &&
+                    x.DueDate < DateTime.Now);
+
+            // TOTAL FINE
+
+            var fineRecords = await _context.BorrowRecords
+                .Where(x => x.FinePaid)
                 .ToListAsync();
 
-            return View(overdueBooks);
-        }
+            model.TotalFineCollection =
+                fineRecords.Sum(x => x.FineAmount);
 
-        // TOP BORROWERS REPORT
-        public async Task<IActionResult> TopBorrowers()
-        {
-            var data = await _context.BorrowRecords
-                .Include(b => b.Member)
-                .Where(b => b.Member != null)
-                .GroupBy(b => new { b.MemberId, b.Member.Name })
-                .Select(g => new TopBorrowerViewModel
+            // MOST BORROWED BOOKS
+
+            model.MostBorrowedBooks = await _context.BorrowRecords
+                .Include(x => x.Book)
+                .GroupBy(x => x.Book.Title)
+                .Select(g => new MostBorrowedBookVM
                 {
-                    MemberName = g.Key.Name,
-                    TotalBooks = g.Count()
+                    BookName = g.Key,
+                    BorrowCount = g.Count()
                 })
-                .OrderByDescending(x => x.TotalBooks)
+                .OrderByDescending(x => x.BorrowCount)
                 .Take(10)
                 .ToListAsync();
 
-            return View(data);
-        }
+            // ISSUED BOOKS
 
-        // BOOKS THAT HAVE NEVER BEEN BORROWED
-        public async Task<IActionResult> NeverBorrowed()
-        {
-            var borrowedBookIds = _context.BorrowRecords.Select(b => b.BookId);
+            model.IssuedBooks = await _context.BorrowRecords
+                .Include(x => x.Book)
+                .Include(x => x.Member)
+                .Where(x => x.ReturnedOn == null)
+                .Select(x => new IssuedBookVM
+                {
+                    BookName = x.Book.Title,
 
-            var books = await _context.Books
-                .Include(b => b.Author)
-                .Include(b => b.Category)
-                .Where(b => !borrowedBookIds.Contains(b.Id))
-                .OrderBy(b => b.Title)
+                    MemberName = x.Member.Name,
+
+                    IssuedOn = x.IssuedOn,
+
+                    DueDate = x.DueDate
+                })
+                .OrderByDescending(x => x.IssuedOn)
+                .Take(10)
                 .ToListAsync();
 
-            return View(books);
-        }
+            // RETURNED BOOKS
 
-        // MOST WISHLISTED — purchasing-decision support
-        public async Task<IActionResult> MostWishlisted()
-        {
-            var rows = await _context.Wishlists
-                .Where(w => w.BookId != null)
-                .GroupBy(w => w.BookId!.Value)
+            model.ReturnedBooks = await _context.BorrowRecords
+                .Include(x => x.Book)
+                .Include(x => x.Member)
+                .Where(x => x.ReturnedOn != null)
+                .Select(x => new ReturnedBookVM
+                {
+                    BookName = x.Book.Title,
+
+                    MemberName = x.Member.Name,
+
+                    IssuedOn = x.IssuedOn,
+
+                    ReturnedOn = x.ReturnedOn.Value,
+
+                    FineAmount = x.FineAmount
+                })
+                .OrderByDescending(x => x.ReturnedOn)
+                .Take(10)
+                .ToListAsync();
+
+            // LATE RETURNS
+
+            var lateData = await _context.BorrowRecords
+                .Include(x => x.Book)
+                .Include(x => x.Member)
+                .Where(x =>
+                    x.ReturnedOn != null &&
+                    x.ReturnedOn > x.DueDate)
+                .ToListAsync();
+
+            model.LateReturns = lateData
+                .Select(x => new LateReturnVM
+                {
+                    BookName = x.Book.Title,
+
+                    MemberName = x.Member.Name,
+
+                    DueDate = x.DueDate,
+
+                    ReturnedOn = x.ReturnedOn.Value,
+
+                    LateDays =
+                        (x.ReturnedOn.Value - x.DueDate).Days,
+
+                    FineAmount = x.FineAmount
+                })
+                .OrderByDescending(x => x.LateDays)
+                .Take(10)
+                .ToList();
+
+            // PENDING RESERVATIONS
+
+            // model.PendingReservations = await _context.Reservations
+            //     .Include(x => x.Book)
+            //     .Include(x => x.Member)
+            //     .Where(x => x.Status.ToString() == "Pending")
+            //     .Select(x => new PendingReservationVM
+            //     {
+            //         BookName = x.Book.Title,
+
+            //         MemberName =
+            //             x.Member.FullName ??
+            //             x.Member.UserName,
+
+            //         ReservedOn = x.ReservedOn
+            //     })
+            //     .OrderByDescending(x => x.ReservedOn)
+            //     .Take(10)
+            //     .ToListAsync();
+
+            // PENDING RESERVATIONS
+
+            var reservationData = await _context.Reservations
+                .Include(r => r.Book)
+                .Include(r => r.Member)
+                .ToListAsync();
+
+            model.PendingReservations = reservationData
+                .Where(r => r.Status != null &&
+                            r.Status.ToString().ToLower() == "pending")
+                .Select(r => new PendingReservationVM
+                {
+                    BookName = r.Book != null ? r.Book.Title : "",
+                    MemberName = r.Member != null ? r.Member.FullName : "",
+                    ReservedOn = r.ReservedOn
+                })
+                .ToList();
+
+            // BORROW CHART
+
+            var borrowChart = await _context.BorrowRecords
+                .GroupBy(x => x.IssuedOn.Month)
                 .Select(g => new
                 {
-                    BookId = g.Key,
+                    Month = g.Key,
                     Count = g.Count()
                 })
-                .OrderByDescending(x => x.Count)
-                .Take(20)
+                .OrderBy(x => x.Month)
                 .ToListAsync();
 
-            var bookIds = rows.Select(r => r.BookId).ToList();
-            var books = await _context.Books
-                .Include(b => b.Author)
-                .Where(b => bookIds.Contains(b.Id))
-                .ToDictionaryAsync(b => b.Id);
-
-            var vm = rows
-                .Where(r => books.ContainsKey(r.BookId))
-                .Select(r => new Tuple<LibraryManagementSystem.ClassLibrary.Models.Book, int>(
-                    books[r.BookId], r.Count))
+            model.BorrowChartLabels = borrowChart
+                .Select(x =>
+                    new DateTime(1, x.Month, 1)
+                    .ToString("MMM"))
                 .ToList();
 
-            return View(vm);
-        }
+            model.BorrowChartData = borrowChart
+                .Select(x => x.Count)
+                .ToList();
 
-        // REVENUE — by month, from approved membership payments + paid fines.
-        public async Task<IActionResult> Revenue()
-        {
-            var paymentsByMonth = await _context.MembershipPayments
-                .Where(p => p.PaymentStatus == "Approved")
-                .GroupBy(p => new { p.PaymentDate.Year, p.PaymentDate.Month })
+            // CATEGORY CHART
+
+            var categoryChart = await _context.Books
+                .Include(x => x.Category)
+                .GroupBy(x => x.Category.Name)
                 .Select(g => new
                 {
-                    Year = g.Key.Year,
-                    Month = g.Key.Month,
-                    PaymentRevenue = g.Sum(p => p.Amount)
+                    Category = g.Key,
+                    Count = g.Count()
                 })
                 .ToListAsync();
 
-            var finesByMonth = await _context.BorrowRecords
-                .Where(b => b.FineAmount > 0 && b.FinePaid && b.ReturnedOn != null)
-                .GroupBy(b => new { b.ReturnedOn!.Value.Year, b.ReturnedOn!.Value.Month })
-                .Select(g => new
-                {
-                    Year = g.Key.Year,
-                    Month = g.Key.Month,
-                    FineRevenue = g.Sum(b => b.FineAmount)
-                })
-                .ToListAsync();
-
-            // Merge both streams on (year, month).
-            var allKeys = paymentsByMonth.Select(p => (p.Year, p.Month))
-                .Concat(finesByMonth.Select(f => (f.Year, f.Month)))
-                .Distinct()
-                .OrderByDescending(k => k.Year).ThenByDescending(k => k.Month)
+            model.CategoryLabels = categoryChart
+                .Select(x => x.Category)
                 .ToList();
 
-            var rows = allKeys.Select(k =>
-            {
-                var p = paymentsByMonth.FirstOrDefault(x => x.Year == k.Year && x.Month == k.Month);
-                var f = finesByMonth.FirstOrDefault(x => x.Year == k.Year && x.Month == k.Month);
-                return new ViewModels.RevenueRowViewModel
-                {
-                    Year = k.Year,
-                    Month = k.Month,
-                    MembershipRevenue = p?.PaymentRevenue ?? 0m,
-                    FineRevenue = f?.FineRevenue ?? 0m
-                };
-            }).ToList();
+            model.CategoryData = categoryChart
+                .Select(x => x.Count)
+                .ToList();
 
-            return View(rows);
+            // FINE CHART
+
+            // FINE CHART
+
+            var fineChartRaw = await _context.BorrowRecords
+                .Where(x => x.FinePaid && x.ReturnedOn != null)
+                .ToListAsync();
+
+            var fineChart = fineChartRaw
+                .GroupBy(x => x.ReturnedOn!.Value.Month)
+                .Select(g => new
+                {
+                    Month = g.Key,
+                    Total = g.Sum(x => x.FineAmount)
+                })
+                .OrderBy(x => x.Month)
+                .ToList();
+
+            model.FineChartLabels = fineChart
+                .Select(x => new DateTime(2025, x.Month, 1).ToString("MMM"))
+                .ToList();
+
+            model.FineChartData = fineChart
+                .Select(x => x.Total)
+                .ToList();
+        return View(model);
         }
+        
+
+
     }
+
 }

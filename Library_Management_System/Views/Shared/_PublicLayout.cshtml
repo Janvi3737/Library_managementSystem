@@ -67,30 +67,101 @@
 
     <script>
 
-        const themeToggle =
-            document.getElementById("themeToggle");
+document.addEventListener("DOMContentLoaded", function () {
 
-        themeToggle?.addEventListener("click", function () {
+    const body =
+        document.body;
 
-            document.body.classList.toggle("light-theme");
+    const html =
+        document.documentElement;
 
-            if (document.body.classList.contains("light-theme")) {
+    const themeToggle =
+        document.getElementById("themeToggle");
 
-                localStorage.setItem("theme", "light");
+    const themeIcon =
+        document.getElementById("themeIcon");
 
+    // =========================
+    // LOAD SAVED THEME
+    // =========================
+
+    let savedTheme =
+        localStorage.getItem("theme");
+
+    // DEFAULT THEME
+
+    if (!savedTheme) {
+
+        savedTheme = "dark";
+    }
+
+    applyTheme(savedTheme);
+
+    // =========================
+    // TOGGLE THEME
+    // =========================
+
+    themeToggle?.addEventListener("click", function () {
+
+        const currentTheme =
+            body.classList.contains("light-mode")
+            ? "light"
+            : "dark";
+
+        const newTheme =
+            currentTheme === "light"
+            ? "dark"
+            : "light";
+
+        applyTheme(newTheme);
+
+        localStorage.setItem(
+            "theme",
+            newTheme
+        );
+
+    });
+
+    // =========================
+    // APPLY THEME
+    // =========================
+
+    function applyTheme(theme) {
+
+        if (theme === "light") {
+
+            body.classList.add("light-mode");
+
+            html.setAttribute(
+                "data-bs-theme",
+                "light"
+            );
+
+            if (themeIcon) {
+
+                themeIcon.className =
+                    "bi bi-sun-fill";
             }
-            else {
-
-                localStorage.setItem("theme", "dark");
-            }
-        });
-
-        if (localStorage.getItem("theme") === "light") {
-
-            document.body.classList.add("light-theme");
         }
+        else {
 
-    </script>
+            body.classList.remove("light-mode");
 
+            html.setAttribute(
+                "data-bs-theme",
+                "dark"
+            );
+
+            if (themeIcon) {
+
+                themeIcon.className =
+                    "bi bi-moon-stars-fill";
+            }
+        }
+    }
+
+});
+
+</script>
 </body>
 </html>

@@ -36,13 +36,20 @@
     <div class="topbar-right">
 
         <!-- NOTIFICATION -->
-        <div class="notification-bell">
+<a asp-controller="ContactMessages"
+   asp-action="Index"
+   class="notification-bell text-decoration-none">
 
-            <i class="bi bi-bell"></i>
+    <i class="bi bi-bell"></i>
 
-            <span class="notification-count">3</span>
+    @if (ViewBag.UnreadCount > 0)
+    {
+        <span class="notification-count">
+            @ViewBag.UnreadCount
+        </span>
+    }
 
-        </div>
+</a>
 
         <!-- DARK MODE -->
         <button class="theme-toggle-btn"
@@ -187,41 +194,6 @@
             width: 100%;
         }
 
-    /* ICON BUTTONS */
-    .notification-bell,
-    .theme-toggle-btn {
-        width: 46px;
-        height: 46px;
-        border-radius: 14px;
-        background: #f3f4f6;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        border: none;
-        flex-shrink: 0;
-    }
-
-        .notification-bell i,
-        .theme-toggle-btn i {
-            font-size: 18px;
-        }
-
-    /* BADGE */
-    .notification-count {
-        position: absolute;
-        top: -5px;
-        right: -5px;
-        width: 20px;
-        height: 20px;
-        background: red;
-        color: white;
-        border-radius: 50%;
-        font-size: 11px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
 
     /* USER */
     .user-avatar {
@@ -235,7 +207,69 @@
         justify-content: center;
         font-weight: 700;
     }
+.notification-bell{
+    width:45px;
+    height:45px;
+    border-radius:14px;
+    background:#f3f4f6;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    transition:.3s ease;
+    cursor:pointer;
+    text-decoration:none;
+    border:1px solid transparent;
+}
 
+.notification-bell i{
+    font-size:18px;
+    color:#111827;
+    transition:.3s ease;
+}
+
+.notification-bell:hover{
+    transform:translateY(-2px);
+    background:#e2e8f0;
+}
+
+.notification-count{
+    position:absolute;
+    top:-6px;
+    right:-6px;
+    min-width:22px;
+    height:22px;
+    padding:0 6px;
+    border-radius:50px;
+    background:linear-gradient(135deg,#ef4444,#dc2626);
+    color:white;
+    font-size:11px;
+    font-weight:800;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:2px solid white;
+    box-shadow:0 4px 10px rgba(239,68,68,.35);
+}
+
+/* DARK MODE */
+
+[data-bs-theme="dark"] .notification-bell{
+    background:#1e293b;
+    border:1px solid #334155;
+}
+
+[data-bs-theme="dark"] .notification-bell:hover{
+    background:#334155;
+}
+
+[data-bs-theme="dark"] .notification-bell i{
+    color:#f8fafc;
+}
+
+[data-bs-theme="dark"] .notification-count{
+    border:2px solid #1e293b;
+}
     /* =========================
        MOBILE
     ========================= */
@@ -260,7 +294,6 @@
                 font-size: 14px;
             }
 
-        .notification-bell,
         .theme-toggle-btn,
         .user-avatar,
         .toggle-btn {
@@ -273,3 +306,30 @@
         }
     }
 </style>
+<script>
+
+    setInterval(function () {
+
+        fetch('/ContactMessage/GetUnreadCount')
+
+            .then(response => response.json())
+
+            .then(data => {
+
+                const badge =
+                    document.querySelector(
+                        '.notification-count'
+                    );
+
+                if (badge) {
+
+                    badge.innerText =
+                        data.count;
+
+                }
+
+            });
+
+    }, 10000);
+
+</script>

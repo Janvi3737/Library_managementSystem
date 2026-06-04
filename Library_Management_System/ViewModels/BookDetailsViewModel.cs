@@ -36,5 +36,7 @@ namespace Library_Management_System.ViewModels
         public string? PreviewPdfUrl { get; set; }
 
         public bool HasMembership { get; set; }
+
+        public int RemainingCopies { get; set; }
     }
 }
