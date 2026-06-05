@@ -23,6 +23,16 @@ namespace LibraryManagementSystem.Controllers
         {
             var model = new ReportViewModel();
 
+            // EXTRA COUNTS
+
+            model.TotalMembers = await _context.Members.CountAsync();
+
+            model.TotalAuthors = await _context.Authors.CountAsync();
+
+            model.TotalCategories = await _context.Categories.CountAsync();
+
+            model.TotalReservations = await _context.Reservations.CountAsync();
+
             // TOTAL COUNTS
 
             model.TotalBooks = await _context.Books.CountAsync();
@@ -134,14 +144,6 @@ namespace LibraryManagementSystem.Controllers
 
             // PENDING RESERVATIONS
 
-            // model.PendingReservations = await _context.Reservations
-
-            //         MemberName =
-
-            //         ReservedOn = x.ReservedOn
-
-            // PENDING RESERVATIONS
-
             var reservationData = await _context.Reservations
                 .Include(r => r.Book)
                 .Include(r => r.Member)
@@ -200,7 +202,6 @@ namespace LibraryManagementSystem.Controllers
                 .Select(x => x.Count)
                 .ToList();
 
-            // FINE CHART
 
             // FINE CHART
 
@@ -225,6 +226,53 @@ namespace LibraryManagementSystem.Controllers
             model.FineChartData = fineChart
                 .Select(x => x.Total)
                 .ToList();
+
+            // MEMBERSHIP REVENUE
+
+            var membershipRevenue = await _context.Memberships
+                .SumAsync(x => (decimal?)x.Fee) ?? 0;
+
+            // FINE REVENUE
+
+            var fineRevenue = await _context.BorrowRecords
+                .Where(x => x.FinePaid)
+                .SumAsync(x => (decimal?)x.FineAmount) ?? 0;
+
+            model.TotalRevenue = membershipRevenue + fineRevenue;
+
+            var reviews = await _context.BookReviews
+                .Include(r => r.Book)
+                .Include(r => r.Member)
+                .OrderByDescending(r => r.CreatedAt)
+                .ToListAsync();
+
+            model.TotalReviews = reviews.Count;
+
+            model.AverageRating = reviews.Any()
+                ? reviews.Average(r => r.Rating)
+                : 0;
+
+            model.BookReviews = reviews
+                .Take(10)
+                .Select(r => new ReviewVM
+                {
+                    BookName = r.Book != null ? r.Book.Title : "",
+                    MemberName = r.Member != null ? r.Member.UserName : "",
+                    Rating = r.Rating,
+                    Comment = r.Comment ?? "",
+                    CreatedAt = r.CreatedAt
+                })
+                .ToList();
+
+            model.RatingCounts = new List<int>
+            {
+                reviews.Count(r => r.Rating == 1),
+                reviews.Count(r => r.Rating == 2),
+                reviews.Count(r => r.Rating == 3),
+                reviews.Count(r => r.Rating == 4),
+                reviews.Count(r => r.Rating == 5)
+            };
+
             return View(model);
         }
 
@@ -345,31 +393,76 @@ namespace LibraryManagementSystem.Controllers
             return View(topBorrowers);
         }
 
-        [HttpGet]
         public async Task<IActionResult> Revenue()
         {
-            var result = new List<RevenueRowViewModel>();
+            var memberships = await _context.Memberships.ToListAsync();
 
-            var fineRecords = await _context.BorrowRecords
-                .Where(x => x.FinePaid && x.ReturnedOn != null)
+            var fines = await _context.BorrowRecords
+                .Where(x => x.FinePaid)
                 .ToListAsync();
 
-            for (int month = 1; month <= 12; month++)
-            {
-                var fineRevenue = fineRecords
-                    .Where(x => x.ReturnedOn!.Value.Month == month)
-                    .Sum(x => x.FineAmount);
-
-                result.Add(new RevenueRowViewModel
+            var revenue = memberships
+                .GroupBy(x => new { x.StartDate.Year, x.StartDate.Month })
+                .Select(g => new RevenueRowViewModel
                 {
-                    Year = DateTime.Now.Year,
-                    Month = month,
-                    MembershipRevenue = 0,
-                    FineRevenue = fineRevenue
-                });
+                    Year = g.Key.Year,
+                    Month = g.Key.Month,
+                    MembershipRevenue = g.Sum(x => x.Fee),
+                    FineRevenue = 0
+                })
+                .ToList();
+
+            foreach (var fine in fines)
+            {
+                var month = fine.ReturnedOn?.Month ?? DateTime.Now.Month;
+                var year = fine.ReturnedOn?.Year ?? DateTime.Now.Year;
+
+                var row = revenue.FirstOrDefault(x =>
+                    x.Month == month &&
+                    x.Year == year);
+
+                if (row == null)
+                {
+                    revenue.Add(new RevenueRowViewModel
+                    {
+                        Year = year,
+                        Month = month,
+                        FineRevenue = fine.FineAmount
+                    });
+                }
+                else
+                {
+                    row.FineRevenue += fine.FineAmount;
+                }
             }
 
-            return View(result);
+            revenue = revenue
+                .OrderByDescending(x => x.Year)
+                .ThenByDescending(x => x.Month)
+                .ToList();
+
+            return View(revenue);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ReviewRating()
+        {
+            var reviews = await _context.BookReviews
+                .Include(r => r.Book)
+                .Include(r => r.Member)
+                .OrderByDescending(r => r.CreatedAt)
+                .ToListAsync();
+
+            var model = reviews.Select(r => new ReviewVM
+            {
+                BookName = r.Book?.Title ?? "",
+                MemberName = r.Member?.FullName ?? "",
+                Rating = r.Rating,
+                Comment = string.IsNullOrEmpty(r.Comment) ? "-" : r.Comment,
+                CreatedAt = r.CreatedAt
+            }).ToList();
+
+            return View(model);
         }
 
     }

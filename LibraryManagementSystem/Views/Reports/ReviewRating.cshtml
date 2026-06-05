@@ -1,0 +1,113 @@
+@model IEnumerable<LibraryManagementSystem.ViewModels.ReviewVM>
+
+@{
+    ViewData["Title"] = "Reviews & Ratings";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    .table thead th {
+        font-family: 'Poppins', sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    .table tbody td {
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .rating-badge {
+        background: #f59e0b;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+</style>
+
+<div class="container mt-4">
+
+    <h2 class="mb-3">⭐ Reviews & Ratings Report</h2>
+
+    <p class="text-muted small">
+        User reviews and ratings for library books.
+    </p>
+
+    <div class="card shadow-sm">
+
+        <div class="card-body p-0">
+
+            <table class="table table-hover mb-0 align-middle">
+
+                <thead class="table-dark">
+                    <tr>
+                        <th style="width:70px;">#</th>
+                        <th>Book</th>
+                        <th>Member</th>
+                        <th>Rating</th>
+                        <th>Comment</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="6"
+                                class="text-center text-muted p-4">
+                                No reviews available.
+                            </td>
+                        </tr>
+                    }
+
+                    @{
+                        int i = 0;
+                    }
+
+                    @foreach (var review in Model)
+                    {
+                        i++;
+
+                        <tr>
+
+                            <td>#@i</td>
+
+                            <td>
+                                @review.BookName
+                            </td>
+
+                            <td>
+                                @review.MemberName
+                            </td>
+
+                            <td>
+                                <span class="rating-badge">
+                                    ⭐ @review.Rating
+                                </span>
+                            </td>
+
+                            <td>
+                                @review.Comment
+                            </td>
+
+                            <td>
+                                @review.CreatedAt.ToString("dd-MM-yyyy")
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>

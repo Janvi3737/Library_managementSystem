@@ -17,17 +17,15 @@ namespace LibraryManagementSystem.ViewModels
 
         public decimal TotalFineCollection { get; set; }
 
-        // // REVIEWS
-        // public int TotalReviews { get; set; }
-        // public double AverageRating { get; set; }
-        // public List<ReviewVM> RecentReviews { get; set; } = new();
+        public int TotalMembers { get; set; }
 
-        // public List<ReviewVM> BookReviews { get; set; } = new();
-        // public List<string> RatingLabels { get; set; } = new()
-        // {
-        // "1 Star", "2 Star", "3 Star", "4 Star", "5 Star"
-        // };
-        // public List<int> RatingCounts { get; set; } = new();
+        public int TotalAuthors { get; set; }
+
+        public int TotalCategories { get; set; }
+
+        public int TotalReservations { get; set; }
+
+        public decimal TotalRevenue { get; set; }
 
 
         // Reviews

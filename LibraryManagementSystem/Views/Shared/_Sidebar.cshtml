@@ -112,9 +112,12 @@
     </a>
 
 <a asp-controller="MembershipApproval"
-   asp-action="Index">
+   asp-action="Index"
+       data-bs-toggle="tooltip"
+       title="Approvals">
+
     <i class="bi bi-gem"></i>
-   Membership Approvals
+        <span>Membership Approvals</span>
 
 </a>
     <a asp-controller="Payments"
@@ -153,7 +156,7 @@
        title="Reservations">
 
         <i class="bi bi-bookmark-star"></i>
-        <span>Reservations</span>
+        <span>Book Reservations</span>
     </a>
 
     <a asp-controller="Fines"
@@ -224,7 +227,16 @@
 
         <i class="bi bi-graph-up"></i>
         <span>Revenue</span>
-    </a> 
+    </a>
+
+    <a asp-controller="Reports"
+       asp-action="ReviewRating"
+       data-bs-toggle="tooltip"
+       title="Reviews & Ratings">
+
+        <i class="bi bi-star-fill"></i>
+        <span>Reviews & Ratings</span>
+    </a>
 
     <!-- SYSTEM -->
     <div class="menu-title">SYSTEM</div>
