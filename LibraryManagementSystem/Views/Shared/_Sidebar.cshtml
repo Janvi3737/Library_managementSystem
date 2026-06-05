@@ -165,8 +165,21 @@
         <span>Fines</span>
     </a>
 
-    @* <!-- REPORTS -->
-    <div class="menu-title">REPORTS</div>
+
+    <!-- REPORTS -->
+
+<div class="menu-title">REPORTS</div>
+
+<a asp-controller="Reports"
+   asp-action="Index"
+   data-bs-toggle="tooltip"
+   title="Reports & Analytics">
+
+    <i class="bi bi-bar-chart-line-fill"></i>
+    <span>Reports & Analytics</span>
+
+</a>
+
 
     <a asp-controller="Reports"
        asp-action="OverdueBooks"
@@ -212,19 +225,6 @@
         <i class="bi bi-graph-up"></i>
         <span>Revenue</span>
     </a> *@
-    <!-- REPORTS -->
-
-<div class="menu-title">REPORTS</div>
-
-<a asp-controller="Reports"
-   asp-action="Index"
-   data-bs-toggle="tooltip"
-   title="Reports & Analytics">
-
-    <i class="bi bi-bar-chart-line-fill"></i>
-    <span>Reports & Analytics</span>
-
-</a>
 
     <!-- SYSTEM -->
     <div class="menu-title">SYSTEM</div>
