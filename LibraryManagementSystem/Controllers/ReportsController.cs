@@ -224,10 +224,37 @@ namespace LibraryManagementSystem.Controllers
             model.FineChartData = fineChart
                 .Select(x => x.Total)
                 .ToList();
-        return View(model);
+            return View(model);
         }
-        
 
+        public async Task<IActionResult> Reports()
+        {
+            var model = new ReportViewModel();
+
+            var reviews = await _context.BookReviews
+            .AsNoTracking()
+            .Include(r => r.Book)
+            .Include(r => r.Member)
+            .OrderByDescending(r => r.CreatedAt)
+            .ToListAsync();
+
+            model.TotalReviews = reviews.Count;
+
+            model.AverageRating = reviews.Any()
+            ? reviews.Average(r => r.Rating)
+            : 0;
+
+            model.BookReviews = reviews.Select(r => new ReviewVM
+            {
+                BookName = r.Book?.Title ?? "",
+                MemberName = r.Member?.FullName ?? "",
+                Rating = r.Rating,
+                Comment = string.IsNullOrEmpty(r.Comment) ? "-" : r.Comment,
+                CreatedAt = r.CreatedAt
+            }).ToList();
+
+            return View(model);
+        }
 
     }
 

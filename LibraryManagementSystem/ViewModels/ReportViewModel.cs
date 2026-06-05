@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace LibraryManagementSystem.ViewModels
@@ -16,6 +16,32 @@ namespace LibraryManagementSystem.ViewModels
         public int TotalOverdueBooks { get; set; }
 
         public decimal TotalFineCollection { get; set; }
+
+        // // REVIEWS
+        // public int TotalReviews { get; set; }
+        // public double AverageRating { get; set; }
+        // public List<ReviewVM> RecentReviews { get; set; } = new();
+
+        // public List<ReviewVM> BookReviews { get; set; } = new();
+        // public List<string> RatingLabels { get; set; } = new()
+        // {
+        // "1 Star", "2 Star", "3 Star", "4 Star", "5 Star"
+        // };
+        // public List<int> RatingCounts { get; set; } = new();
+
+
+        // Reviews
+        public int TotalReviews { get; set; }
+        public double AverageRating { get; set; }
+
+        public List<ReviewVM> BookReviews { get; set; } = new();
+        public List<string> RatingLabels { get; set; } = new()
+{
+"1 Star", "2 Star", "3 Star", "4 Star", "5 Star"
+};
+
+        public List<int> RatingCounts { get; set; } = new();
+
 
         // TABLES
 
@@ -43,6 +69,7 @@ namespace LibraryManagementSystem.ViewModels
 
         public List<decimal> FineChartData { get; set; } = new();
     }
+
 
     // MOST BORROWED BOOKS
 
@@ -108,4 +135,15 @@ namespace LibraryManagementSystem.ViewModels
 
         public decimal FineAmount { get; set; }
     }
+
+
+    public class ReviewVM
+    {
+        public string BookName { get; set; } = "";
+        public string MemberName { get; set; } = "";
+        public int Rating { get; set; }
+        public string Comment { get; set; } = "";
+        public DateTime CreatedAt { get; set; }
+    }
+
 }
