@@ -159,7 +159,7 @@ namespace LibraryManagementSystem.Controllers
                     using (var stream =
                            new FileStream(filePath, FileMode.Create))
                     {
-                        await PdfFile .CopyToAsync(stream);
+                        await PdfFile.CopyToAsync(stream);
                     }
 
                     // SAVE URL
@@ -197,15 +197,195 @@ namespace LibraryManagementSystem.Controllers
             return View(book);
         }
 
+        //     // EDIT GET
+        //     [HttpGet]
+        //     public async Task<IActionResult> Edit(int id)
+        //     {
+        //         var book = await _context.Books
+        //             .FirstOrDefaultAsync(b => b.Id == id);
+
+        //         if (book == null)
+        //             return NotFound();
+
+        //         LoadDropdowns(
+        //             book.CategoryId,
+        //             book.AuthorId,
+        //             book.DepartmentId);
+
+        //         return View(book);
+        //     }
+
+        //     // EDIT POST
+        //     [HttpPost]
+        //     [ValidateAntiForgeryToken]
+        //     public async Task<IActionResult> Edit(
+        //         int id,
+        //         Book book,
+        //         IFormFile? PdfFile)
+        //     {
+        //         if (id != book.Id)
+        //         {
+        //             return NotFound();
+        //         }
+
+        //         ValidateBook(book);
+
+        //         // CHECK DUPLICATE ISBN
+        //         bool isbnExists = await _context.Books
+        //             .AnyAsync(b =>
+        //                 b.ISBN == book.ISBN &&
+        //                 b.Id != book.Id);
+
+        //         if (isbnExists)
+        //         {
+        //             ModelState.AddModelError(
+        //                 "ISBN",
+        //                 "This ISBN already exists.");
+        //         }
+
+        //         // AVAILABLE COPIES VALIDATION
+        //         if (book.AvailableCopies > book.TotalCopies)
+        //         {
+        //             ModelState.AddModelError(
+        //                 "AvailableCopies",
+        //                 "Available copies cannot exceed total copies.");
+        //         }
+
+        //         if (!ModelState.IsValid)
+        //         {
+        //             LoadDropdowns(
+        //                 book.CategoryId,
+        //                 book.AuthorId,
+        //                 book.DepartmentId);
+
+        //             return View(book);
+        //         }
+
+        //         try
+        //         {
+        //             var existingBook = await _context.Books
+        //  .FirstOrDefaultAsync(b => b.Id == id);
+
+        //             if (existingBook == null)
+        //             {
+        //                 return NotFound();
+        //             }
+
+        //             // UPDATE BOOK
+        //             existingBook.Title = book.Title;
+        //             existingBook.ISBN = book.ISBN;
+        //             existingBook.AuthorId = book.AuthorId;
+        //             existingBook.CategoryId = book.CategoryId;
+        //             existingBook.DepartmentId = book.DepartmentId;
+        //             existingBook.TotalPages = book.TotalPages;
+        //             existingBook.Description = book.Description;
+        //             existingBook.CoverImageUrl = book.CoverImageUrl;
+        //             existingBook.TotalCopies = book.TotalCopies;
+        //             existingBook.AvailableCopies = book.AvailableCopies;
+        //             existingBook.IsFeatured = book.IsFeatured;
+
+        //             // PDF UPLOAD
+        //             if (PdfFile != null && PdfFile.Length > 0)
+        //             {
+        //                 // VALIDATE PDF
+        //                 if (Path.GetExtension(PdfFile.FileName)
+        //                     .ToLower() != ".pdf")
+        //                 {
+        //                     ModelState.AddModelError(
+        //                         "PdfFile",
+        //                         "Only PDF files are allowed.");
+
+        //                     LoadDropdowns(
+        //                         book.CategoryId,
+        //                         book.AuthorId,
+        //                         book.DepartmentId);
+
+        //                     return View(book);
+        //                 }
+
+        //                 string pdfFolder = Path.Combine(
+        //                     Directory.GetCurrentDirectory(),
+        //                     "wwwroot",
+        //                     "uploads",
+        //                     "pdfs");
+
+        //                 // CREATE FOLDER
+        //                 if (!Directory.Exists(pdfFolder))
+        //                 {
+        //                     Directory.CreateDirectory(pdfFolder);
+        //                 }
+
+        //                 // DELETE OLD PDF
+        //                 if (!string.IsNullOrWhiteSpace(existingBook.PdfUrl))
+        //                 {
+        //                     string oldPdfPath = Path.Combine(
+        //                         Directory.GetCurrentDirectory(),
+        //                         "wwwroot",
+        //                         existingBook.PdfUrl.TrimStart('/'));
+
+        //                     if (System.IO.File.Exists(oldPdfPath))
+        //                     {
+        //                         System.IO.File.Delete(oldPdfPath);
+        //                     }
+        //                 }
+
+        //                 // NEW FILE NAME
+        //                 string fileName =
+        //                     Guid.NewGuid().ToString()
+        //                     + Path.GetExtension(PdfFile.FileName);
+
+        //                 string filePath =
+        //                     Path.Combine(pdfFolder, fileName);
+
+        //                 // SAVE NEW PDF
+        //                 using (var stream =
+        //                        new FileStream(filePath, FileMode.Create))
+        //                 {
+        //                     await PdfFile.CopyToAsync(stream);
+        //                     if (!System.IO.File.Exists(filePath))
+        //                     {
+        //                         throw new Exception("PDF not saved.");
+        //                     }
+        //                 }
+
+        //                 // UPDATE PDF URL
+        //                 existingBook.PdfUrl = "/uploads/pdfs/" + fileName;
+        //             }
+
+        //             _context.Books.Update(existingBook);
+
+        //             await _context.SaveChangesAsync();
+
+        //             TempData["Success"] =
+        //                 "Book updated successfully!";
+
+        //             return RedirectToAction(nameof(Index));
+        //         }
+        //         catch (Exception ex)
+        //         {
+        //             TempData["Error"] = ex.Message;
+
+        //             LoadDropdowns(
+        //                 book.CategoryId,
+        //                 book.AuthorId,
+        //                 book.DepartmentId);
+
+        //             return View(book);
+        //         }
+        //     }
+
+
         // EDIT GET
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             var book = await _context.Books
-                .FirstOrDefaultAsync(b => b.Id == id);
+                .FirstOrDefaultAsync(x => x.Id == id);
 
             if (book == null)
+            {
                 return NotFound();
+            }
 
             LoadDropdowns(
                 book.CategoryId,
@@ -215,26 +395,36 @@ namespace LibraryManagementSystem.Controllers
             return View(book);
         }
 
+
         // EDIT POST
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
-            int id,
             Book book,
             IFormFile? PdfFile)
         {
-            if (id != book.Id)
-            {
-                return NotFound();
-            }
+
+
+            // REMOVE UNUSED VALIDATIONS
+
+            ModelState.Remove("Author");
+            ModelState.Remove("Category");
+            ModelState.Remove("Department");
+            ModelState.Remove("BorrowRecords");
+            ModelState.Remove("Reservations");
+            ModelState.Remove("Reviews");
+
+            // CUSTOM VALIDATION
 
             ValidateBook(book);
 
-            // CHECK DUPLICATE ISBN
+            // DUPLICATE ISBN CHECK
+
             bool isbnExists = await _context.Books
-                .AnyAsync(b =>
-                    b.ISBN == book.ISBN &&
-                    b.Id != book.Id);
+                .AnyAsync(x =>
+                    x.ISBN == book.ISBN &&
+                    x.Id != book.Id);
 
             if (isbnExists)
             {
@@ -243,7 +433,8 @@ namespace LibraryManagementSystem.Controllers
                     "This ISBN already exists.");
             }
 
-            // AVAILABLE COPIES VALIDATION
+            // AVAILABLE COPIES CHECK
+
             if (book.AvailableCopies > book.TotalCopies)
             {
                 ModelState.AddModelError(
@@ -263,15 +454,19 @@ namespace LibraryManagementSystem.Controllers
 
             try
             {
+
                 var existingBook = await _context.Books
-     .FirstOrDefaultAsync(b => b.Id == id);
+                    .FirstOrDefaultAsync(x => x.Id == book.Id);
+
+
 
                 if (existingBook == null)
                 {
                     return NotFound();
                 }
 
-                // UPDATE BOOK
+                // UPDATE DATA
+
                 existingBook.Title = book.Title;
                 existingBook.ISBN = book.ISBN;
                 existingBook.AuthorId = book.AuthorId;
@@ -285,9 +480,11 @@ namespace LibraryManagementSystem.Controllers
                 existingBook.IsFeatured = book.IsFeatured;
 
                 // PDF UPLOAD
+
                 if (PdfFile != null && PdfFile.Length > 0)
                 {
                     // VALIDATE PDF
+
                     if (Path.GetExtension(PdfFile.FileName)
                         .ToLower() != ".pdf")
                     {
@@ -310,12 +507,14 @@ namespace LibraryManagementSystem.Controllers
                         "pdfs");
 
                     // CREATE FOLDER
+
                     if (!Directory.Exists(pdfFolder))
                     {
                         Directory.CreateDirectory(pdfFolder);
                     }
 
                     // DELETE OLD PDF
+
                     if (!string.IsNullOrWhiteSpace(existingBook.PdfUrl))
                     {
                         string oldPdfPath = Path.Combine(
@@ -330,29 +529,29 @@ namespace LibraryManagementSystem.Controllers
                     }
 
                     // NEW FILE NAME
+
                     string fileName =
-                        Guid.NewGuid().ToString()
-                        + Path.GetExtension(PdfFile.FileName);
+                        Guid.NewGuid().ToString() +
+                        Path.GetExtension(PdfFile.FileName);
 
                     string filePath =
                         Path.Combine(pdfFolder, fileName);
 
-                    // SAVE NEW PDF
+                    // SAVE FILE
+
                     using (var stream =
                            new FileStream(filePath, FileMode.Create))
                     {
                         await PdfFile.CopyToAsync(stream);
-                        if (!System.IO.File.Exists(filePath))
-                        {
-                            throw new Exception("PDF not saved.");
-                        }
                     }
 
-                    // UPDATE PDF URL
-                    existingBook.PdfUrl = "/uploads/pdfs/" + fileName;
+                    // SAVE URL
+
+                    existingBook.PdfUrl =
+                        "/uploads/pdfs/" + fileName;
                 }
 
-                _context.Books.Update(existingBook);
+                // SAVE CHANGES
 
                 await _context.SaveChangesAsync();
 
@@ -373,6 +572,7 @@ namespace LibraryManagementSystem.Controllers
                 return View(book);
             }
         }
+
 
         // DELETE GET
         [HttpGet]

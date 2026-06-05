@@ -33,10 +33,15 @@
                 </div>
             }
 
-            <form asp-action="Edit"
-                  asp-route-id="@Model.Id"
+
+            <form asp-controller="Books"
+                  asp-action="Edit"
                   method="post"
                   enctype="multipart/form-data">
+
+                <input type="hidden" asp-for="Id" />
+
+
 
                 <!-- HIDDEN -->
 
