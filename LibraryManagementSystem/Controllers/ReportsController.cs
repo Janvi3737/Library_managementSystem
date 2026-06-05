@@ -1,4 +1,5 @@
 using LibraryManagementSystem.ClassLibrary.Data;
+using LibraryManagementSystem.ClassLibrary.Models;
 using LibraryManagementSystem.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -254,6 +255,121 @@ namespace LibraryManagementSystem.Controllers
             }).ToList();
 
             return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> OverdueBooks()
+        {
+            var overdueBooks = await _context.BorrowRecords
+                .Include(x => x.Book)
+                .Include(x => x.Member)
+                .Where(x =>
+                    x.ReturnedOn == null &&
+                    x.DueDate < DateTime.Now)
+                .OrderBy(x => x.DueDate)
+                .ToListAsync();
+
+            return View(overdueBooks);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> NeverBorrowed()
+        {
+            var borrowedBookIds = await _context.BorrowRecords
+                .Select(x => x.BookId)
+                .Distinct()
+                .ToListAsync();
+
+            var books = await _context.Books
+                .Include(b => b.Author)
+                .Include(b => b.Category)
+                .Where(b => !borrowedBookIds.Contains(b.Id))
+                .ToListAsync();
+
+            return View(books);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> MostWishlisted()
+        {
+            var wishlistData = await _context.Wishlists
+                .Include(w => w.Book)
+                    .ThenInclude(b => b.Author)
+                .GroupBy(w => w.BookId)
+                .Select(g => new
+                {
+                    BookId = g.Key,
+                    Count = g.Count()
+                })
+                .OrderByDescending(x => x.Count)
+                .Take(20)
+                .ToListAsync();
+
+            var result = new List<Tuple<Book, int>>();
+
+            foreach (var item in wishlistData)
+            {
+                var book = await _context.Books
+                    .Include(b => b.Author)
+                    .FirstOrDefaultAsync(b => b.Id == item.BookId);
+
+                if (book != null)
+                {
+                    result.Add(
+                        Tuple.Create(book, item.Count));
+                }
+            }
+
+            return View(result);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> TopBorrowers()
+        {
+            var topBorrowers = await _context.BorrowRecords
+                .Include(x => x.Member)
+                .GroupBy(x => new
+                {
+                    x.MemberId,
+                    x.Member.Name
+                })
+                .Select(g => new TopBorrowerViewModel
+                {
+                    MemberName = g.Key.Name,
+                    TotalBooks = g.Count()
+                })
+                .OrderByDescending(x => x.TotalBooks)
+                .Take(20)
+                .ToListAsync();
+
+            return View(topBorrowers);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Revenue()
+        {
+            var result = new List<RevenueRowViewModel>();
+
+            var fineRecords = await _context.BorrowRecords
+                .Where(x => x.FinePaid && x.ReturnedOn != null)
+                .ToListAsync();
+
+            for (int month = 1; month <= 12; month++)
+            {
+                var fineRevenue = fineRecords
+                    .Where(x => x.ReturnedOn!.Value.Month == month)
+                    .Sum(x => x.FineAmount);
+
+                result.Add(new RevenueRowViewModel
+                {
+                    Year = DateTime.Now.Year,
+                    Month = month,
+                    MembershipRevenue = 0,
+                    FineRevenue = fineRevenue
+                });
+            }
+
+            return View(result);
         }
 
     }
