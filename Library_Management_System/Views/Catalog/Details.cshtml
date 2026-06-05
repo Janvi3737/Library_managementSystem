@@ -839,7 +839,7 @@
 
                 <!-- FULL ACCESS -->
 
-                <div class="pdf-actions">
+                @* <div class="pdf-actions">
 
                     <a href="@Url.Action("ViewPdf", "Books", new { id = Model.Id })"
                        target="_blank"
@@ -852,14 +852,10 @@
                         Download PDF
                     </a>
 
-                </div>
+                </div> *@
 
                 @if (!Model.HasMembership)
                 {
-                    <!-- LOCK BANNER for non-members.
-                         The server already trims the PDF to the first 20
-                         pages, so even the iframe below + the download
-                         button physically can't deliver more than that. -->
                     <div class="alert alert-warning p-4 rounded-4 mb-3"
                          style="background:rgba(245,158,11,.12); border:1px solid rgba(245,158,11,.35); color:#fde68a;">
                         <div style="display:flex; gap:14px; align-items:center;">
