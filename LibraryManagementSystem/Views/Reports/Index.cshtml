@@ -10,17 +10,23 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-    @@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
+    @@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+    /* ==================================================
+       RESET
+    ================================================== */
     * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
     }
 
-    /* =========================
-       LIGHT MODE
-    ========================= */
+    html {
+        scroll-behavior: smooth;
+    }
+
+    /* ==================================================
+       LIGHT THEME
+    ================================================== */
 
     :root {
         --bg: #f8fafc;
@@ -34,12 +40,14 @@
         --success: #10b981;
         --danger: #ef4444;
         --warning: #f59e0b;
-        --shadow: 0 12px 30px rgba(15,23,42,.08);
+        --info: #06b6d4;
+        --shadow: 0 10px 25px rgba(15,23,42,.08);
+        --hover: rgba(99,102,241,.05);
     }
 
-    /* =========================
-       DARK MODE
-    ========================= */
+    /* ==================================================
+       DARK THEME
+    ================================================== */
 
     [data-bs-theme="dark"] {
         --bg: #0f172a;
@@ -53,22 +61,29 @@
         --success: #34d399;
         --danger: #f87171;
         --warning: #fbbf24;
-        --shadow: 0 12px 35px rgba(0,0,0,.35);
+        --info: #22d3ee;
+        --shadow: 0 12px 40px rgba(0,0,0,.35);
+        --hover: rgba(255,255,255,.03);
     }
 
-    /* =========================
+    /* ==================================================
        BODY
-    ========================= */
+    ================================================== */
 
     body {
+        font-family: 'Inter',sans-serif;
         background: var(--bg);
-        font-family: 'Inter', sans-serif;
         color: var(--text);
+        min-height: 100vh;
     }
 
-    /* =========================
+    [data-bs-theme="dark"] body {
+        background: radial-gradient( circle at top right, rgba(99,102,241,.12), transparent 35% ), var(--bg);
+    }
+
+    /* ==================================================
        PAGE
-    ========================= */
+    ================================================== */
 
     .reports-page {
         padding: 35px;
@@ -77,32 +92,32 @@
     .page-title {
         font-size: 38px;
         font-weight: 800;
-        margin-bottom: 10px;
         color: var(--text);
+        margin-bottom: 8px;
     }
 
     .page-subtitle {
         color: var(--muted);
-        margin-bottom: 35px;
         font-size: 15px;
+        margin-bottom: 30px;
     }
 
-    /* =========================
+    /* ==================================================
        STATS
-    ========================= */
+    ================================================== */
 
     .stats-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit,minmax(240px,1fr));
+        grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
         gap: 24px;
         margin-bottom: 35px;
     }
 
     .stat-card {
-        border-radius: 24px;
-        padding: 28px;
         position: relative;
         overflow: hidden;
+        border-radius: 24px;
+        padding: 30px;
         color: white;
         box-shadow: var(--shadow);
         transition: .3s ease;
@@ -110,6 +125,17 @@
 
         .stat-card:hover {
             transform: translateY(-6px);
+        }
+
+        .stat-card::after {
+            content: "";
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            top: -70px;
+            right: -70px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.08);
         }
 
     .card-1 {
@@ -130,24 +156,22 @@
 
     .stat-icon {
         font-size: 34px;
-        margin-bottom: 18px;
-        opacity: .95;
+        margin-bottom: 15px;
     }
 
     .stat-title {
-        font-size: 15px;
-        color: rgba(255,255,255,.9);
-        margin-bottom: 10px;
+        font-size: 14px;
+        opacity: .9;
     }
 
     .stat-value {
-        font-size: 40px;
+        font-size: 42px;
         font-weight: 800;
     }
 
-    /* =========================
+    /* ==================================================
        CONTENT GRID
-    ========================= */
+    ================================================== */
 
     .content-grid {
         display: grid;
@@ -156,73 +180,103 @@
         margin-bottom: 30px;
     }
 
-    /* =========================
-       REPORT CARDS
-    ========================= */
+    /* ==================================================
+       CARDS
+    ================================================== */
 
     .report-card,
     .chart-card {
         background: var(--card);
-        border-radius: 24px;
-        padding: 25px;
         border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 24px;
         box-shadow: var(--shadow);
+        transition: .3s ease;
     }
 
-    .card-title {
-        font-size: 24px;
-        font-weight: 700;
-        margin-bottom: 24px;
-        color: var(--text);
-    }
-
-    /* =========================
-       TABLES
-    ========================= */
-
-    .table {
-        margin-bottom: 0;
-    }
-
-    table {
-        width: 100%;
-    }
-
-    thead {
-        background: var(--card2);
-    }
-
-    th {
-        padding: 16px;
-        color: var(--muted);
-        font-size: 14px;
-        font-weight: 700;
-        border: none !important;
-    }
-
-    td {
-        padding: 16px;
-        color: var(--text);
-        font-size: 14px;
-        border-bottom: 1px solid var(--border);
-    }
-
-    tbody tr {
-        transition: .2s ease;
-    }
-
-        tbody tr:hover {
-            background: rgba(99,102,241,.05);
+        .report-card:hover,
+        .chart-card:hover {
+            transform: translateY(-4px);
         }
 
-    /* =========================
+    .card-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* ==================================================
+       TABLES
+    ================================================== */
+
+    .table-responsive {
+        border-radius: 18px;
+        overflow: hidden;
+    }
+
+    .table {
+        width: 100%;
+        margin-bottom: 0;
+        background: var(--card);
+        color: var(--text);
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+        .table thead {
+            background: var(--card2);
+        }
+
+            .table thead th {
+                padding: 16px;
+                border: none !important;
+                color: var(--muted);
+                font-size: 13px;
+                font-weight: 700;
+                letter-spacing: .5px;
+                text-transform: uppercase;
+            }
+
+        .table tbody td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text);
+            vertical-align: middle;
+        }
+
+        .table tbody tr {
+            transition: .25s ease;
+        }
+
+            .table tbody tr:nth-child(even) {
+                background: rgba(148,163,184,.03);
+            }
+
+    [data-bs-theme="dark"] .table tbody tr:nth-child(even) {
+        background: rgba(255,255,255,.02);
+    }
+
+    .table tbody tr:hover {
+        background: var(--hover);
+    }
+
+    .table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* ==================================================
        BADGES
-    ========================= */
+    ================================================== */
 
     .badge-success {
         background: rgba(16,185,129,.15);
         color: var(--success);
-        padding: 8px 14px;
+        border: 1px solid rgba(16,185,129,.25);
+        padding: 8px 15px;
         border-radius: 30px;
         font-weight: 700;
     }
@@ -230,29 +284,38 @@
     .badge-danger {
         background: rgba(239,68,68,.15);
         color: var(--danger);
-        padding: 8px 14px;
+        border: 1px solid rgba(239,68,68,.25);
+        padding: 8px 15px;
         border-radius: 30px;
         font-weight: 700;
     }
 
-    /* =========================
+    .badge-warning {
+        background: rgba(245,158,11,.15);
+        color: var(--warning);
+        border: 1px solid rgba(245,158,11,.25);
+        padding: 8px 15px;
+        border-radius: 30px;
+        font-weight: 700;
+    }
+
+    /* ==================================================
        REVIEW SUMMARY
-    ========================= */
+    ================================================== */
 
     .summary {
         display: flex;
-        gap: 15px;
         flex-wrap: wrap;
+        gap: 15px;
         margin-bottom: 20px;
     }
 
         .summary p {
-            margin: 0;
             background: var(--card2);
-            padding: 12px 18px;
-            border-radius: 14px;
             color: var(--text);
             border: 1px solid var(--border);
+            padding: 14px 18px;
+            border-radius: 14px;
             font-weight: 600;
         }
 
@@ -260,47 +323,75 @@
             color: var(--primary);
         }
 
-    /* =========================
-       EMPTY TEXT
-    ========================= */
+    /* ==================================================
+       CHARTS
+    ================================================== */
+
+    .chart-card {
+        min-height: 450px;
+    }
+
+        .chart-card canvas {
+            width: 100% !important;
+            height: 350px !important;
+        }
+
+    /* ==================================================
+       EMPTY DATA
+    ================================================== */
 
     .empty-text {
-        color: var(--muted);
         text-align: center;
-        padding: 35px;
-        font-size: 15px;
+        padding: 40px;
+        color: var(--muted);
     }
 
-    /* =========================
-       CHARTS
-    ========================= */
-
-    canvas {
-        width: 100% !important;
-        height: 340px !important;
-    }
-
-    /* =========================
+    /* ==================================================
        SCROLLBAR
-    ========================= */
+    ================================================== */
 
     ::-webkit-scrollbar {
         width: 10px;
         height: 10px;
     }
 
-    ::-webkit-scrollbar-thumb {
-        background: var(--primary);
-        border-radius: 20px;
-    }
-
     ::-webkit-scrollbar-track {
         background: var(--card2);
     }
 
-    /* =========================
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient( 180deg, var(--primary), var(--primary2) );
+        border-radius: 20px;
+    }
+
+    /* ==================================================
+       BUTTONS
+    ================================================== */
+
+    .btn-primary {
+        background: linear-gradient( 135deg, var(--primary), var(--primary2) );
+        border: none;
+    }
+
+        .btn-primary:hover {
+            opacity: .95;
+        }
+
+    /* ==================================================
+       LINKS
+    ================================================== */
+
+    a {
+        text-decoration: none;
+    }
+
+        a:hover {
+            text-decoration: none;
+        }
+
+    /* ==================================================
        RESPONSIVE
-    ========================= */
+    ================================================== */
 
     @@media(max - width:992px) {
 
@@ -312,251 +403,27 @@
     @@media(max - width:768px) {
 
         .reports-page {
-            padding: 18px;
+            padding: 20px;
         }
 
         .page-title {
             font-size: 28px;
         }
 
-        .stat-value {
-            font-size: 30px;
-        }
-
         .card-title {
             font-size: 20px;
         }
 
-        table {
-            display: block;
-            overflow-x: auto;
-            white-space: nowrap;
+        .stat-value {
+            font-size: 32px;
         }
-    }
-
-    /* ========================================
-       PREMIUM REPORTS UI
-    ======================================== */
-
-    /* CARD EFFECT */
-
-    .report-card,
-    .chart-card,
-    .stat-card {
-        position: relative;
-    }
-
-        .report-card::before,
-        .chart-card::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            border-radius: 24px;
-            padding: 1px;
-            background: linear-gradient( 135deg, rgba(99,102,241,.25), rgba(139,92,246,.15) );
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            pointer-events: none;
-        }
-
-    /* STAT CARDS */
-
-    .stat-card {
-        min-height: 170px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-
-        .stat-card::after {
-            content: "";
-            position: absolute;
-            width: 180px;
-            height: 180px;
-            right: -70px;
-            top: -70px;
-            background: rgba(255,255,255,.08);
-            border-radius: 50%;
-        }
-
-    .stat-value {
-        line-height: 1;
-        letter-spacing: -1px;
-    }
-
-    .stat-icon {
-        opacity: .9;
-    }
-
-    /* TABLES */
-
-    .table {
-        border-collapse: separate;
-        border-spacing: 0;
-    }
-
-        .table thead th:first-child {
-            border-top-left-radius: 12px;
-        }
-
-        .table thead th:last-child {
-            border-top-right-radius: 12px;
-        }
-
-        .table tbody tr {
-            transition: all .25s ease;
-        }
-
-            .table tbody tr:hover {
-                transform: scale(1.01);
-            }
-
-            /* TABLE ROW ALTERNATE */
-
-            .table tbody tr:nth-child(even) {
-                background: rgba(148,163,184,.03);
-            }
-
-    /* REVIEW STARS */
-
-    .fa-star {
-        font-size: 15px;
-    }
-
-    .text-warning {
-        color: #fbbf24 !important;
-    }
-
-    /* CHART CONTAINER */
-
-    .chart-card {
-        min-height: 450px;
-    }
-
-        .chart-card canvas {
-            margin-top: 10px;
-        }
-
-    /* SECTION TITLES */
-
-    .card-title {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        border-bottom: 1px solid var(--border);
-        padding-bottom: 15px;
-    }
-
-    /* REVIEW SUMMARY */
-
-    .summary {
-        margin-bottom: 25px;
-    }
-
-        .summary p {
-            min-width: 220px;
-            box-shadow: 0 4px 15px rgba(0,0,0,.06);
-        }
-
-            .summary p:nth-child(1) {
-                border-left: 4px solid #6366f1;
-            }
-
-            .summary p:nth-child(2) {
-                border-left: 4px solid #f59e0b;
-            }
-
-    /* BADGES */
-
-    .badge-success,
-    .badge-danger {
-        min-width: 110px;
-        display: inline-block;
-        text-align: center;
-    }
-
-    /* EMPTY STATES */
-
-    .empty-text {
-        padding: 50px;
-        font-size: 15px;
-    }
-
-        .empty-text::before {
-            display: block;
-            font-size: 40px;
-            margin-bottom: 10px;
-        }
-
-    /* PAGE TITLE */
-
-    .page-title {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        color: var(--text);
-    }
-
-        .page-title i {
-            color: #6366f1;
-        }
-
-    /* SUBTITLE */
-
-    .page-subtitle {
-        font-size: 15px;
-        max-width: 700px;
-    }
-
-    /* CONTENT GRID */
-
-    .content-grid {
-        align-items: start;
-    }
-
-    /* REPORT CARD HOVER */
-
-    .report-card:hover,
-    .chart-card:hover {
-        transform: translateY(-3px);
-        transition: .3s ease;
-    }
-
-    /* CHART CARD GLOW */
-
-    .chart-card:hover {
-        box-shadow: 0 15px 40px rgba(99,102,241,.12);
-    }
-
-    /* TABLE HEADER */
-
-    thead {
-        background: linear-gradient( 90deg, var(--card2), rgba(99,102,241,.05) );
-    }
-
-    /* MOBILE */
-
-    @@media (max-width:768px) {
 
         .summary p {
             width: 100%;
         }
 
-        .stat-card {
-            min-height: 140px;
-        }
-
-        .card-title {
-            font-size: 18px;
-        }
-
-        .report-card,
-        .chart-card {
-            padding: 18px;
-        }
-
-        .table tbody tr:hover {
-            transform: none;
+        .table {
+            min-width: 700px;
         }
     }
 </style>
