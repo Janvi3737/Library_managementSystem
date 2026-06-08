@@ -310,6 +310,7 @@
     .quick-actions {
         display: grid;
         gap: 16px;
+        margin-top:15px;
     }
 
     .quick-btn {
@@ -407,6 +408,53 @@
             font-size: 22px;
             font-weight: 700;
         }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 24px;
+    }
+
+    .view-all-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 18px;
+        border-radius: 14px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+        color: #fff;
+        background: linear-gradient(135deg,#7c3aed,#a855f7);
+        border: 1px solid rgba(168,85,247,.25);
+        transition: .35s ease;
+        box-shadow: 0 10px 25px rgba(124,58,237,.25);
+    }
+
+        .view-all-btn:hover {
+            color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 18px 35px rgba(124,58,237,.35);
+        }
+
+    body.light-mode .view-all-btn {
+        background: linear-gradient(135deg,#7c3aed,#9333ea);
+        box-shadow: 0 8px 20px rgba(124,58,237,.18);
+    }
+
+    @@media(max - width:768px) {
+        .section-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .view-all-btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
 
     @@media(max-width:1200px) {
 
@@ -589,11 +637,19 @@
 
             <div class="dashboard-card">
 
-                <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="section-header">
 
                     <div class="card-title mb-0">
                         Current Borrowed Books
                     </div>
+
+                    <a href="/Member/BorrowHistory?status=active"
+                       class="view-all-btn">
+
+                        View All
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </a>
 
                 </div>
 
@@ -689,8 +745,19 @@
             {
                 <div class="dashboard-card">
 
-                    <div class="card-title">
+                    <div class="section-header">
+
+                    <div class="card-title mb-0">
                         Upcoming Due Books
+                    </div>
+
+                    <a href="/Member/BorrowHistory?status=overdue"
+                       class="view-all-btn">
+
+                        View All
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </a>
                     </div>
 
                     @foreach (var item in Model.MyBooks
@@ -737,8 +804,19 @@
             {
                 <div class="dashboard-card">
 
-                    <div class="card-title">
+                    <div class="section-header">
+
+                    <div class="card-title mb-0">
                         Recently Returned Books
+                    </div>
+
+                    <a href="/Member/BorrowHistory?status=returned"
+                       class="view-all-btn">
+
+                        View All
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </a>
                     </div>
 
                     @foreach (var activity in Model.RecentActivity
@@ -779,7 +857,7 @@
 
             <div class="dashboard-card">
 
-                <div class="card-title">
+                <div class="card-title mb-0">
                     Quick Actions
                 </div>
 
@@ -857,8 +935,20 @@
             {
                 <div class="dashboard-card">
 
-                    <div class="card-title">
-                        Recent Activities
+                    <div class="section-header">
+
+                        <div class="card-title mb-0">
+                            Recent Activities
+                        </div>
+
+                        <a href="/Member/BorrowHistory"
+                           class="view-all-btn">
+
+                            View All
+                            <i class="fa-solid fa-arrow-right"></i>
+
+                        </a>
+
                     </div>
 
                     @foreach (var activity in Model.RecentActivity.Take(5))

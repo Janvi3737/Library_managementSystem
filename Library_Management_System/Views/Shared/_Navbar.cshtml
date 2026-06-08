@@ -23,52 +23,58 @@
                      && x.BookId != null);
     }
 }
+<head>
+    <link rel="stylesheet" href="~/css/theme.css" />
+
+    <script src="~/js/theme.js"></script>
+</head>
 
 <style>
     @@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
     /* =========================================
-       ROOT VARIABLES
-    ========================================= */
+           ROOT VARIABLES
+        ========================================= */
     :root {
         /* COLORS */
 
         --bg-color: #050816;
-        --sidebar-bg: linear-gradient(180deg,#0f172a,#111827);
-        --navbar-bg: rgba(10,14,28,.92);
+        --sidebar-bg: linear-gradient(180deg, #0f172a, #111827);
+        --navbar-bg: rgba(10, 14, 28, .92);
         --card-bg: #111827;
         --card-bg-2: #151c35;
-        --border-color: rgba(255,255,255,.08);
+        --border-color: rgba(255, 255, 255, .08);
         --text-color: #ffffff;
         --text-light: #d1d5db;
         --text-muted: #94a3b8;
         --purple: #7c3aed;
         --purple-light: #9333ea;
         --pink: #d946ef;
-        --hover-bg: rgba(124,58,237,.15);
-        --shadow: 0 20px 40px rgba(0,0,0,.35);
+        --hover-bg: rgba(124, 58, 237, .15);
+        --shadow: 0 20px 40px rgba(0, 0, 0, .35);
     }
 
     /* =========================================
-       LIGHT THEME
-    ========================================= */
+           LIGHT THEME
+        ========================================= */
 
     body.light-mode {
         --bg-color: #f3f5fb;
-        --sidebar-bg: linear-gradient(180deg,#ffffff,#f8fafc);
-        --navbar-bg: rgba(255,255,255,.92);
+        --sidebar-bg: linear-gradient(180deg, #ffffff, #f8fafc);
+        --navbar-bg: rgba(255, 255, 255, .92);
         --card-bg: #ffffff;
         --card-bg-2: #f8fafc;
-        --border-color: rgba(0,0,0,.08);
+        --border-color: rgba(0, 0, 0, .08);
         --text-color: #111827;
         --text-light: #374151;
         --text-muted: #6b7280;
-        --hover-bg: rgba(124,58,237,.08);
-        --shadow: 0 15px 35px rgba(0,0,0,.08);
+        --hover-bg: rgba(124, 58, 237, .08);
+        --shadow: 0 15px 35px rgba(0, 0, 0, .08);
     }
 
     /* =========================================
-       GLOBAL
-    ========================================= */
+           GLOBAL
+        ========================================= */
 
     * {
         margin: 0;
@@ -101,8 +107,8 @@
     }
 
     /* =========================================
-       SCROLLBAR
-    ========================================= */
+           SCROLLBAR
+        ========================================= */
 
     ::-webkit-scrollbar {
         width: 8px;
@@ -110,13 +116,13 @@
     }
 
     ::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg,#7c3aed,#9333ea);
+        background: linear-gradient(135deg, #7c3aed, #9333ea);
         border-radius: 20px;
     }
 
     /* =========================================
-       SIDEBAR
-    ========================================= */
+           SIDEBAR
+        ========================================= */
 
     .sidebar {
         width: 260px;
@@ -143,8 +149,8 @@
     }
 
     /* =========================================
-       PAGE CONTENT
-    ========================================= */
+           PAGE CONTENT
+        ========================================= */
 
     .page-content {
         margin-left: 260px;
@@ -154,8 +160,8 @@
     }
 
     /* =========================================
-       MENU HEADING
-    ========================================= */
+           MENU HEADING
+        ========================================= */
 
     .menu-heading {
         color: var(--text-muted);
@@ -167,8 +173,8 @@
     }
 
     /* =========================================
-       MENU ITEM
-    ========================================= */
+           MENU ITEM
+        ========================================= */
 
     .menu-item {
         display: flex;
@@ -193,14 +199,14 @@
         }
 
         .menu-item.active {
-            background: linear-gradient(135deg,#7c3aed,#9333ea);
+            background: linear-gradient(135deg, #7c3aed, #9333ea);
             color: white;
-            box-shadow: 0 15px 30px rgba(124,58,237,.25);
+            box-shadow: 0 15px 30px rgba(124, 58, 237, .25);
         }
 
     /* =========================================
-       LOGOUT
-    ========================================= */
+           LOGOUT
+        ========================================= */
 
     .logout-box {
         margin-top: 40px;
@@ -216,20 +222,20 @@
         gap: 12px;
         height: 56px;
         border-radius: 18px;
-        background: rgba(239,68,68,.12);
+        background: rgba(239, 68, 68, .12);
         color: #f87171;
         transition: .3s;
         font-weight: 700;
     }
 
         .logout-link:hover {
-            background: rgba(239,68,68,.2);
+            background: rgba(239, 68, 68, .2);
             color: white;
         }
 
     /* =========================================
-       NAVBAR
-    ========================================= */
+           NAVBAR
+        ========================================= */
 
     .modern-navbar {
         position: sticky;
@@ -242,8 +248,8 @@
     }
 
     /* =========================================
-       SEARCH BOX
-    ========================================= */
+           SEARCH BOX
+        ========================================= */
 
     .search-box {
         position: relative;
@@ -256,7 +262,7 @@
         height: 58px;
         border-radius: 18px;
         border: 1px solid var(--border-color);
-        background: rgba(255,255,255,.04);
+        background: rgba(255, 255, 255, .04);
         color: var(--text-color);
         padding: 0 56px 0 20px;
         outline: none;
@@ -265,7 +271,7 @@
 
         .search-input:focus {
             border-color: #9333ea;
-            box-shadow: 0 0 0 4px rgba(147,51,234,.12);
+            box-shadow: 0 0 0 4px rgba(147, 51, 234, .12);
         }
 
         .search-input::placeholder {
@@ -282,46 +288,82 @@
     }
 
     /* =========================================
-       NAV ICON BUTTON
-    ========================================= */
+           NAV ICON BUTTON
+        ========================================= */
 
-    /* =========================
-   THEME BUTTON
-========================= */
-/* =========================================
-   THEME BUTTON
-========================================= */
+    /* ================= THEME TOGGLE ================= */
 
-.nav-icon-btn{
-    width:48px;
-    height:48px;
-    border:none;
-    border-radius:16px;
-    background:var(--card-bg);
-    color:var(--text-color);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    transition:.3s ease;
-    border:1px solid var(--border-color);
-    box-shadow:0 10px 25px rgba(0,0,0,.12);
-}
+    .theme-toggle-btn {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 20px;
+        background: linear-gradient(135deg, #7c3aed, #9333ea);
+        color: white;
+        box-shadow: 0 8px 25px rgba(124, 58, 237, .35);
+        transition: .3s ease;
+    }
 
-.nav-icon-btn:hover{
-    transform:translateY(-3px);
-    border-color:rgba(147,51,234,.35);
-    background:rgba(124,58,237,.08);
-}
+        .theme-toggle-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(124, 58, 237, .45);
+        }
 
-.nav-icon-btn:active{
-    transform:scale(.96);
-}
+        .theme-toggle-btn i {
+            transition: .3s;
+        }
 
-.nav-icon-btn i{
-    font-size:20px;
-    transition:.3s ease;
-}
+    /* LIGHT MODE */
+
+    body.light-mode {
+        --bg-color: #f8fafc;
+        --card-bg: #ffffff;
+        --text-color: #111827;
+        --secondary-text: #6b7280;
+        --border-color: #e5e7eb;
+        background: var(--bg-color);
+        color: var(--text-color);
+    }
+
+    /* DARK MODE */
+
+    body {
+        --bg-color: #050816;
+        --card-bg: #111827;
+        --text-color: #ffffff;
+        --secondary-text: #9ca3af;
+        --border-color: rgba(255, 255, 255, .08);
+        background: var(--bg-color);
+        color: var(--text-color);
+        transition: background .3s ease, color .3s ease;
+    }
+
+    /* GLOBAL CARD SUPPORT */
+
+    .modern-card,
+    .history-card,
+    .info-box,
+    .event-card,
+    .membership-card,
+    .category-item {
+        background: var(--card-bg) !important;
+        color: var(--text-color);
+        border-color: var(--border-color);
+    }
+
+    /* TEXT COLORS */
+
+    .info-title,
+    .author-name,
+    .event-info p,
+    .category-content span {
+        color: var(--secondary-text);
+    }
 
     /* WISHLIST BUTTON */
 
@@ -347,7 +389,7 @@
             position: absolute;
             inset: 0;
             border-radius: 50%;
-            background: rgba(255,255,255,.04);
+            background: rgba(255, 255, 255, .04);
             transform: scale(0);
             transition: .3s ease;
         }
@@ -364,7 +406,7 @@
         height: 22px;
         padding: 0 6px;
         border-radius: 50px;
-        background: linear-gradient( 135deg, #ef4444, #ff4d8d);
+        background: linear-gradient(135deg, #ef4444, #ff4d8d);
         color: white;
         font-size: 11px;
         font-weight: 700;
@@ -372,9 +414,10 @@
         align-items: center;
         justify-content: center;
         border: 2px solid #111827;
-        box-shadow: 0 4px 12px rgba(239,68,68,.5);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, .5);
         animation: pulseBadge 1.8s infinite;
     }
+
     @@keyframes pulseBadge {
 
         0% {
@@ -389,9 +432,10 @@
             transform: scale(1);
         }
     }
+
     /* =========================================
-       PROFILE
-    ========================================= */
+           PROFILE
+        ========================================= */
 
     .profile-trigger {
         display: flex;
@@ -399,14 +443,14 @@
         gap: 12px;
         padding: 8px 16px;
         border-radius: 50px;
-        background: rgba(255,255,255,.04);
+        background: rgba(255, 255, 255, .04);
         border: 1px solid var(--border-color);
         color: var(--text-color);
         transition: .3s;
     }
 
         .profile-trigger:hover {
-            border-color: rgba(147,51,234,.25);
+            border-color: rgba(147, 51, 234, .25);
             color: var(--text-color);
         }
 
@@ -415,11 +459,11 @@
         height: 48px;
         border-radius: 50%;
         object-fit: cover;
-        border: 2px solid rgba(147,51,234,.25);
+        border: 2px solid rgba(147, 51, 234, .25);
     }
 
     .default-avatar {
-        background: linear-gradient(135deg,#7c3aed,#9333ea);
+        background: linear-gradient(135deg, #7c3aed, #9333ea);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -435,8 +479,8 @@
     }
 
     /* =========================================
-       DROPDOWN
-    ========================================= */
+           DROPDOWN
+        ========================================= */
 
     .dropdown-menu {
         background: var(--card-bg);
@@ -457,17 +501,17 @@
     }
 
         .dropdown-item:hover {
-            background: rgba(147,51,234,.12);
+            background: rgba(147, 51, 234, .12);
             color: #9333ea;
         }
 
     /* =========================================
-       CARD COMMON
-    ========================================= */
+           CARD COMMON
+        ========================================= */
 
     .card-section,
     .summary-card {
-        background: linear-gradient(180deg,#0f172a,#111827);
+        background: linear-gradient(180deg, #0f172a, #111827);
         border-radius: 28px;
         border: 1px solid var(--border-color);
         padding: 24px;
@@ -480,8 +524,8 @@
     }
 
     /* =========================================
-       SECTION HEADER
-    ========================================= */
+           SECTION HEADER
+        ========================================= */
 
     .section-header {
         display: flex;
@@ -502,8 +546,8 @@
         }
 
     /* =========================================
-       RESPONSIVE
-    ========================================= */
+           RESPONSIVE
+        ========================================= */
 
     @@media(max - width:1200px) {
 
@@ -604,9 +648,7 @@
 
             <div class="search-box">
 
-                <input type="text"
-                       class="search-input"
-                       placeholder="Search books, authors..." />
+                <input type="text" class="search-input" placeholder="Search books, authors..." />
 
                 <span class="search-icon" style="cursor:pointer;">
                     <i class="bi bi-search"></i>
@@ -620,26 +662,22 @@
 
                 <!-- THEME BUTTON -->
 
-                <button class="nav-icon-btn"
-                        id="themeToggle"
-                        type="button">
+                <button id="themeToggle"
+                        class="theme-toggle-btn">
 
-                    <i class="bi bi-moon-stars-fill"
-                    id="themeIcon"></i>
+                    <i id="themeIcon"
+                       class="bi bi-moon-stars-fill">
+                    </i>
 
                 </button>
 
                 <!-- WISHLIST -->
 
-                <a asp-area="Member"
-                   asp-controller="Wishlist"
-                   asp-action="Index"
-                   class="wishlist-nav-icon">
+                <a asp-area="Member" asp-controller="Wishlist" asp-action="Index" class="wishlist-nav-icon">
 
                     <i class="fa-regular fa-heart"></i>
 
-                    <span class="wishlist-badge"
-                          id="wishlistCountBadge"
+                    <span class="wishlist-badge" id="wishlistCountBadge"
                           style="@(wishlistCount == 0 ? "display:none" : "")">
 
                         @wishlistCount
@@ -654,14 +692,11 @@
                 {
                     <div class="dropdown">
 
-                        <a href="javascript:void(0)"
-                           class="profile-trigger dropdown-toggle"
-                           data-bs-toggle="dropdown">
+                        <a href="javascript:void(0)" class="profile-trigger dropdown-toggle" data-bs-toggle="dropdown">
 
                             @if (!string.IsNullOrEmpty(currentUser?.ProfileImagePath))
                             {
-                                <img src="@currentUser.ProfileImagePath"
-                                     class="profile-avatar" />
+                                <img src="@currentUser.ProfileImagePath" class="profile-avatar" />
                             }
                             else
                             {
@@ -683,39 +718,28 @@
                         <ul class="dropdown-menu dropdown-menu-end">
 
                             <li>
-                                <a class="dropdown-item"
-                                   asp-area="Member"
-                                   asp-controller="Dashboard"
-                                   asp-action="Index">
+                                <a class="dropdown-item" asp-area="Member" asp-controller="Dashboard" asp-action="Index">
 
                                     📊 Dashboard
                                 </a>
                             </li>
 
                             <li>
-                                <a class="dropdown-item"
-                                   asp-area="Member"
-                                   asp-controller="Profile"
-                                   asp-action="Index">
+                                <a class="dropdown-item" asp-area="Member" asp-controller="Profile" asp-action="Index">
 
                                     👤 My Profile
                                 </a>
                             </li>
 
                             <li>
-                                <a class="dropdown-item"
-                                   asp-area="Member"
-                                   asp-controller="Wishlist"
-                                   asp-action="Index">
+                                <a class="dropdown-item" asp-area="Member" asp-controller="Wishlist" asp-action="Index">
 
                                     ❤️ Wishlist
                                 </a>
                             </li>
 
                             <li>
-                                <a class="dropdown-item"
-                                   asp-controller="Account"
-                                   asp-action="Logout">
+                                <a class="dropdown-item" asp-controller="Account" asp-action="Logout">
 
                                     🚪 Logout
                                 </a>

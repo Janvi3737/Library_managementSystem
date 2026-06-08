@@ -12,43 +12,6 @@
 <style>
     @@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
-    :root {
-        /* DARK MODE */
-
-        --bg: #050816;
-        --bg2: #0b1120;
-        --card: #111827;
-        --card2: #1e293b;
-        --text: #ffffff;
-        --text-light: #d1d5db;
-        --text-muted: #94a3b8;
-        --primary: #7c3aed;
-        --primary-light: #a855f7;
-        --pink: #d946ef;
-        --border: rgba(255,255,255,.08);
-        --shadow: 0 15px 40px rgba(0,0,0,.35);
-        --hero-overlay: linear-gradient( rgba(5,8,22,.85), rgba(15,23,42,.92) );
-    }
-
-    /* ===================================
-       LIGHT MODE
-    =================================== */
-
-    body.light-mode {
-        --bg: #f6f8fc;
-        --bg2: #ffffff;
-        --card: #ffffff;
-        --card2: #f8fafc;
-        --text: #111827;
-        --text-light: #4b5563;
-        --text-muted: #6b7280;
-        --primary: #7c3aed;
-        --primary-light: #9333ea;
-        --pink: #d946ef;
-        --border: rgba(124,58,237,.10);
-        --shadow: 0 12px 35px rgba(124,58,237,.08);
-        --hero-overlay: linear-gradient( rgba(255,255,255,.92), rgba(248,250,252,.96) );
-    }
 
     * {
         margin: 0;
@@ -84,7 +47,7 @@
         background-position: center;
         border: 1px solid var(--border);
         box-shadow: var(--shadow);
-        margin-bottom:30px;
+        margin-bottom: 30px;
     }
 
         .catalog-hero::before {
@@ -104,6 +67,7 @@
         z-index: 2;
         max-width: 720px;
     }
+
         .hero-content h1 {
             font-size: 68px;
             font-weight: 900;
@@ -140,7 +104,7 @@
         box-shadow: var(--shadow);
         border-radius: 30px;
         padding: 32px;
-        margin-bottom:30px;
+        margin-bottom: 30px;
     }
 
     .filter-title {
@@ -200,7 +164,7 @@
 
     .search-btn {
         height: 60px;
-        width:100px;
+        width: 100px;
         border: none;
         border-radius: 20px;
         color: white;
@@ -353,6 +317,7 @@
     .available-box {
         background: rgba(34,197,94,.08);
     }
+
         .available-box small {
             color: #86efac;
         }
@@ -360,6 +325,7 @@
     .borrow-box {
         background: rgba(124,58,237,.08);
     }
+
         .borrow-box small {
             color: #d8b4fe;
         }
@@ -573,8 +539,8 @@
                                 data-bookid="@book.Id">
 
                             <i class="@(ViewBag.WishlistIds.Contains(book.Id)
-                                                            ? "fa-solid fa-heart"
-                                                            : "fa-regular fa-heart")"></i>
+                                                                                           ? "fa-solid fa-heart"
+                                                                                           : "fa-regular fa-heart")"></i>
 
                         </button>
 
@@ -583,8 +549,8 @@
                     <div class="catalog-book-image">
 
                         <img src="@(string.IsNullOrEmpty(book.CoverImageUrl)
-                                                      ? "/images/default-book.jpg"
-                                                      : book.CoverImageUrl)"
+                                                                                   ? "/images/default-book.jpg"
+                                                                                   : book.CoverImageUrl)"
                              alt="@book.Title" />
 
                     </div>
@@ -678,5 +644,4 @@
             </div>
     }
 }
-
     <script src="~/js/wishlist.js"></script>

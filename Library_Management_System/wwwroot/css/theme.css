@@ -1,0 +1,391 @@
+/* =========================================
+   GLOBAL THEME VARIABLES
+========================================= */
+
+:root {
+  --bg: #050816;
+  --bg-secondary: #0f172a;
+  --card: #111827;
+  --card-2: #1e293b;
+  --text: #ffffff;
+  --text-light: #d1d5db;
+  --text-muted: #94a3b8;
+  --border: rgba(255,255,255,.08);
+  --primary: #7c3aed;
+  --primary-light: #9333ea;
+  --shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+
+/* =========================================
+   LIGHT MODE
+========================================= */
+
+body.light-mode {
+  --bg: #f4f7fb;
+  --bg-secondary: #ffffff;
+  --card: #ffffff;
+  --card-2: #f8fafc;
+  --text: #111827;
+  --text-light: #374151;
+  --text-muted: #6b7280;
+  --border: rgba(15,23,42,.08);
+  --primary: #7c3aed;
+  --primary-light: #9333ea;
+  --shadow: 0 10px 25px rgba(0,0,0,.08);
+}
+
+/* =========================================
+   BODY
+========================================= */
+
+html,
+body {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+  transition: background .3s ease, color .3s ease;
+}
+
+/* =========================================
+   GLOBAL TEXT
+========================================= */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.title,
+.page-title,
+.book-title,
+.catalog-book-title {
+  color: var(--text) !important;
+}
+
+p,
+span,
+div,
+label,
+small,
+li,
+td,
+th {
+  color: var(--text-light);
+}
+
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
+/* =========================================
+   LINKS
+========================================= */
+
+a {
+  color: var(--text-light) !important;
+  text-decoration: none;
+}
+
+  a:hover {
+    color: var(--primary-light) !important;
+  }
+
+/* =========================================
+   CARDS & BOXES
+========================================= */
+
+.card,
+.history-card,
+.info-box,
+.filter-box,
+.catalog-book-card,
+.catalog-hero,
+.status-box,
+.empty-box,
+.pagination-info,
+.modern-card,
+.event-card,
+.membership-card,
+.category-item,
+.dropdown-menu,
+.modal-content,
+.alert,
+.table {
+  background: var(--card) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: var(--shadow);
+}
+
+/* =========================================
+   NAVBAR
+========================================= */
+
+.navbar,
+.modern-navbar {
+  background: var(--bg-secondary) !important;
+  border-bottom: 1px solid var(--border) !important;
+  backdrop-filter: blur(12px);
+}
+
+/* =========================================
+   SIDEBAR
+========================================= */
+
+.sidebar {
+  background: var(--bg-secondary) !important;
+  border-right: 1px solid var(--border) !important;
+}
+
+/* =========================================
+   FOOTER
+========================================= */
+
+.footer,
+.premium-footer,
+.footer-wrapper {
+  background: var(--bg-secondary) !important;
+  color: var(--text) !important;
+  border-top: 1px solid var(--border) !important;
+}
+
+  .footer *,
+  .premium-footer *,
+  .footer-wrapper * {
+    color: var(--text-light) !important;
+  }
+
+  .footer h1,
+  .footer h2,
+  .footer h3,
+  .footer h4,
+  .footer h5,
+  .footer h6,
+  .footer-title,
+  .footer-heading,
+  .footer-logo h2 {
+    color: var(--text) !important;
+  }
+
+  .footer a:hover,
+  .footer-links a:hover {
+    color: var(--primary-light) !important;
+  }
+
+/* =========================================
+   INPUTS
+========================================= */
+
+input,
+select,
+textarea,
+.form-control,
+.form-select {
+  background: var(--card-2) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+}
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--text-muted) !important;
+  }
+
+  .form-select option {
+    background: var(--card) !important;
+    color: var(--text) !important;
+  }
+
+/* =========================================
+   TABLE
+========================================= */
+
+table,
+thead,
+tbody,
+tr,
+td,
+th {
+  background: transparent !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+
+thead {
+  background: var(--card-2) !important;
+}
+
+/* =========================================
+   BUTTONS
+========================================= */
+
+button,
+.btn {
+  border-color: transparent;
+}
+
+.theme-toggle-btn,
+#themeToggle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: linear-gradient( 135deg, var(--primary), var(--primary-light) ) !important;
+  color: white !important;
+  transition: .3s ease;
+  position: relative;
+  z-index: 9999;
+}
+
+  .theme-toggle-btn:hover,
+  #themeToggle:hover {
+    transform: translateY(-3px) scale(1.05);
+  }
+
+  #themeToggle i {
+    color: white !important;
+  }
+
+/* =========================================
+   BOOTSTRAP FIXES
+========================================= */
+
+.bg-dark {
+  background: var(--card) !important;
+}
+
+.bg-light {
+  background: var(--card-2) !important;
+}
+
+.text-dark {
+  color: var(--text) !important;
+}
+
+.text-white {
+  color: white !important;
+}
+
+.border {
+  border-color: var(--border) !important;
+}
+
+/* =========================================
+   DROPDOWN
+========================================= */
+
+.dropdown-item {
+  color: var(--text-light) !important;
+}
+
+  .dropdown-item:hover {
+    background: var(--card-2) !important;
+    color: var(--text) !important;
+  }
+
+/* =========================================
+   MODAL
+========================================= */
+
+.modal-header,
+.modal-footer {
+  border-color: var(--border) !important;
+}
+
+/* =========================================
+   PAGE CONTENT
+========================================= */
+
+.page-content,
+main,
+.main-wrapper {
+  background: transparent !important;
+  color: var(--text) !important;
+}
+
+/* =========================================
+   SEARCH INPUT
+========================================= */
+
+.search-input {
+  background: var(--card-2) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+}
+
+  .search-input::placeholder {
+    color: var(--text-muted) !important;
+  }
+
+/* =========================================
+   PROFILE DROPDOWN
+========================================= */
+
+.profile-trigger {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+}
+
+/* =========================================
+   SCROLLBAR
+========================================= */
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 20px;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media(max-width:768px) {
+
+  .sidebar {
+    background: var(--bg-secondary) !important;
+  }
+}
+
+/* =========================================
+   BUTTON FIX
+========================================= */
+
+.catalog-details-btn,
+.catalog-btn,
+.btn-primary,
+.btn-dark {
+  background: linear-gradient( 135deg, var(--primary), var(--primary-light) ) !important;
+  color: white !important;
+  border: none !important;
+}
+
+/* LIGHT MODE BUTTON */
+
+body.light-mode .catalog-details-btn,
+body.light-mode .catalog-btn,
+body.light-mode .btn-primary,
+body.light-mode .btn-dark {
+  background: linear-gradient( 135deg, #7c3aed, #9333ea ) !important;
+  color: white !important;
+}
+
+/* BUTTON HOVER */
+
+.catalog-details-btn:hover,
+.catalog-btn:hover {
+  transform: translateY(-2px);
+  opacity: .95;
+}
