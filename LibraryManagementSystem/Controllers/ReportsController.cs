@@ -17,37 +17,53 @@ namespace LibraryManagementSystem.Controllers
             _context = context;
         }
 
+        // =========================================
         // MAIN REPORT PAGE
+        // =========================================
 
         public async Task<IActionResult> Index()
         {
             var model = new ReportViewModel();
 
+            // =========================================
             // EXTRA COUNTS
+            // =========================================
 
-            model.TotalMembers = await _context.Members.CountAsync();
+            model.TotalMembers =
+                await _context.Members.CountAsync();
 
-            model.TotalAuthors = await _context.Authors.CountAsync();
+            model.TotalAuthors =
+                await _context.Authors.CountAsync();
 
-            model.TotalCategories = await _context.Categories.CountAsync();
+            model.TotalCategories =
+                await _context.Categories.CountAsync();
 
-            model.TotalReservations = await _context.Reservations.CountAsync();
+            model.TotalReservations =
+                await _context.Reservations.CountAsync();
 
+            // =========================================
             // TOTAL COUNTS
+            // =========================================
 
-            model.TotalBooks = await _context.Books.CountAsync();
+            model.TotalBooks =
+                await _context.Books.CountAsync();
 
-            model.TotalUsers = await _context.Users.CountAsync();
+            model.TotalUsers =
+                await _context.Users.CountAsync();
 
-            model.TotalIssuedBooks = await _context.BorrowRecords
-                .CountAsync(x => x.ReturnedOn == null);
+            model.TotalIssuedBooks =
+                await _context.BorrowRecords
+                    .CountAsync(x => x.ReturnedOn == null);
 
-            model.TotalOverdueBooks = await _context.BorrowRecords
-                .CountAsync(x =>
-                    x.ReturnedOn == null &&
-                    x.DueDate < DateTime.Now);
+            model.TotalOverdueBooks =
+                await _context.BorrowRecords
+                    .CountAsync(x =>
+                        x.ReturnedOn == null &&
+                        x.DueDate < DateTime.Now);
 
-            // TOTAL FINE
+            // =========================================
+            // TOTAL FINE COLLECTION
+            // =========================================
 
             var fineRecords = await _context.BorrowRecords
                 .Where(x => x.FinePaid)
@@ -56,63 +72,67 @@ namespace LibraryManagementSystem.Controllers
             model.TotalFineCollection =
                 fineRecords.Sum(x => x.FineAmount);
 
+            // =========================================
             // MOST BORROWED BOOKS
+            // =========================================
 
-            model.MostBorrowedBooks = await _context.BorrowRecords
-                .Include(x => x.Book)
-                .GroupBy(x => x.Book.Title)
-                .Select(g => new MostBorrowedBookVM
-                {
-                    BookName = g.Key,
-                    BorrowCount = g.Count()
-                })
-                .OrderByDescending(x => x.BorrowCount)
-                .Take(10)
-                .ToListAsync();
+            model.MostBorrowedBooks =
+                await _context.BorrowRecords
+                    .Include(x => x.Book)
+                    .GroupBy(x => x.Book.Title)
+                    .Select(g => new MostBorrowedBookVM
+                    {
+                        BookName = g.Key,
+                        BorrowCount = g.Count()
+                    })
+                    .OrderByDescending(x => x.BorrowCount)
+                    .Take(10)
+                    .ToListAsync();
 
+            // =========================================
             // ISSUED BOOKS
+            // =========================================
 
-            model.IssuedBooks = await _context.BorrowRecords
-                .Include(x => x.Book)
-                .Include(x => x.Member)
-                .Where(x => x.ReturnedOn == null)
-                .Select(x => new IssuedBookVM
-                {
-                    BookName = x.Book.Title,
+            model.IssuedBooks =
+                await _context.BorrowRecords
+                    .Include(x => x.Book)
+                    .Include(x => x.Member)
+                    .Where(x => x.ReturnedOn == null)
+                    .Select(x => new IssuedBookVM
+                    {
+                        BookName = x.Book.Title,
+                        MemberName = x.Member.Name,
+                        IssuedOn = x.IssuedOn,
+                        DueDate = x.DueDate
+                    })
+                    .OrderByDescending(x => x.IssuedOn)
+                    .Take(10)
+                    .ToListAsync();
 
-                    MemberName = x.Member.Name,
-
-                    IssuedOn = x.IssuedOn,
-
-                    DueDate = x.DueDate
-                })
-                .OrderByDescending(x => x.IssuedOn)
-                .Take(10)
-                .ToListAsync();
-
+            // =========================================
             // RETURNED BOOKS
+            // =========================================
 
-            model.ReturnedBooks = await _context.BorrowRecords
-                .Include(x => x.Book)
-                .Include(x => x.Member)
-                .Where(x => x.ReturnedOn != null)
-                .Select(x => new ReturnedBookVM
-                {
-                    BookName = x.Book.Title,
+            model.ReturnedBooks =
+                await _context.BorrowRecords
+                    .Include(x => x.Book)
+                    .Include(x => x.Member)
+                    .Where(x => x.ReturnedOn != null)
+                    .Select(x => new ReturnedBookVM
+                    {
+                        BookName = x.Book.Title,
+                        MemberName = x.Member.Name,
+                        IssuedOn = x.IssuedOn,
+                        ReturnedOn = x.ReturnedOn.Value,
+                        FineAmount = x.FineAmount
+                    })
+                    .OrderByDescending(x => x.ReturnedOn)
+                    .Take(10)
+                    .ToListAsync();
 
-                    MemberName = x.Member.Name,
-
-                    IssuedOn = x.IssuedOn,
-
-                    ReturnedOn = x.ReturnedOn.Value,
-
-                    FineAmount = x.FineAmount
-                })
-                .OrderByDescending(x => x.ReturnedOn)
-                .Take(10)
-                .ToListAsync();
-
+            // =========================================
             // LATE RETURNS
+            // =========================================
 
             var lateData = await _context.BorrowRecords
                 .Include(x => x.Book)
@@ -126,73 +146,86 @@ namespace LibraryManagementSystem.Controllers
                 .Select(x => new LateReturnVM
                 {
                     BookName = x.Book.Title,
-
                     MemberName = x.Member.Name,
-
                     DueDate = x.DueDate,
-
                     ReturnedOn = x.ReturnedOn.Value,
-
                     LateDays =
                         (x.ReturnedOn.Value - x.DueDate).Days,
-
                     FineAmount = x.FineAmount
                 })
                 .OrderByDescending(x => x.LateDays)
                 .Take(10)
                 .ToList();
 
+            // =========================================
             // PENDING RESERVATIONS
+            // =========================================
 
-            var reservationData = await _context.Reservations
-                .Include(r => r.Book)
-                .Include(r => r.Member)
-                .ToListAsync();
+            var reservationData =
+                await _context.Reservations
+                    .Include(r => r.Book)
+                    .Include(r => r.Member)
+                    .ToListAsync();
 
             model.PendingReservations = reservationData
-                .Where(r => r.Status != null &&
-                            r.Status.ToString().ToLower() == "pending")
+                .Where(r =>
+                    r.Status != null &&
+                    r.Status.ToString().ToLower() == "waiting")
                 .Select(r => new PendingReservationVM
                 {
-                    BookName = r.Book != null ? r.Book.Title : "",
-                    MemberName = r.Member != null ? r.Member.FullName : "",
+                    BookName =
+                        r.Book != null
+                            ? r.Book.Title
+                            : "",
+
+                    MemberName =
+                        r.Member != null
+                            ? r.Member.FullName
+                            : "",
+
                     ReservedOn = r.ReservedOn
                 })
                 .ToList();
 
+            // =========================================
             // BORROW CHART
+            // =========================================
 
-            var borrowChart = await _context.BorrowRecords
-                .GroupBy(x => x.IssuedOn.Month)
-                .Select(g => new
-                {
-                    Month = g.Key,
-                    Count = g.Count()
-                })
-                .OrderBy(x => x.Month)
-                .ToListAsync();
+            var borrowChart =
+                await _context.BorrowRecords
+                    .GroupBy(x => x.IssuedOn.Month)
+                    .Select(g => new
+                    {
+                        Month = g.Key,
+                        Count = g.Count()
+                    })
+                    .OrderBy(x => x.Month)
+                    .ToListAsync();
 
             model.BorrowChartLabels = borrowChart
                 .Select(x =>
                     new DateTime(1, x.Month, 1)
-                    .ToString("MMM"))
+                        .ToString("MMM"))
                 .ToList();
 
             model.BorrowChartData = borrowChart
                 .Select(x => x.Count)
                 .ToList();
 
+            // =========================================
             // CATEGORY CHART
+            // =========================================
 
-            var categoryChart = await _context.Books
-                .Include(x => x.Category)
-                .GroupBy(x => x.Category.Name)
-                .Select(g => new
-                {
-                    Category = g.Key,
-                    Count = g.Count()
-                })
-                .ToListAsync();
+            var categoryChart =
+                await _context.Books
+                    .Include(x => x.Category)
+                    .GroupBy(x => x.Category.Name)
+                    .Select(g => new
+                    {
+                        Category = g.Key,
+                        Count = g.Count()
+                    })
+                    .ToListAsync();
 
             model.CategoryLabels = categoryChart
                 .Select(x => x.Category)
@@ -202,12 +235,16 @@ namespace LibraryManagementSystem.Controllers
                 .Select(x => x.Count)
                 .ToList();
 
-
+            // =========================================
             // FINE CHART
+            // =========================================
 
-            var fineChartRaw = await _context.BorrowRecords
-                .Where(x => x.FinePaid && x.ReturnedOn != null)
-                .ToListAsync();
+            var fineChartRaw =
+                await _context.BorrowRecords
+                    .Where(x =>
+                        x.FinePaid &&
+                        x.ReturnedOn != null)
+                    .ToListAsync();
 
             var fineChart = fineChartRaw
                 .GroupBy(x => x.ReturnedOn!.Value.Month)
@@ -220,46 +257,83 @@ namespace LibraryManagementSystem.Controllers
                 .ToList();
 
             model.FineChartLabels = fineChart
-                .Select(x => new DateTime(2025, x.Month, 1).ToString("MMM"))
+                .Select(x =>
+                    new DateTime(2025, x.Month, 1)
+                        .ToString("MMM"))
                 .ToList();
 
             model.FineChartData = fineChart
                 .Select(x => x.Total)
                 .ToList();
 
+            // =========================================
             // MEMBERSHIP REVENUE
+            // SQLITE SAFE
+            // =========================================
 
-            var membershipRevenue = await _context.Memberships
-                .SumAsync(x => (decimal?)x.Fee) ?? 0;
+            var membershipList =
+                await _context.Memberships
+                    .ToListAsync();
 
+            decimal membershipRevenue =
+                membershipList.Sum(x => x.Fee);
+
+            // =========================================
             // FINE REVENUE
+            // SQLITE SAFE
+            // =========================================
 
-            var fineRevenue = await _context.BorrowRecords
-                .Where(x => x.FinePaid)
-                .SumAsync(x => (decimal?)x.FineAmount) ?? 0;
+            var fineList =
+                await _context.BorrowRecords
+                    .Where(x => x.FinePaid)
+                    .ToListAsync();
 
-            model.TotalRevenue = membershipRevenue + fineRevenue;
+            decimal fineRevenue =
+                fineList.Sum(x => x.FineAmount);
 
-            var reviews = await _context.BookReviews
-                .Include(r => r.Book)
-                .Include(r => r.Member)
-                .OrderByDescending(r => r.CreatedAt)
-                .ToListAsync();
+            // =========================================
+            // TOTAL REVENUE
+            // =========================================
+
+            model.TotalRevenue =
+                membershipRevenue + fineRevenue;
+
+            // =========================================
+            // REVIEWS
+            // =========================================
+
+            var reviews =
+                await _context.BookReviews
+                    .Include(r => r.Book)
+                    .Include(r => r.Member)
+                    .OrderByDescending(r => r.CreatedAt)
+                    .ToListAsync();
 
             model.TotalReviews = reviews.Count;
 
-            model.AverageRating = reviews.Any()
-                ? reviews.Average(r => r.Rating)
-                : 0;
+            model.AverageRating =
+                reviews.Any()
+                    ? reviews.Average(r => r.Rating)
+                    : 0;
 
             model.BookReviews = reviews
                 .Take(10)
                 .Select(r => new ReviewVM
                 {
-                    BookName = r.Book != null ? r.Book.Title : "",
-                    MemberName = r.Member != null ? r.Member.UserName : "",
+                    BookName =
+                        r.Book != null
+                            ? r.Book.Title
+                            : "",
+
+                    MemberName =
+                        r.Member != null
+                            ? r.Member.UserName
+                            : "",
+
                     Rating = r.Rating,
+
                     Comment = r.Comment ?? "",
+
                     CreatedAt = r.CreatedAt
                 })
                 .ToList();
@@ -276,133 +350,27 @@ namespace LibraryManagementSystem.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> Reports()
-        {
-            var model = new ReportViewModel();
-
-            var reviews = await _context.BookReviews
-            .AsNoTracking()
-            .Include(r => r.Book)
-            .Include(r => r.Member)
-            .OrderByDescending(r => r.CreatedAt)
-            .ToListAsync();
-
-            model.TotalReviews = reviews.Count;
-
-            model.AverageRating = reviews.Any()
-            ? reviews.Average(r => r.Rating)
-            : 0;
-
-            model.BookReviews = reviews.Select(r => new ReviewVM
-            {
-                BookName = r.Book?.Title ?? "",
-                MemberName = r.Member?.FullName ?? "",
-                Rating = r.Rating,
-                Comment = string.IsNullOrEmpty(r.Comment) ? "-" : r.Comment,
-                CreatedAt = r.CreatedAt
-            }).ToList();
-
-            return View(model);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> OverdueBooks()
-        {
-            var overdueBooks = await _context.BorrowRecords
-                .Include(x => x.Book)
-                .Include(x => x.Member)
-                .Where(x =>
-                    x.ReturnedOn == null &&
-                    x.DueDate < DateTime.Now)
-                .OrderBy(x => x.DueDate)
-                .ToListAsync();
-
-            return View(overdueBooks);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> NeverBorrowed()
-        {
-            var borrowedBookIds = await _context.BorrowRecords
-                .Select(x => x.BookId)
-                .Distinct()
-                .ToListAsync();
-
-            var books = await _context.Books
-                .Include(b => b.Author)
-                .Include(b => b.Category)
-                .Where(b => !borrowedBookIds.Contains(b.Id))
-                .ToListAsync();
-
-            return View(books);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> MostWishlisted()
-        {
-            var wishlistData = await _context.Wishlists
-                .Include(w => w.Book)
-                    .ThenInclude(b => b.Author)
-                .GroupBy(w => w.BookId)
-                .Select(g => new
-                {
-                    BookId = g.Key,
-                    Count = g.Count()
-                })
-                .OrderByDescending(x => x.Count)
-                .Take(20)
-                .ToListAsync();
-
-            var result = new List<Tuple<Book, int>>();
-
-            foreach (var item in wishlistData)
-            {
-                var book = await _context.Books
-                    .Include(b => b.Author)
-                    .FirstOrDefaultAsync(b => b.Id == item.BookId);
-
-                if (book != null)
-                {
-                    result.Add(
-                        Tuple.Create(book, item.Count));
-                }
-            }
-
-            return View(result);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> TopBorrowers()
-        {
-            var topBorrowers = await _context.BorrowRecords
-                .Include(x => x.Member)
-                .GroupBy(x => new
-                {
-                    x.MemberId,
-                    x.Member.Name
-                })
-                .Select(g => new TopBorrowerViewModel
-                {
-                    MemberName = g.Key.Name,
-                    TotalBooks = g.Count()
-                })
-                .OrderByDescending(x => x.TotalBooks)
-                .Take(20)
-                .ToListAsync();
-
-            return View(topBorrowers);
-        }
+        // =========================================
+        // REVENUE PAGE
+        // =========================================
 
         public async Task<IActionResult> Revenue()
         {
-            var memberships = await _context.Memberships.ToListAsync();
+            var memberships =
+                await _context.Memberships
+                    .ToListAsync();
 
-            var fines = await _context.BorrowRecords
-                .Where(x => x.FinePaid)
-                .ToListAsync();
+            var fines =
+                await _context.BorrowRecords
+                    .Where(x => x.FinePaid)
+                    .ToListAsync();
 
             var revenue = memberships
-                .GroupBy(x => new { x.StartDate.Year, x.StartDate.Month })
+                .GroupBy(x => new
+                {
+                    x.StartDate.Year,
+                    x.StartDate.Month
+                })
                 .Select(g => new RevenueRowViewModel
                 {
                     Year = g.Key.Year,
@@ -414,8 +382,13 @@ namespace LibraryManagementSystem.Controllers
 
             foreach (var fine in fines)
             {
-                var month = fine.ReturnedOn?.Month ?? DateTime.Now.Month;
-                var year = fine.ReturnedOn?.Year ?? DateTime.Now.Year;
+                int month =
+                    fine.ReturnedOn?.Month
+                    ?? DateTime.Now.Month;
+
+                int year =
+                    fine.ReturnedOn?.Year
+                    ?? DateTime.Now.Year;
 
                 var row = revenue.FirstOrDefault(x =>
                     x.Month == month &&
@@ -427,6 +400,7 @@ namespace LibraryManagementSystem.Controllers
                     {
                         Year = year,
                         Month = month,
+                        MembershipRevenue = 0,
                         FineRevenue = fine.FineAmount
                     });
                 }
@@ -444,27 +418,35 @@ namespace LibraryManagementSystem.Controllers
             return View(revenue);
         }
 
+        // =========================================
+        // REVIEW RATING
+        // =========================================
+
         [HttpGet]
         public async Task<IActionResult> ReviewRating()
         {
-            var reviews = await _context.BookReviews
-                .Include(r => r.Book)
-                .Include(r => r.Member)
-                .OrderByDescending(r => r.CreatedAt)
-                .ToListAsync();
+            var reviews =
+                await _context.BookReviews
+                    .Include(r => r.Book)
+                    .Include(r => r.Member)
+                    .OrderByDescending(r => r.CreatedAt)
+                    .ToListAsync();
 
-            var model = reviews.Select(r => new ReviewVM
-            {
-                BookName = r.Book?.Title ?? "",
-                MemberName = r.Member?.FullName ?? "",
-                Rating = r.Rating,
-                Comment = string.IsNullOrEmpty(r.Comment) ? "-" : r.Comment,
-                CreatedAt = r.CreatedAt
-            }).ToList();
+            var model = reviews
+                .Select(r => new ReviewVM
+                {
+                    BookName = r.Book?.Title ?? "",
+                    MemberName = r.Member?.FullName ?? "",
+                    Rating = r.Rating,
+                    Comment =
+                        string.IsNullOrEmpty(r.Comment)
+                            ? "-"
+                            : r.Comment,
+                    CreatedAt = r.CreatedAt
+                })
+                .ToList();
 
             return View(model);
         }
-
     }
-
 }

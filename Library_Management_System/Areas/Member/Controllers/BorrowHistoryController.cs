@@ -19,11 +19,8 @@ namespace Library_Management_System.Areas.Member.Controllers
             _context = context;
         }
 
-        // HISTORY
-
-        public async Task<IActionResult> Index(string status)
+        public async Task<IActionResult> Index(string? status)
         {
-            status = "active";
             var userId =
                 User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -35,73 +32,94 @@ namespace Library_Management_System.Areas.Member.Controllers
                 .Select(x => x.Id)
                 .FirstOrDefaultAsync();
 
-            var query = _context.BorrowRecords
+            // LOAD ALL BORROW RECORDS
+
+            var borrowRecords = await _context.BorrowRecords
                 .Include(x => x.Book)
-                .ThenInclude(x => x.Author)
+                    .ThenInclude(x => x.Author)
                 .Where(x => x.MemberId == memberId)
+                .OrderByDescending(x => x.IssuedOn)
+                .ToListAsync();
+
+            // GROUP SAME BOOKS
+
+            var query = borrowRecords
+                .GroupBy(x => x.BookId)
+                .Select(g => new
+                {
+                    Borrow = g.First(),
+                    BorrowCount = g.Count()
+                })
                 .AsQueryable();
 
             // FILTERS
 
             if (!string.IsNullOrEmpty(status))
             {
-                if (status == "active")
+                if (status.ToLower() == "active")
                 {
                     query = query.Where(x =>
-                        x.ReturnedOn == null);
+                        x.Borrow.ReturnedOn == null &&
+                        x.Borrow.DueDate >= DateTime.Now);
                 }
-                else if (status == "returned")
+                else if (status.ToLower() == "returned")
                 {
                     query = query.Where(x =>
-                        x.ReturnedOn != null);
+                        x.Borrow.ReturnedOn != null);
                 }
-                else if (status == "overdue")
+                else if (status.ToLower() == "overdue")
                 {
                     query = query.Where(x =>
-                        x.ReturnedOn == null &&
-                        x.DueDate < DateTime.Now);
+                        x.Borrow.ReturnedOn == null &&
+                        x.Borrow.DueDate < DateTime.Now);
                 }
             }
 
-            // DATA
+            // VIEW MODEL
 
-            var history = await query
-                .OrderByDescending(x => x.IssuedOn)
+            var history = query
+                .OrderByDescending(x => x.Borrow.IssuedOn)
                 .Select(x => new BorrowHistoryViewModel
                 {
-                    Id = x.Id,
+                    Id = x.Borrow.Id,
 
-                    BookTitle = x.Book.Title,
+                    BookTitle = x.Borrow.Book != null
+                        ? x.Borrow.Book.Title
+                        : "",
 
-                    Author = x.Book.Author.Name,
+                    Author = x.Borrow.Book != null &&
+                             x.Borrow.Book.Author != null
+                        ? x.Borrow.Book.Author.Name
+                        : "",
 
-                    BorrowDate = x.IssuedOn,
+                    BorrowDate = x.Borrow.IssuedOn,
 
-                    DueDate = x.DueDate,
+                    DueDate = x.Borrow.DueDate,
 
-                    ReturnDate = x.ReturnedOn,
+                    ReturnDate = x.Borrow.ReturnedOn,
 
-                    DaysLate = x.DaysLate,
+                    DaysLate = x.Borrow.DaysLate,
 
-                    FinePerDay = x.FinePerDay,
+                    FinePerDay = x.Borrow.FinePerDay,
 
-                    FineAmount = x.FineAmount,
+                    FineAmount = x.Borrow.FineAmount,
 
-                    FinePaid = x.FinePaid,
+                    FinePaid = x.Borrow.FinePaid,
 
-                    Status = x.ReturnedOn != null
+                    BorrowCount = x.BorrowCount,
+
+                    Status = x.Borrow.ReturnedOn != null
                         ? "Returned"
-                        : x.DueDate < DateTime.Now
+                        : x.Borrow.DueDate < DateTime.Now
                             ? "Overdue"
                             : "Active"
                 })
-                .ToListAsync();
+                .ToList();
 
             ViewBag.CurrentStatus = status;
 
             return View(history);
         }
-
         // RETURN PAGE
 
         [HttpGet]

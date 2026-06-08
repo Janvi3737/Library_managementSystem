@@ -15,7 +15,7 @@ namespace Library_Management_System.Controllers
         private readonly AppDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public HomeController(AppDbContext context,UserManager<ApplicationUser> userManager)
+        public HomeController(AppDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _userManager = userManager;
@@ -26,6 +26,38 @@ namespace Library_Management_System.Controllers
             var model = new HomePageViewModel();
 
             // CONTINUE READING — the user's currently-borrowed books (not yet
+            // var currentUser = await _userManager.GetUserAsync(User);
+
+            // if (currentUser != null)
+            // {
+            //     var memberId = await _context.Members
+            //         .Where(m => m.ApplicationUserId == currentUser.Id)
+            //         .Select(m => m.Id)
+            //         .FirstOrDefaultAsync();
+
+            //     if (memberId != 0)
+            //     {
+            //         model.ContinueReadingBooks = await _context.BorrowRecords
+            //             .Where(br => br.MemberId == memberId && br.ReturnedOn == null && br.Book != null)
+            //             .Include(br => br.Book)
+            //                 .ThenInclude(b => b.Author)
+            //             .OrderByDescending(br => br.IssuedOn)
+            //             .Take(8)
+            //             .Select(br => br.Book!)
+            //             .ToListAsync();
+            //     }
+            // }
+
+            // if (model.ContinueReadingBooks == null || model.ContinueReadingBooks.Count == 0)
+            // {
+            //     model.ContinueReadingBooks = await _context.Books
+            //         .Include(x => x.Author)
+            //         .OrderByDescending(x => x.CreatedAt)
+            //         .Take(8)
+            //         .ToListAsync();
+            // }
+            // CONTINUE READING — currently borrowed unique books
+
             var currentUser = await _userManager.GetUserAsync(User);
 
             if (currentUser != null)
@@ -38,17 +70,30 @@ namespace Library_Management_System.Controllers
                 if (memberId != 0)
                 {
                     model.ContinueReadingBooks = await _context.BorrowRecords
-                        .Where(br => br.MemberId == memberId && br.ReturnedOn == null && br.Book != null)
+
+                        .Where(br =>
+                            br.MemberId == memberId &&
+                            br.ReturnedOn == null &&
+                            br.Book != null)
+
                         .Include(br => br.Book)
                             .ThenInclude(b => b.Author)
+
                         .OrderByDescending(br => br.IssuedOn)
+
+                        // REMOVE DUPLICATE BOOKS
+                        .GroupBy(br => br.BookId)
+
+                        .Select(g => g.First().Book!)
+
                         .Take(8)
-                        .Select(br => br.Book!)
+
                         .ToListAsync();
                 }
             }
 
-            if (model.ContinueReadingBooks == null || model.ContinueReadingBooks.Count == 0)
+            if (model.ContinueReadingBooks == null ||
+                model.ContinueReadingBooks.Count == 0)
             {
                 model.ContinueReadingBooks = await _context.Books
                     .Include(x => x.Author)

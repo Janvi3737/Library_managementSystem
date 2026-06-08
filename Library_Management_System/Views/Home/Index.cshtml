@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="~/css/frontend.css" />
 
 <style>
+
     a.book-card-link,
     a.event-card-link,
     a.arrival-card-link,
@@ -35,6 +36,136 @@
         .membership-card:hover {
             transform: translateY(-5px);
         }
+
+    /* =========================================
+       EVENTS DARK MODE
+    ========================================= */
+
+    .event-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .event-card-link {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .event-card {
+        position: relative;
+        background: linear-gradient(145deg, #111827, #1e293b);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 24px;
+        padding: 22px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        overflow: hidden;
+        transition: all .3s ease;
+        box-shadow: 0 10px 25px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.03);
+    }
+
+        .event-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient( 135deg, rgba(99,102,241,.08), rgba(168,85,247,.05) );
+            opacity: 0;
+            transition: .3s ease;
+        }
+
+        .event-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(99,102,241,.4);
+            box-shadow: 0 18px 40px rgba(0,0,0,.45), 0 0 0 1px rgba(99,102,241,.15);
+        }
+
+            .event-card:hover::before {
+                opacity: 1;
+            }
+
+    .event-date {
+        min-width: 78px;
+        height: 78px;
+        border-radius: 22px;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        box-shadow: 0 8px 20px rgba(79,70,229,.35);
+    }
+
+        .event-date h2 {
+            margin: 0;
+            font-size: 30px;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .event-date span {
+            margin-top: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+    .event-info {
+        flex: 1;
+    }
+
+        .event-info h4 {
+            margin: 0 0 8px;
+            font-size: 17px;
+            font-weight: 700;
+            color: #f8fafc;
+            line-height: 1.4;
+        }
+
+        .event-info p {
+            margin: 0 0 8px;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .event-info small {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #818cf8;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+    /* =========================================
+       MOBILE
+    ========================================= */
+
+    @@media(max-width:768px) {
+
+        .event-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .event-card {
+            padding: 18px;
+        }
+
+        .event-date {
+            min-width: 68px;
+            height: 68px;
+        }
+
+            .event-date h2 {
+                font-size: 24px;
+            }
+
+        .event-info h4 {
+            font-size: 15px;
+        }
+    }
 
 </style>
 
@@ -126,8 +257,8 @@
                             <div class="book-card">
 
                                 <img src="@(string.IsNullOrEmpty(book.CoverImageUrl)
-                                                                                                                                       ? "/images/default-book.jpg"
-                                                                                                                                       : book.CoverImageUrl)"
+                                                                                                                                                                            ? "/images/default-book.jpg"
+                                                                                                                                                                            : book.CoverImageUrl)"
                                      alt="@book.Title" />
 
                                 <div class="book-content">
@@ -163,7 +294,7 @@
 
                 <div class="event-grid">
 
-                    @foreach (var ev in Model.UpcomingEvents)
+                    @foreach (var ev in Model.UpcomingEvents.Take(6))
                     {
                         <a asp-controller="Events"
                            asp-action="Details"
@@ -192,44 +323,6 @@
 
             </div>
 
-            @* <!-- FULL WIDTH NEW ARRIVALS -->
-            <div class="modern-card full-width-arrivals">
-
-                <div class="section-header">
-
-                    <h3>New Arrivals</h3>
-
-                    <a asp-controller="Catalog"
-                       asp-action="NewArrivals">
-                        View All
-                    </a>
-
-                </div>
-
-                <div class="arrival-row">
-
-                    @foreach (var book in Model.NewArrivals)
-                    {
-                        <a asp-controller="Catalog"
-                           asp-action="Details"
-                           asp-route-id="@book.Id"
-                           class="arrival-card-link">
-
-                            <div class="arrival-card">
-
-                                <img src="@(string.IsNullOrEmpty(book.CoverImageUrl)
-                                                             ? "/images/default-book.jpg"
-                                                             : book.CoverImageUrl)"
-                                     alt="@book.Title" />
-
-                            </div>
-
-                        </a>
-                    }
-
-                </div>
-
-            </div> *@
 
         </div>
 
@@ -374,8 +467,8 @@
                     <div class="arrival-card">
 
                         <img src="@(string.IsNullOrEmpty(book.CoverImageUrl)
-                                                                                          ? "/images/default-book.jpg"
-                                                                                          : book.CoverImageUrl)"
+                                                                                                                       ? "/images/default-book.jpg"
+                                                                                                                       : book.CoverImageUrl)"
                              alt="@book.Title" />
 
                     </div>
