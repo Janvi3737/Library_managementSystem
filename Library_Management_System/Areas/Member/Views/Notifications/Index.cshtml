@@ -251,6 +251,93 @@
             font-size: 24px;
         }
     }
+    /* =========================================
+       LIGHT MODE
+    ========================================= */
+
+    body.light-mode .notification-page {
+        color: #111827;
+    }
+
+    /* HERO */
+
+    body.light-mode .notification-hero {
+        background: linear-gradient(rgba(255,255,255,.90), rgba(248,250,252,.95)), url('/images/library-banner.png');
+        border: 1px solid rgba(15,23,42,.08);
+        box-shadow: 0 20px 45px rgba(15,23,42,.08);
+    }
+
+    body.light-mode .notification-title {
+        color: #111827;
+    }
+
+        body.light-mode .notification-title span {
+            background: linear-gradient(90deg,#7c3aed,#ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+    body.light-mode .notification-subtitle {
+        color: #475569;
+    }
+
+    /* HERO GLOW */
+
+    body.light-mode .notification-hero::before {
+        background: rgba(124,58,237,.10);
+    }
+
+    /* CARD */
+
+    body.light-mode .notification-card {
+        background: linear-gradient( 180deg, rgba(255,255,255,.98), rgba(248,250,252,.98));
+        border: 1px solid rgba(15,23,42,.08);
+        box-shadow: 0 12px 30px rgba(15,23,42,.06);
+    }
+
+        body.light-mode .notification-card:hover {
+            border-color: rgba(124,58,237,.20);
+            box-shadow: 0 18px 40px rgba(124,58,237,.10);
+        }
+
+    /* TEXT */
+
+    body.light-mode .notification-message {
+        color: #111827;
+    }
+
+    body.light-mode .notification-time {
+        color: #64748b;
+    }
+
+    /* BUTTON */
+
+    body.light-mode .notification-link {
+        background: rgba(124,58,237,.08);
+        border: 1px solid rgba(124,58,237,.14);
+        color: #7c3aed;
+    }
+
+        body.light-mode .notification-link:hover {
+            background: rgba(124,58,237,.14);
+            color: #5b21b6;
+        }
+
+    /* EMPTY */
+
+    body.light-mode .notification-empty {
+        background: linear-gradient( 180deg, rgba(255,255,255,.98), rgba(248,250,252,.98));
+        border: 1px solid rgba(15,23,42,.08);
+        box-shadow: 0 12px 30px rgba(15,23,42,.06);
+    }
+
+        body.light-mode .notification-empty h3 {
+            color: #111827;
+        }
+
+        body.light-mode .notification-empty p {
+            color: #64748b;
+        }
 </style>
 
 <div class="notification-page">

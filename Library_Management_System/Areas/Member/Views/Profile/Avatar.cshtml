@@ -371,6 +371,129 @@
             height: 140px;
         }
     }
+
+    /* =========================================================
+       LIGHT MODE
+    ========================================================= */
+
+    body.light-mode {
+        background: radial-gradient(circle at top left, rgba(124,58,237,.10), transparent 25%), radial-gradient(circle at bottom right, rgba(236,72,153,.08), transparent 25%), #f3f4f6;
+        color: #111827;
+    }
+
+        /* HERO SECTION */
+
+        body.light-mode .profile-hero,
+        body.light-mode .password-hero,
+        body.light-mode .avatar-hero,
+        body.light-mode .profile-header {
+            background: linear-gradient(rgba(255,255,255,.88), rgba(255,255,255,.92)), url('/images/library-banner.png');
+        }
+
+        /* MAIN CARDS */
+
+        body.light-mode .profile-card,
+        body.light-mode .password-card,
+        body.light-mode .avatar-card {
+            background: linear-gradient( 145deg, #ffffff, #f8fafc);
+            border: 1px solid rgba(15,23,42,.08);
+            box-shadow: 0 20px 60px rgba(0,0,0,.08);
+        }
+
+        /* SIDEBAR */
+
+        body.light-mode .profile-sidebar {
+            background: rgba(15,23,42,.02);
+            border-color: rgba(15,23,42,.08);
+        }
+
+        /* SMALL BOXES */
+
+        body.light-mode .notification-box,
+        body.light-mode .security-box,
+        body.light-mode .upload-box,
+        body.light-mode .quick-action-box,
+        body.light-mode .info-item {
+            background: rgba(15,23,42,.03);
+            border: 1px solid rgba(15,23,42,.08);
+        }
+
+        /* TEXT */
+
+        body.light-mode h1,
+        body.light-mode h2,
+        body.light-mode h3,
+        body.light-mode h4,
+        body.light-mode h5,
+        body.light-mode .member-name,
+        body.light-mode .info-value,
+        body.light-mode .card-title,
+        body.light-mode .card-header h2,
+        body.light-mode .preview-section h3 {
+            color: #111827 !important;
+        }
+
+        body.light-mode p,
+        body.light-mode .member-role,
+        body.light-mode .hero-content p,
+        body.light-mode .notification-box p,
+        body.light-mode .security-box p,
+        body.light-mode .upload-note,
+        body.light-mode .info-label {
+            color: #6b7280 !important;
+        }
+
+        /* INPUTS */
+
+        body.light-mode .custom-input,
+        body.light-mode .custom-file {
+            background: #ffffff;
+            color: #111827;
+            border: 1px solid rgba(15,23,42,.10);
+        }
+
+            body.light-mode .custom-input::placeholder {
+                color: #9ca3af;
+            }
+
+        /* SECONDARY BUTTONS */
+
+        body.light-mode .cancel-btn,
+        body.light-mode .password-btn,
+        body.light-mode .hero-btn,
+        body.light-mode .btn-profile-secondary {
+            background: rgba(15,23,42,.05);
+            border: 1px solid rgba(15,23,42,.08);
+            color: #374151;
+        }
+
+            body.light-mode .cancel-btn:hover,
+            body.light-mode .password-btn:hover,
+            body.light-mode .hero-btn:hover,
+            body.light-mode .btn-profile-secondary:hover {
+                background: rgba(15,23,42,.08);
+                color: #111827;
+            }
+
+        /* ALERTS */
+
+        body.light-mode .success-alert {
+            background: rgba(34,197,94,.10);
+            color: #15803d;
+        }
+
+        body.light-mode .error-alert {
+            background: rgba(239,68,68,.10);
+            color: #dc2626;
+        }
+
+        /* BADGES */
+
+        body.light-mode .hero-badge {
+            background: rgba(255,255,255,.18);
+            color: #f3e8ff;
+            border-color: rgba(255,255,255,.15);
+        }
 </style>
 
 <div class="avatar-page">

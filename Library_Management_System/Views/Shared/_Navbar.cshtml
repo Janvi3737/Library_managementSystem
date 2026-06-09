@@ -1,4 +1,4 @@
-@using Microsoft.AspNetCore.Identity
+@* @using Microsoft.AspNetCore.Identity
 @using LibraryManagementSystem.ClassLibrary.Data
 @inject AppDbContext DbContext
 @inject UserManager<LibraryManagementSystem.ClassLibrary.Models.ApplicationUser> UserManager
@@ -21,6 +21,17 @@
         wishlistCount = DbContext.Wishlists
             .Count(x => x.MemberId == currentUser.Id
                      && x.BookId != null);
+    }
+}
+
+@{
+    int bellUnread = 0;
+
+    if (currentUser != null)
+    {
+        bellUnread = DbContext.Notifications
+            .Count(x => x.MemberId == currentUser.Id &&
+                        !x.IsRead);
     }
 }
 <head>
@@ -686,6 +697,24 @@
 
                 </a>
 
+                <!-- NOTIFICATION -->
+
+                <a asp-area="Member"
+                   asp-controller="Notifications"
+                   asp-action="Index"
+                   class="nav-icon-btn position-relative">
+
+                    <i class="bi bi-bell-fill"></i>
+
+                    @if (bellUnread > 0)
+                    {
+                        <span class="notification-count">
+                            @bellUnread
+                        </span>
+                    }
+
+                </a>
+
                 <!-- PROFILE -->
                 @if (User.Identity != null &&
                                 User.Identity.IsAuthenticated)
@@ -780,6 +809,792 @@
         });
 
         searchIcon.addEventListener("click", routeSearch);
+
+    });
+</script> *@
+
+
+@using Microsoft.AspNetCore.Identity
+@using LibraryManagementSystem.ClassLibrary.Data
+@inject AppDbContext DbContext
+@inject UserManager<LibraryManagementSystem.ClassLibrary.Models.ApplicationUser> UserManager
+
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+
+    string profileImage = "/images/default-user.svg";
+
+    if (currentUser != null &&
+        !string.IsNullOrEmpty(currentUser.ProfileImagePath))
+    {
+        profileImage = currentUser.ProfileImagePath;
+    }
+
+    int wishlistCount = 0;
+
+    if (currentUser != null)
+    {
+        wishlistCount = DbContext.Wishlists
+            .Count(x => x.MemberId == currentUser.Id
+                     && x.BookId != null);
+    }
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/theme.css" />
+
+    <script src="~/js/theme.js"></script>
+</head>
+
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+    /* =========================================
+        ROOT VARIABLES
+        ========================================= */
+    :root {
+        /* COLORS */
+
+        --bg-color: #050816;
+        --sidebar-bg: linear-gradient(180deg, #0f172a, #111827);
+        --navbar-bg: rgba(10, 14, 28, .92);
+        --card-bg: #111827;
+        --card-bg-2: #151c35;
+        --border-color: rgba(255, 255, 255, .08);
+        --text-color: #ffffff;
+        --text-light: #d1d5db;
+        --text-muted: #94a3b8;
+        --purple: #7c3aed;
+        --purple-light: #9333ea;
+        --pink: #d946ef;
+        --hover-bg: rgba(124, 58, 237, .15);
+        --shadow: 0 20px 40px rgba(0, 0, 0, .35);
+    }
+
+    /* =========================================
+        LIGHT THEME
+        ========================================= */
+
+    body.light-mode {
+        --bg-color: #f3f5fb;
+        --sidebar-bg: linear-gradient(180deg, #ffffff, #f8fafc);
+        --navbar-bg: rgba(255, 255, 255, .92);
+        --card-bg: #ffffff;
+        --card-bg-2: #f8fafc;
+        --border-color: rgba(0, 0, 0, .08);
+        --text-color: #111827;
+        --text-light: #374151;
+        --text-muted: #6b7280;
+        --hover-bg: rgba(124, 58, 237, .08);
+        --shadow: 0 15px 35px rgba(0, 0, 0, .08);
+    }
+
+    /* =========================================
+        GLOBAL
+        ========================================= */
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Inter', sans-serif;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        background: var(--bg-color);
+        color: var(--text-color);
+        overflow-x: hidden;
+        transition: .35s;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    ul {
+        list-style: none;
+    }
+
+    main {
+        padding: 24px;
+    }
+
+    /* =========================================
+        SCROLLBAR
+        ========================================= */
+
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #7c3aed, #9333ea);
+        border-radius: 20px;
+    }
+
+    /* =========================================
+        SIDEBAR
+        ========================================= */
+
+    .sidebar {
+        width: 260px;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 9999;
+        overflow-y: auto;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border-color);
+        padding: 24px 18px;
+        transition: .35s;
+    }
+
+        /* HIDE SCROLLBAR */
+
+        .sidebar::-webkit-scrollbar {
+            display: none;
+        }
+
+    .sidebar {
+        scrollbar-width: none;
+    }
+
+    /* =========================================
+        PAGE CONTENT
+        ========================================= */
+
+    .page-content {
+        margin-left: 260px;
+        min-height: 100vh;
+        width: calc(100% - 260px);
+        transition: .35s;
+    }
+
+    /* =========================================
+        MENU HEADING
+        ========================================= */
+
+    .menu-heading {
+        color: var(--text-muted);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        margin: 26px 0 14px;
+        padding-left: 10px;
+    }
+
+    /* =========================================
+        MENU ITEM
+        ========================================= */
+
+    .menu-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px 16px;
+        border-radius: 18px;
+        margin-bottom: 8px;
+        color: var(--text-light);
+        transition: .3s;
+        position: relative;
+    }
+
+        .menu-item i {
+            font-size: 18px;
+        }
+
+        .menu-item:hover {
+            background: var(--hover-bg);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .menu-item.active {
+            background: linear-gradient(135deg, #7c3aed, #9333ea);
+            color: white;
+            box-shadow: 0 15px 30px rgba(124, 58, 237, .25);
+        }
+
+    /* =========================================
+        LOGOUT
+        ========================================= */
+
+    .logout-box {
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .logout-link {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        height: 56px;
+        border-radius: 18px;
+        background: rgba(239, 68, 68, .12);
+        color: #f87171;
+        transition: .3s;
+        font-weight: 700;
+    }
+
+        .logout-link:hover {
+            background: rgba(239, 68, 68, .2);
+            color: white;
+        }
+
+    /* =========================================
+        NAVBAR
+        ========================================= */
+
+    .modern-navbar {
+        position: sticky;
+        top: 0;
+        z-index: 999;
+        padding: 18px 0;
+        background: var(--navbar-bg);
+        backdrop-filter: blur(18px);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    /* =========================================
+        SEARCH BOX
+        ========================================= */
+
+    .search-box {
+        position: relative;
+        width: 430px;
+        max-width: 100%;
+    }
+
+    .search-input {
+        width: 100%;
+        height: 58px;
+        border-radius: 18px;
+        border: 1px solid var(--border-color);
+        background: rgba(255, 255, 255, .04);
+        color: var(--text-color);
+        padding: 0 56px 0 20px;
+        outline: none;
+        transition: .3s;
+    }
+
+        .search-input:focus {
+            border-color: #9333ea;
+            box-shadow: 0 0 0 4px rgba(147, 51, 234, .12);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+    .search-icon {
+        position: absolute;
+        top: 50%;
+        right: 18px;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        font-size: 18px;
+    }
+
+    /* =========================================
+        NAV ICON BUTTON
+        ========================================= */
+
+    /* ================= THEME TOGGLE ================= */
+
+    .theme-toggle-btn {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 20px;
+        background: linear-gradient(135deg, #7c3aed, #9333ea);
+        color: white;
+        box-shadow: 0 8px 25px rgba(124, 58, 237, .35);
+        transition: .3s ease;
+    }
+
+        .theme-toggle-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(124, 58, 237, .45);
+        }
+
+        .theme-toggle-btn i {
+            transition: .3s;
+        }
+
+    /* LIGHT MODE */
+
+    body.light-mode {
+        --bg-color: #f8fafc;
+        --card-bg: #ffffff;
+        --text-color: #111827;
+        --secondary-text: #6b7280;
+        --border-color: #e5e7eb;
+        background: var(--bg-color);
+        color: var(--text-color);
+    }
+
+    /* DARK MODE */
+
+    body {
+        --bg-color: #050816;
+        --card-bg: #111827;
+        --text-color: #ffffff;
+        --secondary-text: #9ca3af;
+        --border-color: rgba(255, 255, 255, .08);
+        background: var(--bg-color);
+        color: var(--text-color);
+        transition: background .3s ease, color .3s ease;
+    }
+
+    /* GLOBAL CARD SUPPORT */
+
+    .modern-card,
+    .history-card,
+    .info-box,
+    .event-card,
+    .membership-card,
+    .category-item {
+        background: var(--card-bg) !important;
+        color: var(--text-color);
+        border-color: var(--border-color);
+    }
+
+    /* TEXT COLORS */
+
+    .info-title,
+    .author-name,
+    .event-info p,
+    .category-content span {
+        color: var(--secondary-text);
+    }
+
+    /* WISHLIST BUTTON */
+
+    .wishlist-nav-icon {
+        width: 46px;
+        height: 46px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        font-size: 24px;
+        color: white;
+        transition: .3s;
+    }
+
+        .wishlist-nav-icon:hover {
+            color: #ff4d8d;
+            transform: scale(1.12);
+        }
+
+        .wishlist-nav-icon::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .04);
+            transform: scale(0);
+            transition: .3s ease;
+        }
+
+        .wishlist-nav-icon:hover::after {
+            transform: scale(1);
+        }
+
+    .wishlist-badge {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        min-width: 22px;
+        height: 22px;
+        padding: 0 6px;
+        border-radius: 50px;
+        background: linear-gradient(135deg, #ef4444, #ff4d8d);
+        color: white;
+        font-size: 11px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid #111827;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, .5);
+        animation: pulseBadge 1.8s infinite;
+    }
+
+    @@keyframes pulseBadge {
+
+        0% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.15);
+        }
+
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    /* =========================================
+        PROFILE
+        ========================================= */
+
+    .profile-trigger {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 16px;
+        border-radius: 50px;
+        background: rgba(255, 255, 255, .04);
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+        transition: .3s;
+    }
+
+        .profile-trigger:hover {
+            border-color: rgba(147, 51, 234, .25);
+            color: var(--text-color);
+        }
+
+    .profile-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid rgba(147, 51, 234, .25);
+    }
+
+    .default-avatar {
+        background: linear-gradient(135deg, #7c3aed, #9333ea);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .profile-user {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text-color);
+    }
+
+    /* =========================================
+        DROPDOWN
+        ========================================= */
+
+    .dropdown-menu {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        padding: 12px;
+        min-width: 240px;
+        margin-top: 16px;
+        box-shadow: var(--shadow);
+    }
+
+    .dropdown-item {
+        padding: 13px 16px;
+        border-radius: 14px;
+        color: var(--text-color);
+        font-weight: 600;
+        transition: .3s;
+    }
+
+        .dropdown-item:hover {
+            background: rgba(147, 51, 234, .12);
+            color: #9333ea;
+        }
+
+    /* =========================================
+        CARD COMMON
+        ========================================= */
+
+    .card-section,
+    .summary-card {
+        background: linear-gradient(180deg, #0f172a, #111827);
+        border-radius: 28px;
+        border: 1px solid var(--border-color);
+        padding: 24px;
+        box-shadow: var(--shadow);
+    }
+
+    body.light-mode .card-section,
+    body.light-mode .summary-card {
+        background: white;
+    }
+
+    /* =========================================
+        SECTION HEADER
+        ========================================= */
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 22px;
+    }
+
+        .section-header h3 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .section-header a {
+            color: #c084fc;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+    /* =========================================
+        RESPONSIVE
+        ========================================= */
+
+    @@media(max - width:1200px) {
+
+        .search-box {
+            width: 320px;
+        }
+    }
+
+    @@media(max - width:992px) {
+
+        .sidebar {
+            width: 90px;
+            padding: 20px 12px;
+        }
+
+        .page-content {
+            margin-left: 90px;
+            width: calc(100% - 90px);
+        }
+
+        .brand-text,
+        .menu-heading,
+        .menu-item span {
+            display: none;
+        }
+
+        .brand-logo {
+            justify-content: center;
+        }
+
+        .menu-item {
+            justify-content: center;
+        }
+
+        .logout-link {
+            justify-content: center;
+            padding: 0;
+        }
+
+            .logout-link span {
+                display: none;
+            }
+
+        .search-box {
+            width: 100%;
+        }
+
+        .profile-user {
+            display: none;
+        }
+    }
+
+    @@media(max - width:768px) {
+
+        .sidebar {
+            left: -100%;
+        }
+
+        .page-content {
+            margin-left: 0;
+            width: 100%;
+        }
+
+        .modern-navbar {
+            padding: 14px 0;
+        }
+
+        main {
+            padding: 16px;
+        }
+    }
+
+    @@media(max - width:576px) {
+
+        .search-input {
+            height: 52px;
+        }
+
+        .nav-icon-btn {
+            width: 48px;
+            height: 48px;
+        }
+
+        .profile-avatar {
+            width: 42px;
+            height: 42px;
+        }
+    }
+</style>
+
+<nav class="navbar navbar-expand-lg modern-navbar">
+
+    <div class="container-fluid px-4">
+
+        <div class="collapse navbar-collapse show">
+
+            <!-- SEARCH -->
+
+            <div class="search-box">
+
+                <input type="text" class="search-input" placeholder="Search books, authors..." />
+
+                <span class="search-icon" style="cursor:pointer;">
+                    <i class="bi bi-search"></i>
+                </span>
+
+            </div>
+
+            <!-- RIGHT -->
+
+            <div class="ms-auto d-flex align-items-center gap-3 navbar-right">
+
+                <!-- THEME BUTTON -->
+
+                <button id="themeToggle" class="theme-toggle-btn">
+
+                    <i id="themeIcon" class="bi bi-moon-stars-fill">
+                    </i>
+
+                </button>
+
+                <!-- WISHLIST -->
+
+                <a asp-area="Member" asp-controller="Wishlist" asp-action="Index" class="wishlist-nav-icon">
+
+                    <i class="fa-regular fa-heart"></i>
+
+                    <span class="wishlist-badge" id="wishlistCountBadge"
+                          style="@(wishlistCount == 0 ? "display:none" : "")">
+
+                        @wishlistCount
+
+                    </span>
+
+                </a>
+
+                <!-- PROFILE -->
+                @if (User.Identity != null &&
+                                User.Identity.IsAuthenticated)
+                {
+                    <div class="dropdown">
+
+                        <a href="javascript:void(0)" class="profile-trigger dropdown-toggle" data-bs-toggle="dropdown">
+
+                            @if (!string.IsNullOrEmpty(currentUser?.ProfileImagePath))
+                            {
+                                <img src="@currentUser.ProfileImagePath" class="profile-avatar" />
+                            }
+                            else
+                            {
+                                <div class="profile-avatar default-avatar">
+
+                                    @(string.IsNullOrEmpty(currentUser?.FullName)
+                                                                ? "U"
+                                                                : currentUser.FullName.Substring(0, 1).ToUpper())
+
+                                </div>
+                            }
+
+                            <span class="profile-user">
+                                @currentUser?.FullName
+                            </span>
+
+                        </a>
+
+                        <ul class="dropdown-menu dropdown-menu-end">
+
+                            <li>
+                                <a class="dropdown-item" asp-area="Member" asp-controller="Dashboard" asp-action="Index">
+
+                                    📊 Dashboard
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" asp-area="Member" asp-controller="Profile" asp-action="Index">
+
+                                    👤 My Profile
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" asp-area="Member" asp-controller="Wishlist" asp-action="Index">
+
+                                    ❤️ Wishlist
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" asp-controller="Account" asp-action="Logout">
+
+                                    🚪 Logout
+                                </a>
+                            </li>
+
+                        </ul>
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+
+</nav>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+    const searchInput = document.querySelector(".search-input");
+    const searchIcon = document.querySelector(".search-icon");
+
+    function routeSearch() {
+
+    const query = searchInput.value.trim();
+    if (!query) return;
+
+    window.location.href = `/Search/Route?query=${encodeURIComponent(query)}`;
+    }
+
+    searchInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+    e.preventDefault();
+    routeSearch();
+    }
+    });
+
+    searchIcon.addEventListener("click", routeSearch);
 
     });
 </script>

@@ -22,26 +22,110 @@ namespace Library_Management_System.Areas.Member.Controllers
             _userManager = userManager;
         }
 
+        // =====================================
+        // LIST NOTIFICATIONS
+        // =====================================
+
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
-            if (user == null) return RedirectToAction("Login", "Account", new { area = "" });
+
+            if (user == null)
+            {
+                return RedirectToAction(
+                    "Login",
+                    "Account",
+                    new { area = "" });
+            }
 
             var list = await _context.Notifications
                 .Where(n => n.MemberId == user.Id)
                 .OrderByDescending(n => n.CreatedOn)
-                .Take(50)
+                .Take(100)
                 .ToListAsync();
 
-            // Mark all as read once the user views the list. Cheaper than per-row.
-            var unread = list.Where(n => !n.IsRead).ToList();
-            if (unread.Count > 0)
+            var unread = list
+                .Where(n => !n.IsRead)
+                .ToList();
+
+            if (unread.Any())
             {
-                foreach (var n in unread) n.IsRead = true;
+                foreach (var item in unread)
+                {
+                    item.IsRead = true;
+                }
+
                 await _context.SaveChangesAsync();
             }
 
             return View(list);
+        }
+
+        // =====================================
+        // DELETE ONE
+        // =====================================
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            var notification = await _context.Notifications
+                .FirstOrDefaultAsync(x =>
+                    x.Id == id &&
+                    x.MemberId == user.Id);
+
+            if (notification != null)
+            {
+                _context.Notifications.Remove(notification);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // =====================================
+        // DELETE ALL
+        // =====================================
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteAll()
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            var notifications = await _context.Notifications
+                .Where(x => x.MemberId == user.Id)
+                .ToListAsync();
+
+            if (notifications.Any())
+            {
+                _context.Notifications.RemoveRange(notifications);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // =====================================
+        // UNREAD COUNT
+        // =====================================
+
+        [HttpGet]
+        public async Task<IActionResult> GetUnreadCount()
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+                return Json(0);
+
+            var count = await _context.Notifications
+                .CountAsync(x =>
+                    x.MemberId == user.Id &&
+                    !x.IsRead);
+
+            return Json(count);
         }
     }
 }

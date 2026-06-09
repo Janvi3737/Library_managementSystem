@@ -1,21 +1,41 @@
-﻿@{
+@{
     ViewData["Title"] = "About";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <style>
+    :root {
+        --bg: #050816;
+        --bg2: #0b1120;
+        --card: rgba(255, 255, 255, 0.04);
+        --border: rgba(255, 255, 255, 0.08);
+        --text: #ffffff;
+        --muted: #9ca3af;
+        --primary: #7c3aed;
+        --primary2: #9333ea;
+    }
 
     body {
-        background: #050816;
+        background: var(--bg);
         font-family: 'Inter', sans-serif;
+        color: var(--text);
     }
+
+        body.light {
+            --bg: #f5f7fb;
+            --bg2: #ffffff;
+            --card: #ffffff;
+            --border: #e5e7eb;
+            --text: #111827;
+            --muted: #6b7280;
+        }
 
     .about-section {
         min-height: 100vh;
         padding: 90px 0;
         display: flex;
         align-items: center;
-        background: radial-gradient(circle at top right, rgba(124,58,237,0.18), transparent 30%), linear-gradient(135deg,#050816,#0b1120,#111827);
+        background: radial-gradient(circle at top right, rgba(124, 58, 237, 0.18), transparent 30%), linear-gradient(135deg, var(--bg), var(--bg2));
     }
 
     .about-header {
@@ -24,15 +44,14 @@
     }
 
         .about-header h1 {
-            color: #ffffff;
+            color: var(--text);
             font-size: 52px;
             font-weight: 800;
             margin-bottom: 18px;
-            letter-spacing: -1px;
         }
 
         .about-header p {
-            color: #9ca3af;
+            color: var(--muted);
             font-size: 18px;
             max-width: 700px;
             margin: auto;
@@ -41,31 +60,31 @@
     /* CARDS */
 
     .about-card {
-        background: rgba(255,255,255,0.04);
+        background: var(--card);
         padding: 40px 35px;
         border-radius: 28px;
         backdrop-filter: blur(14px);
-        border: 1px solid rgba(255,255,255,0.08);
+        border: 1px solid var(--border);
         height: 100%;
         transition: 0.35s ease;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.35), 0 0 20px rgba(124,58,237,0.10);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     }
 
         .about-card:hover {
             transform: translateY(-6px);
-            border-color: rgba(139,92,246,0.35);
-            box-shadow: 0 18px 40px rgba(0,0,0,0.45), 0 0 30px rgba(139,92,246,0.18);
+            border-color: rgba(139, 92, 246, 0.35);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45), 0 0 30px rgba(139, 92, 246, 0.18);
         }
 
         .about-card h3 {
-            color: white;
+            color: var(--text);
             font-size: 28px;
             font-weight: 700;
             margin-bottom: 18px;
         }
 
         .about-card p {
-            color: #d1d5db;
+            color: var(--muted);
             line-height: 1.9;
             font-size: 16px;
             margin: 0;
@@ -77,14 +96,14 @@
         width: 70px;
         height: 70px;
         border-radius: 20px;
-        background: linear-gradient(135deg,#7c3aed,#9333ea);
+        background: linear-gradient(135deg, var(--primary), var(--primary2));
+        color: white;
         display: flex;
         align-items: center;
         justify-content: center;
         margin-bottom: 25px;
         font-size: 30px;
-        color: white;
-        box-shadow: 0 0 20px rgba(124,58,237,0.4);
+        box-shadow: 0 0 20px rgba(124, 58, 237, 0.4);
     }
 
     /* MOBILE */
@@ -111,7 +130,6 @@
                 font-size: 24px;
             }
     }
-
 </style>
 
 <section class="about-section">

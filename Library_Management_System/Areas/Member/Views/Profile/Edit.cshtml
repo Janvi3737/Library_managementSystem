@@ -644,5 +644,96 @@
             gap: 20px;
         }
     }
+    /* =========================================
+       LIGHT MODE SUPPORT
+    ========================================= */
+
+    body.light-mode {
+        background: radial-gradient(circle at top left, rgba(124,58,237,.10), transparent 25%), radial-gradient(circle at bottom right, rgba(236,72,153,.08), transparent 25%), #f3f4f6;
+        color: #111827;
+    }
+
+        /* HERO */
+
+        body.light-mode .profile-hero {
+            background: linear-gradient(rgba(255,255,255,.90), rgba(255,255,255,.92)), url('/images/library-banner.png');
+            background-size: cover;
+            background-position: center;
+            border: 1px solid rgba(15,23,42,.08);
+        }
+
+        body.light-mode .hero-content h1,
+        body.light-mode .member-name,
+        body.light-mode .form-group label,
+        body.light-mode .notification-box h5 {
+            color: #111827;
+        }
+
+        body.light-mode .hero-content p,
+        body.light-mode .member-role,
+        body.light-mode .notification-box p {
+            color: #6b7280;
+        }
+
+        /* MAIN CARD */
+
+        body.light-mode .profile-card {
+            background: linear-gradient(145deg,#ffffff,#f9fafb);
+            border: 1px solid rgba(15,23,42,.08);
+            box-shadow: 0 20px 50px rgba(0,0,0,.08);
+        }
+
+        body.light-mode .profile-sidebar {
+            background: rgba(15,23,42,.02);
+            border-right: 1px solid rgba(15,23,42,.08);
+        }
+
+        /* INPUTS */
+
+        body.light-mode .custom-input {
+            background: white;
+            color: #111827;
+            border: 1px solid rgba(15,23,42,.12);
+        }
+
+            body.light-mode .custom-input::placeholder {
+                color: #9ca3af;
+            }
+
+        /* BOXES */
+
+        body.light-mode .notification-box {
+            background: rgba(15,23,42,.03);
+            border: 1px solid rgba(15,23,42,.08);
+        }
+
+        /* BUTTONS */
+
+        body.light-mode .password-btn {
+            background: rgba(15,23,42,.05);
+            color: #374151;
+        }
+
+            body.light-mode .password-btn:hover {
+                background: rgba(15,23,42,.10);
+                color: #111827;
+            }
+
+        body.light-mode .hero-btn {
+            background: rgba(15,23,42,.06);
+            color: #111827;
+        }
+
+            body.light-mode .hero-btn:hover {
+                background: rgba(15,23,42,.12);
+            }
+
+        /* ALERT */
+
+        body.light-mode .success-alert {
+            background: rgba(34,197,94,.10);
+            color: #15803d;
+            border: 1px solid rgba(34,197,94,.18);
+        }
 
 </style>

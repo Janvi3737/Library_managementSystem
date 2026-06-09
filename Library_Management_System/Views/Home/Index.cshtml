@@ -37,9 +37,298 @@
             transform: translateY(-5px);
         }
 
+    /* =========================================================
+    HERO SECTION
+    ========================================================= */
+
+    .hero-section {
+        margin-bottom: 28px;
+    }
+
+    /* =========================================================
+    HERO CARD
+    ========================================================= */
+
+    .hero-card {
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 60px;
+        min-height: 480px;
+        padding: 70px;
+        border-radius: 36px;
+        transition: .35s ease;
+        background: radial-gradient(circle at top right, rgba(59,130,246,.12), transparent 30%), radial-gradient(circle at bottom left, rgba(168,85,247,.12), transparent 30%), linear-gradient(135deg, #ffffff 0%, #f8fbff 45%, #eef4ff 100%);
+        border: 1px solid rgba(15,23,42,.08);
+        box-shadow: 0 20px 60px rgba(15,23,42,.08);
+    }
+
+    /* =========================================================
+    DARK MODE
+    ========================================================= */
+
+    body:not(.light-mode) .hero-card {
+        background: radial-gradient(circle at top right, rgba(59,130,246,.18), transparent 30%), radial-gradient(circle at bottom left, rgba(168,85,247,.18), transparent 30%), linear-gradient(135deg, #020617 0%, #0f172a 45%, #111827 100%);
+        border: 1px solid rgba(255,255,255,.06);
+        box-shadow: 0 30px 80px rgba(0,0,0,.45);
+    }
+
+    /* glow */
+
+    .hero-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient( 120deg, transparent, rgba(255,255,255,.08), transparent);
+        pointer-events: none;
+    }
+
+    /* =========================================================
+    LEFT
+    ========================================================= */
+
+    .hero-left {
+        flex: 1;
+        position: relative;
+        z-index: 2;
+    }
+
+    /* =========================================================
+    BADGE
+    ========================================================= */
+
+    .welcome-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 13px 22px;
+        border-radius: 999px;
+        margin-bottom: 28px;
+        font-size: 14px;
+        font-weight: 700;
+        backdrop-filter: blur(12px);
+        transition: .3s ease;
+        background: rgba(37,99,235,.08);
+        color: #2563eb;
+        border: 1px solid rgba(37,99,235,.12);
+    }
+
+    body:not(.light-mode) .welcome-badge {
+        background: rgba(59,130,246,.12);
+        color: #dbeafe;
+        border: 1px solid rgba(147,197,253,.16);
+    }
+
+    .welcome-badge i {
+        color: #3b82f6;
+    }
+
+    /* =========================================================
+    TITLE
+    ========================================================= */
+
+    .hero-left h1 {
+        font-size: 4.7rem;
+        font-weight: 900;
+        line-height: 1.02;
+        letter-spacing: -2px;
+        margin-bottom: 24px;
+        color: #0f172a;
+    }
+
+    body:not(.light-mode) .hero-left h1 {
+        color: #f8fafc;
+    }
+
+    .hero-left h1 span {
+        background: linear-gradient( 90deg, #3b82f6, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* =========================================================
+    DESCRIPTION
+    ========================================================= */
+
+    .hero-left p {
+        max-width: 620px;
+        font-size: 1.08rem;
+        line-height: 1.9;
+        margin-bottom: 38px;
+        color: #475569;
+    }
+
+    body:not(.light-mode) .hero-left p {
+        color: #cbd5e1;
+    }
+
+    /* =========================================================
+    BUTTONS
+    ========================================================= */
+
+    .hero-buttons {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        flex-wrap: wrap;
+    }
+
+    /* primary */
+
+    .hero-btn {
+        height: 58px;
+        padding: 0 32px;
+        border-radius: 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-size: 15px;
+        font-weight: 700;
+        transition: .35s ease;
+        text-decoration: none;
+        border: none;
+        background: linear-gradient( 135deg, #2563eb, #3b82f6);
+        color: white;
+        box-shadow: 0 16px 35px rgba(37,99,235,.28);
+    }
+
+        .hero-btn:hover {
+            transform: translateY(-5px);
+            color: white;
+            box-shadow: 0 24px 50px rgba(37,99,235,.38);
+        }
+
+    /* secondary */
+
+    .membership-hero-btn {
+        background: rgba(255,255,255,.85);
+        color: #0f172a;
+        border: 1px solid #dbe4f0;
+        box-shadow: none;
+    }
+
+        .membership-hero-btn:hover {
+            background: white;
+            color: #2563eb;
+            border-color: #3b82f6;
+        }
+
+    body:not(.light-mode) .membership-hero-btn {
+        background: rgba(255,255,255,.05);
+        color: #f8fafc;
+        border: 1px solid rgba(255,255,255,.08);
+    }
+
+        body:not(.light-mode) .membership-hero-btn:hover {
+            background: rgba(255,255,255,.08);
+            color: #93c5fd;
+            border-color: rgba(147,197,253,.22);
+        }
+
+    /* =========================================================
+    RIGHT
+    ========================================================= */
+
+    .hero-right {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        z-index: 2;
+    }
+
+        .hero-right img {
+            width: 100%;
+            max-width: 560px;
+            object-fit: contain;
+            animation: heroFloat 5s ease-in-out infinite;
+            filter: drop-shadow(0 25px 45px rgba(0,0,0,.15));
+        }
+
+    body:not(.light-mode) .hero-right img {
+        filter: drop-shadow(0 35px 60px rgba(0,0,0,.55));
+    }
+
+    /* =========================================================
+    FLOAT
+    ========================================================= */
+
+    @@keyframes heroFloat {
+
+        0% {
+            transform: translateY(0px);
+        }
+
+        50% {
+            transform: translateY(-14px);
+        }
+
+        100% {
+            transform: translateY(0px);
+        }
+    }
+
+    /* =========================================================
+    RESPONSIVE
+    ========================================================= */
+
+    @@media(max-width:1100px) {
+
+        .hero-card {
+            flex-direction: column;
+            text-align: center;
+            padding: 55px 35px;
+        }
+
+        .hero-left h1 {
+            font-size: 3.5rem;
+        }
+
+        .hero-left p {
+            margin-inline: auto;
+        }
+
+        .hero-buttons {
+            justify-content: center;
+        }
+
+        .hero-right img {
+            max-width: 420px;
+        }
+    }
+
+    @@media(max-width:768px) {
+
+        .hero-card {
+            padding: 40px 22px;
+            gap: 40px;
+            border-radius: 28px;
+        }
+
+        .hero-left h1 {
+            font-size: 2.6rem;
+        }
+
+        .hero-left p {
+            font-size: 1rem;
+        }
+
+        .hero-btn {
+            width: 100%;
+        }
+
+        .hero-right img {
+            max-width: 300px;
+        }
+    }
+
     /* =========================================
-       EVENTS DARK MODE
-    ========================================= */
+           EVENTS DARK MODE
+        ========================================= */
 
     .event-grid {
         display: grid;
@@ -139,9 +428,210 @@
             font-weight: 600;
         }
 
+    /* =========================================================
+    MEMBERSHIP
+    KEEP YOUR ORIGINAL DESIGN
+    ONLY FIX LIGHT MODE
+    ========================================================= */
+
+    .membership-box {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        background: linear-gradient( 180deg, rgba(15, 23, 42, .98), rgba(10, 15, 28, .98) );
+        border-radius: 28px;
+        border: 1px solid rgba(255, 255, 255, .06);
+        padding: 22px;
+        box-shadow: var(--shadow);
+        transition: .3s ease;
+    }
+
+    /* LIGHT MODE FIX */
+
+    body.light-mode .membership-box {
+        background: linear-gradient( 180deg, #ffffff, #f8fafc ) !important;
+        border: 1px solid #e5e7eb !important;
+        box-shadow: 0 10px 30px rgba(15,23,42,.06) !important;
+    }
+
+    /* =========================================================
+    TITLE
+    ========================================================= */
+
+    .sidebar-title {
+        margin-bottom: 16px;
+    }
+
+        .sidebar-title h3 {
+            font-size: 22px;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+    /* LIGHT MODE TITLE */
+
+    body.light-mode .sidebar-title h3 {
+        color: #111827 !important;
+    }
+
+    /* =========================================================
+    MEMBERSHIP CARD
+    ========================================================= */
+
+    .membership-card {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 25px;
+        border-radius: 20px;
+        background: linear-gradient( to right, rgba(21, 28, 51, .96), rgba(12, 17, 32, .96) );
+        border: 1px solid rgba(255,255,255,.06);
+        margin-bottom: 14px;
+        transition: .35s ease;
+    }
+
+        .membership-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(217, 70, 239, .30);
+        }
+
+    /* LIGHT MODE CARD */
+
+    body.light-mode .membership-card {
+        background: linear-gradient( to right, #ffffff, #f9fafb ) !important;
+        border: 1px solid #e5e7eb !important;
+        box-shadow: 0 6px 18px rgba(15,23,42,.05);
+    }
+
+    /* =========================================================
+    ACTIVE MEMBERSHIP
+    ========================================================= */
+
+    .active-membership {
+        border-color: rgba(217, 70, 239, .55);
+    }
+
+    body.light-mode .active-membership {
+        border-color: rgba(217, 70, 239, .25) !important;
+    }
+
+    /* =========================================================
+    POPULAR BADGE
+    ========================================================= */
+
+    .popular-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: linear-gradient( 135deg, #f59e0b, #f97316 );
+        font-size: 9px;
+        font-weight: 700;
+        color: white;
+    }
+
+    /* =========================================================
+    ICON
+    ========================================================= */
+
+    .membership-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 20px;
+    }
+
+    .student {
+        background: linear-gradient( 135deg, #7c3aed, #9333ea );
+    }
+
+    .regular {
+        background: linear-gradient( 135deg, #d946ef, #ec4899 );
+    }
+
+    .premium {
+        background: linear-gradient( 135deg, #f59e0b, #f97316 );
+    }
+
+    /* =========================================================
+    CONTENT
+    ========================================================= */
+
+    .membership-content h4 {
+        font-size: 15px;
+        margin-bottom: 3px;
+        color: #ffffff;
+    }
+
+    .membership-content p {
+        color: #94a3b8;
+        font-size: 12px;
+        margin-bottom: 5px;
+    }
+
+    .membership-price {
+        font-size: 14px;
+        font-weight: 800;
+        color: #ffffff;
+    }
+
+    /* LIGHT MODE TEXT */
+
+    body.light-mode .membership-content h4 {
+        color: #111827 !important;
+    }
+
+    body.light-mode .membership-content p {
+        color: #6b7280 !important;
+    }
+
+    body.light-mode .membership-price {
+        color: #374151 !important;
+    }
+
+    /* =========================================================
+    BUTTON
+    ========================================================= */
+
+    .membership-btn {
+        width: 100%;
+        height: 52px;
+        border-radius: 16px;
+        background: linear-gradient( 135deg, #7c3aed, #d946ef );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-weight: 700;
+        margin-top: 8px;
+        color: white;
+        transition: .35s ease;
+    }
+
+        .membership-btn:hover {
+            transform: translateY(-4px);
+        }
+
+    /* =========================================================
+    LINK
+    ========================================================= */
+
+    .membership-card-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
+
     /* =========================================
-       MOBILE
-    ========================================= */
+           MOBILE
+        ========================================= */
 
     @@media(max-width:768px) {
 
@@ -257,8 +747,8 @@
                             <div class="book-card">
 
                                 <img src="@(string.IsNullOrEmpty(book.CoverImageUrl)
-                                                                                                                                                                            ? "/images/default-book.jpg"
-                                                                                                                                                                            : book.CoverImageUrl)"
+                                                                                                                                                                                                                 ? "/images/default-book.jpg"
+                                                                                                                                                                                                                 : book.CoverImageUrl)"
                                      alt="@book.Title" />
 
                                 <div class="book-content">
@@ -467,8 +957,8 @@
                     <div class="arrival-card">
 
                         <img src="@(string.IsNullOrEmpty(book.CoverImageUrl)
-                                                                                                                       ? "/images/default-book.jpg"
-                                                                                                                       : book.CoverImageUrl)"
+                                                                                                                                                    ? "/images/default-book.jpg"
+                                                                                                                                                    : book.CoverImageUrl)"
                              alt="@book.Title" />
 
                     </div>

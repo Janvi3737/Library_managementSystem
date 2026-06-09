@@ -24,8 +24,8 @@
     }
 
     body {
-        background: #070b17;
-        color: white;
+        background: var(--page-bg);
+        color: var(--text);
         font-family: 'Inter',sans-serif;
     }
 
@@ -58,7 +58,8 @@
 
     .member-card {
         width: 360px;
-        background: linear-gradient(145deg,#111827,#0f172a);
+        background: var(--page-bg);
+        color: var(--text);
         border: 1px solid rgba(255,255,255,.06);
         border-radius: 28px;
         padding: 28px;
@@ -73,7 +74,8 @@
             width: 180px;
             height: 180px;
             border-radius: 50%;
-            background: rgba(124,58,237,.15);
+            background: var(--page-bg);
+            color: var(--text);
             top: -70px;
             right: -70px;
         }
@@ -91,7 +93,8 @@
         width: 70px;
         height: 70px;
         border-radius: 20px;
-        background: linear-gradient(135deg,#7c3aed,#a855f7);
+        background: var(--page-bg);
+        color: var(--text);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -113,7 +116,7 @@
         height: 12px;
         border-radius: 50px;
         overflow: hidden;
-        background: rgba(255,255,255,.05);
+        background: var(--card-hover-2);
         margin: 20px 0 12px;
     }
 
@@ -139,7 +142,7 @@
     }
 
     .stat-card {
-        background: linear-gradient(145deg,#111827,#0f172a);
+        background: var(--card-gradient);
         border: 1px solid rgba(255,255,255,.06);
         border-radius: 28px;
         padding: 28px;
@@ -203,7 +206,7 @@
     }
 
     .dashboard-card {
-        background: linear-gradient(145deg,#111827,#0f172a);
+        background: var(--card-gradient);
         border: 1px solid rgba(255,255,255,.06);
         border-radius: 28px;
         padding: 28px;
@@ -250,7 +253,7 @@
         }
 
     .text-muted-custom {
-        color: #94a3b8;
+        color: var(--soft-text);
         line-height: 1.8;
     }
 
@@ -270,7 +273,7 @@
     }
 
         .books-table th {
-            color: #94a3b8;
+            color: var(--soft-text);
             font-size: 13px;
             padding: 16px;
             border-bottom: 1px solid rgba(255,255,255,.06);
@@ -310,7 +313,7 @@
     .quick-actions {
         display: grid;
         gap: 16px;
-        margin-top:15px;
+        margin-top: 15px;
     }
 
     .quick-btn {
@@ -321,8 +324,8 @@
         color: white;
         padding: 18px;
         border-radius: 20px;
-        background: rgba(255,255,255,.03);
-        border: 1px solid rgba(255,255,255,.05);
+        background: var(--card-hover);
+        border: 1px solid var(--soft-border);
         transition: .35s ease;
     }
 
@@ -339,7 +342,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(255,255,255,.08);
+            background: var(--card-hover);
             font-size: 20px;
         }
 
@@ -365,7 +368,7 @@
 
         .activity-item:hover {
             transform: translateY(-4px);
-            background: rgba(255,255,255,.05);
+            background: var(--card-hover);
         }
 
     .activity-icon {
@@ -428,7 +431,7 @@
         font-weight: 700;
         color: #fff;
         background: linear-gradient(135deg,#7c3aed,#a855f7);
-        border: 1px solid rgba(168,85,247,.25);
+        border: 1px solid var(--soft-border);
         transition: .35s ease;
         box-shadow: 0 10px 25px rgba(124,58,237,.25);
     }
@@ -747,17 +750,17 @@
 
                     <div class="section-header">
 
-                    <div class="card-title mb-0">
-                        Upcoming Due Books
-                    </div>
+                        <div class="card-title mb-0">
+                            Upcoming Due Books
+                        </div>
 
-                    <a href="/Member/BorrowHistory?status=overdue"
-                       class="view-all-btn">
+                        <a href="/Member/BorrowHistory?status=overdue"
+                           class="view-all-btn">
 
-                        View All
-                        <i class="fa-solid fa-arrow-right"></i>
+                            View All
+                            <i class="fa-solid fa-arrow-right"></i>
 
-                    </a>
+                        </a>
                     </div>
 
                     @foreach (var item in Model.MyBooks
@@ -806,17 +809,17 @@
 
                     <div class="section-header">
 
-                    <div class="card-title mb-0">
-                        Recently Returned Books
-                    </div>
+                        <div class="card-title mb-0">
+                            Recently Returned Books
+                        </div>
 
-                    <a href="/Member/BorrowHistory?status=returned"
-                       class="view-all-btn">
+                        <a href="/Member/BorrowHistory?status=returned"
+                           class="view-all-btn">
 
-                        View All
-                        <i class="fa-solid fa-arrow-right"></i>
+                            View All
+                            <i class="fa-solid fa-arrow-right"></i>
 
-                    </a>
+                        </a>
                     </div>
 
                     @foreach (var activity in Model.RecentActivity

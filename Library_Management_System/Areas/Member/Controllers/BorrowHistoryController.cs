@@ -209,16 +209,65 @@ namespace Library_Management_System.Areas.Member.Controllers
                 borrow.FinePaid = true;
             }
 
-            // Increase Stock
+            // INCREASE STOCK
 
             if (borrow.Book != null)
             {
                 borrow.Book.AvailableCopies += 1;
             }
 
+            // ==========================================
+            // TOKEN REFUND REQUEST CREATION
+            // ==========================================
+
+            if (borrow.IsTokenBorrow &&
+                borrow.UserTokenId.HasValue)
+            {
+                bool refundExists =
+                    await _context.TokenRefunds
+                    .AnyAsync(x =>
+                        x.BorrowRecordId == borrow.Id);
+
+                if (!refundExists)
+                {
+                    var refund = new TokenRefund
+                    {
+                        BorrowRecordId = borrow.Id,
+
+                        UserTokenId =
+                            borrow.UserTokenId.Value,
+
+                        DepositAmount = 200,
+
+                        FineAmount =
+                            borrow.FineAmount,
+
+                        RefundAmount = 0,
+
+                        BookCondition =
+                            "Pending Review",
+
+                        RefundStatus =
+                            "Pending",
+
+                        CreatedOn =
+                            DateTime.Now
+                    };
+
+                    _context.TokenRefunds.Add(refund);
+                }
+            }
+
             await _context.SaveChangesAsync();
 
-            if (borrow.FineAmount > 0)
+            // SUCCESS MESSAGE
+
+            if (borrow.IsTokenBorrow)
+            {
+                TempData["Success"] =
+                    "Book returned successfully. Refund request submitted for admin review.";
+            }
+            else if (borrow.FineAmount > 0)
             {
                 TempData["Success"] =
                     $"Book returned successfully. Fine: ₹{borrow.FineAmount}";

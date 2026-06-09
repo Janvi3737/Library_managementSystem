@@ -28,9 +28,11 @@
         font-size: 42px;
         font-weight: 900;
         margin-bottom: 10px;
-        background: linear-gradient(135deg,#ffffff,#c084fc);
+        background: linear-gradient(135deg, #7c3aed, #c084fc);
         -webkit-background-clip: text;
+        background-clip: text;
         -webkit-text-fill-color: transparent;
+        color: #7c3aed; /* fallback for light mode */
     }
 
     .membership-subtitle {
@@ -48,17 +50,17 @@
         box-shadow: 0 20px 60px rgba(0,0,0,.35);
     }
 
-    .membership-card::before {
-        content: "";
-        position: absolute;
-        width: 300px;
-        height: 300px;
-        background: rgba(168,85,247,.15);
-        border-radius: 50%;
-        top: -150px;
-        right: -150px;
-        filter: blur(40px);
-    }
+        .membership-card::before {
+            content: "";
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(168,85,247,.15);
+            border-radius: 50%;
+            top: -150px;
+            right: -150px;
+            filter: blur(40px);
+        }
 
     .top-section {
         position: relative;
@@ -135,10 +137,10 @@
         transition: .3s ease;
     }
 
-    .info-box:hover {
-        transform: translateY(-5px);
-        border-color: rgba(168,85,247,.35);
-    }
+        .info-box:hover {
+            transform: translateY(-5px);
+            border-color: rgba(168,85,247,.35);
+        }
 
     .info-icon {
         width: 60px;
@@ -188,35 +190,34 @@
         box-shadow: 0 15px 35px rgba(249,115,22,.25);
     }
 
-    .renew-btn:hover {
-        transform: translateY(-4px);
-        color: white;
+        .renew-btn:hover {
+            transform: translateY(-4px);
+            color: white;
+        }
+
+    @@media(max-width:768px) {
+
+        .membership-page {
+            padding: 20px;
+        }
+
+        .membership-title {
+            font-size: 32px;
+        }
+
+        .membership-card {
+            padding: 25px;
+        }
+
+        .plan-name {
+            font-size: 28px;
+        }
+
+        .top-section {
+            flex-direction: column;
+            align-items: flex-start;
+        }
     }
-
-    @@media(max-width:768px){
-
-        .membership-page{
-            padding:20px;
-        }
-
-        .membership-title{
-            font-size:32px;
-        }
-
-        .membership-card{
-            padding:25px;
-        }
-
-        .plan-name{
-            font-size:28px;
-        }
-
-        .top-section{
-            flex-direction:column;
-            align-items:flex-start;
-        }
-    }
-
 </style>
 
 <div class="membership-page">
@@ -247,11 +248,11 @@
 
                 <div class="plan-icon">
 
-                    @if(Model.MembershipType == "Student")
+                    @if (Model.MembershipType == "Student")
                     {
                         <i class="bi bi-mortarboard-fill"></i>
                     }
-                    else if(Model.MembershipType == "Regular")
+                    else if (Model.MembershipType == "Regular")
                     {
                         <i class="bi bi-book-half"></i>
                     }
@@ -278,7 +279,7 @@
 
             <div>
 
-                @if(Model.IsActive)
+                @if (Model.IsActive)
                 {
                     <div class="status-badge active-badge">
                         <i class="bi bi-check-circle-fill"></i>
@@ -368,8 +369,7 @@
         </div>
 
         <!-- RENEW -->
-
-        @if(Model.EndDate < DateTime.Now)
+        @if (Model.EndDate < DateTime.Now)
         {
             <div class="renew-box">
 

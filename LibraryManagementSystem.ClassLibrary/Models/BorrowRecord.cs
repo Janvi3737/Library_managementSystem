@@ -44,5 +44,19 @@ namespace LibraryManagementSystem.ClassLibrary.Models
         [Required]
         [StringLength(20)]
         public string Status { get; set; } = "Issued";
+
+        public bool IsTokenBorrow { get; set; } = false;
+
+        public int? UserTokenId { get; set; }
+
+        [ForeignKey(nameof(UserTokenId))]
+        public UserToken? UserToken { get; set; }
+
+        public string? BookCondition { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal RefundAmount { get; set; }
+
+        public bool RefundProcessed { get; set; } = false;
     }
 }

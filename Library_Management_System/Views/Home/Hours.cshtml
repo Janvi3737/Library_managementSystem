@@ -1,19 +1,41 @@
-﻿@{
+@{
     ViewData["Title"] = "Library Hours";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <style>
+    :root {
+        --bg: #050816;
+        --bg2: #0b1120;
+        --card: rgba(255, 255, 255, 0.04);
+        --border: rgba(255, 255, 255, 0.08);
+        --text: #ffffff;
+        --muted: #9ca3af;
+        --primary: #7c3aed;
+        --primary2: #9333ea;
+        --success: #4ade80;
+        --danger: #f87171;
+    }
 
     body {
-        background: #050816;
+        background: var(--bg);
         font-family: 'Inter', sans-serif;
+        color: var(--text);
     }
+
+        body.light {
+            --bg: #f5f7fb;
+            --bg2: #ffffff;
+            --card: #ffffff;
+            --border: #e5e7eb;
+            --text: #111827;
+            --muted: #6b7280;
+        }
 
     .hours-section {
         min-height: 100vh;
         padding: 90px 0;
-        background: radial-gradient(circle at top right, rgba(124,58,237,0.18), transparent 30%), linear-gradient(135deg,#050816,#0b1120,#111827);
+        background: radial-gradient(circle at top right, rgba(124, 58, 237, 0.18), transparent 30%), linear-gradient(135deg, var(--bg), var(--bg2));
     }
 
     .hours-header {
@@ -22,27 +44,25 @@
     }
 
         .hours-header h1 {
-            color: #ffffff;
+            color: var(--text);
             font-size: 52px;
             font-weight: 800;
             margin-bottom: 16px;
-            letter-spacing: -1px;
         }
 
         .hours-header p {
-            color: #9ca3af;
+            color: var(--muted);
             font-size: 18px;
         }
 
     /* TABLE CARD */
 
     .hours-card {
-        background: rgba(255,255,255,0.04);
-        border: 1px solid rgba(255,255,255,0.08);
+        background: var(--card);
+        border: 1px solid var(--border);
         border-radius: 28px;
         overflow: hidden;
         backdrop-filter: blur(12px);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.35), 0 0 20px rgba(124,58,237,0.10);
     }
 
     /* TABLE */
@@ -53,7 +73,7 @@
     }
 
         .hours-table thead {
-            background: linear-gradient(90deg,#7c3aed,#9333ea,#a855f7);
+            background: linear-gradient(90deg, var(--primary), var(--primary2));
         }
 
             .hours-table thead th {
@@ -71,25 +91,25 @@
         }
 
             .hours-table tbody tr:hover {
-                background: rgba(255,255,255,0.05);
+                background: rgba(255, 255, 255, 0.05);
             }
 
         .hours-table tbody td {
-            border-color: rgba(255,255,255,0.08);
+            border-color: var(--border);
             padding: 22px;
             font-size: 16px;
-            color: #d1d5db;
+            color: var(--muted);
             text-align: center;
         }
 
-    .closed-day {
-        color: #f87171 !important;
-        font-weight: 700;
+    .open-day {
+        color: var(--success);
+        font-weight: 600;
     }
 
-    .open-day {
-        color: #4ade80;
-        font-weight: 600;
+    .closed-day {
+        color: var(--danger);
+        font-weight: 700;
     }
 
     /* MOBILE */
@@ -114,7 +134,6 @@
             font-size: 14px;
         }
     }
-
 </style>
 
 <section class="hours-section">

@@ -4,14 +4,7 @@
     Layout = "~/Areas/Member/Views/Shared/_MemberLayout.cshtml";
     ViewData["Title"] = "My Event Reservations";
 }
-
 <style>
-
-    body {
-        background: #050816;
-        color: white;
-        font-family: 'Inter', sans-serif;
-    }
 
     .reservation-wrapper {
         padding: 30px;
@@ -21,24 +14,31 @@
         font-size: 34px;
         font-weight: 800;
         margin-bottom: 30px;
+        color: var(--text);
     }
 
     .reservation-card {
-        background: linear-gradient(145deg,#0f172a,#111827);
+        background: var(--card);
         border-radius: 24px;
         padding: 24px;
         margin-bottom: 22px;
-        border: 1px solid rgba(255,255,255,0.05);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        transition: .3s ease;
     }
+
+        .reservation-card:hover {
+            transform: translateY(-5px);
+        }
 
     .event-title {
         font-size: 24px;
         font-weight: 700;
-        color: white;
+        color: var(--text);
     }
 
     .event-location {
-        color: #9ca3af;
+        color: var(--text-muted);
         margin-top: 5px;
     }
 
@@ -50,15 +50,22 @@
     }
 
     .info-box {
-        background: rgba(255,255,255,0.04);
+        background: var(--card-2);
         padding: 14px 18px;
         border-radius: 14px;
         min-width: 180px;
         flex: 1;
+        border: 1px solid var(--border);
+        transition: .3s ease;
     }
 
+        .info-box:hover {
+            transform: translateY(-3px);
+            border-color: rgba(124,58,237,.4);
+        }
+
     .info-title {
-        color: #9ca3af;
+        color: var(--text-muted);
         font-size: 13px;
         margin-bottom: 8px;
     }
@@ -66,7 +73,7 @@
     .info-value {
         font-size: 18px;
         font-weight: 700;
-        color: white;
+        color: var(--text);
     }
 
     .status-badge {
@@ -79,7 +86,7 @@
 
     .pending {
         background: #f59e0b;
-        color: black;
+        color: #111827;
     }
 
     .approved {
@@ -93,21 +100,43 @@
     }
 
     .btn-cancel {
-        background: #ef4444;
-        color: white;
+        background: linear-gradient(135deg,#dc2626,#ef4444);
+        color: white !important;
         border: none;
         padding: 12px 20px;
         border-radius: 12px;
         font-weight: 700;
         margin-top: 20px;
+        transition: .3s ease;
     }
 
+        .btn-cancel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(239,68,68,.25);
+        }
+
     .empty-box {
-        background: rgba(255,255,255,0.03);
+        background: var(--card);
         border-radius: 20px;
         padding: 50px;
         text-align: center;
-        color: #9ca3af;
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+    }
+
+    @@media(max-width:768px) {
+
+        .reservation-wrapper {
+            padding: 20px;
+        }
+
+        .reservation-info {
+            flex-direction: column;
+        }
+
+        .event-title {
+            font-size: 20px;
+        }
     }
 
 </style>

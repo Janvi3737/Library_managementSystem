@@ -1,19 +1,39 @@
-﻿@{
+@{
     ViewData["Title"] = "FAQ";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <style>
+    :root {
+        --bg: #050816;
+        --bg2: #0b1120;
+        --card: rgba(255, 255, 255, 0.04);
+        --border: rgba(255, 255, 255, 0.08);
+        --text: #ffffff;
+        --muted: #9ca3af;
+        --primary: #7c3aed;
+        --primary2: #9333ea;
+    }
 
     body {
-        background: #050816;
+        background: var(--bg);
         font-family: 'Inter', sans-serif;
+        color: var(--text);
     }
+
+        body.light {
+            --bg: #f5f7fb;
+            --bg2: #ffffff;
+            --card: #ffffff;
+            --border: #e5e7eb;
+            --text: #111827;
+            --muted: #6b7280;
+        }
 
     .faq-section {
         padding: 90px 0;
         min-height: 100vh;
-        background: radial-gradient(circle at top right, rgba(124,58,237,0.18), transparent 30%), linear-gradient(135deg,#050816,#0b1120,#111827);
+        background: radial-gradient(circle at top right, rgba(124, 58, 237, 0.18), transparent 30%), linear-gradient(135deg, var(--bg), var(--bg2));
     }
 
     .faq-header {
@@ -22,15 +42,14 @@
     }
 
         .faq-header h1 {
-            color: #ffffff;
+            color: var(--text);
             font-size: 52px;
             font-weight: 800;
             margin-bottom: 18px;
-            letter-spacing: -1px;
         }
 
         .faq-header p {
-            color: #9ca3af;
+            color: var(--muted);
             font-size: 18px;
             max-width: 650px;
             margin: auto;
@@ -39,24 +58,22 @@
     /* ACCORDION */
 
     .custom-accordion .accordion-item {
-        background: rgba(255,255,255,0.04);
-        border: 1px solid rgba(255,255,255,0.08);
+        background: var(--card);
+        border: 1px solid var(--border);
         border-radius: 22px !important;
         overflow: hidden;
         margin-bottom: 22px;
         backdrop-filter: blur(12px);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.35), 0 0 20px rgba(124,58,237,0.12);
-        transition: 0.3s ease;
     }
 
         .custom-accordion .accordion-item:hover {
             transform: translateY(-2px);
-            border-color: rgba(139,92,246,0.35);
+            border-color: rgba(139, 92, 246, 0.35);
         }
 
     .custom-accordion .accordion-button {
         background: transparent;
-        color: white;
+        color: var(--text);
         font-size: 18px;
         font-weight: 600;
         padding: 24px;
@@ -64,7 +81,7 @@
     }
 
         .custom-accordion .accordion-button:not(.collapsed) {
-            background: linear-gradient(90deg,#7c3aed,#9333ea,#a855f7);
+            background: linear-gradient(90deg, var(--primary), var(--primary2));
             color: white;
         }
 
@@ -73,15 +90,19 @@
         }
 
         .custom-accordion .accordion-button::after {
-            filter: brightness(0) invert(1);
+            filter: var(--accordion-icon, brightness(0) invert(1));
         }
 
+    body.light {
+        --accordion-icon: brightness(0);
+    }
+
     .custom-accordion .accordion-body {
-        color: #d1d5db;
+        color: var(--muted);
         font-size: 16px;
         line-height: 1.9;
         padding: 26px;
-        background: rgba(255,255,255,0.02);
+        background: rgba(255, 255, 255, 0.02);
     }
 
     /* MOBILE */
@@ -110,7 +131,6 @@
             padding: 20px;
         }
     }
-
 </style>
 
 <section class="faq-section">
@@ -133,8 +153,7 @@
 
         <!-- ACCORDION -->
 
-        <div class="accordion custom-accordion"
-             id="faqAccordion">
+        <div class="accordion custom-accordion" id="faqAccordion">
 
             <!-- FAQ 1 -->
 
@@ -142,10 +161,7 @@
 
                 <h2 class="accordion-header">
 
-                    <button class="accordion-button"
-                            type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#faq1">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
 
                         How can I borrow books?
 
@@ -153,9 +169,7 @@
 
                 </h2>
 
-                <div id="faq1"
-                     class="accordion-collapse collapse show"
-                     data-bs-parent="#faqAccordion">
+                <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
 
                     <div class="accordion-body">
 
@@ -174,9 +188,7 @@
 
                 <h2 class="accordion-header">
 
-                    <button class="accordion-button collapsed"
-                            type="button"
-                            data-bs-toggle="collapse"
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                             data-bs-target="#faq2">
 
                         What is the late return fine?
@@ -185,9 +197,7 @@
 
                 </h2>
 
-                <div id="faq2"
-                     class="accordion-collapse collapse"
-                     data-bs-parent="#faqAccordion">
+                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
 
                     <div class="accordion-body">
 
@@ -206,9 +216,7 @@
 
                 <h2 class="accordion-header">
 
-                    <button class="accordion-button collapsed"
-                            type="button"
-                            data-bs-toggle="collapse"
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                             data-bs-target="#faq3">
 
                         What if the book is lost?
@@ -217,9 +225,7 @@
 
                 </h2>
 
-                <div id="faq3"
-                     class="accordion-collapse collapse"
-                     data-bs-parent="#faqAccordion">
+                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
 
                     <div class="accordion-body">
 
@@ -238,9 +244,7 @@
 
                 <h2 class="accordion-header">
 
-                    <button class="accordion-button collapsed"
-                            type="button"
-                            data-bs-toggle="collapse"
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                             data-bs-target="#faq4">
 
                         Can I reserve unavailable books?
@@ -249,9 +253,7 @@
 
                 </h2>
 
-                <div id="faq4"
-                     class="accordion-collapse collapse"
-                     data-bs-parent="#faqAccordion">
+                <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
 
                     <div class="accordion-body">
 
@@ -270,9 +272,7 @@
 
                 <h2 class="accordion-header">
 
-                    <button class="accordion-button collapsed"
-                            type="button"
-                            data-bs-toggle="collapse"
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                             data-bs-target="#faq5">
 
                         How many books can I borrow?
@@ -281,9 +281,7 @@
 
                 </h2>
 
-                <div id="faq5"
-                     class="accordion-collapse collapse"
-                     data-bs-parent="#faqAccordion">
+                <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
 
                     <div class="accordion-body">
 

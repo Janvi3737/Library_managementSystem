@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewData["Title"] = "Privacy Policy";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -6,91 +6,103 @@
 <style>
 
     body {
-        background: #050816;
+        margin: 0;
         font-family: 'Inter', sans-serif;
+        background: radial-gradient(circle at top right, rgba(124,58,237,0.18), transparent 35%), radial-gradient(circle at bottom left, rgba(236,72,153,0.10), transparent 35%), linear-gradient(135deg, #050816, #0b1120, #111827);
+        color: #e5e7eb;
     }
 
+    /* SECTION */
     .privacy-section {
         min-height: 100vh;
         padding: 90px 0;
-        background: radial-gradient(circle at top right, rgba(124,58,237,0.18), transparent 30%), linear-gradient(135deg,#050816,#0b1120,#111827);
     }
 
+    /* HEADER */
     .privacy-header {
         text-align: center;
         margin-bottom: 60px;
     }
 
         .privacy-header h1 {
-            color: white;
             font-size: 52px;
             font-weight: 800;
-            margin-bottom: 16px;
+            color: #ffffff;
             letter-spacing: -1px;
         }
 
         .privacy-header p {
-            color: #9ca3af;
             font-size: 18px;
+            color: #9ca3af;
             max-width: 750px;
-            margin: auto;
+            margin: 12px auto 0;
+            line-height: 1.7;
         }
 
     /* CARD */
-
     .privacy-card {
-        background: rgba(255,255,255,0.04);
+        background: rgba(255,255,255,0.06);
         border: 1px solid rgba(255,255,255,0.08);
-        border-radius: 30px;
+        border-radius: 28px;
         padding: 45px;
-        backdrop-filter: blur(14px);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.35), 0 0 20px rgba(124,58,237,0.10);
+        backdrop-filter: blur(18px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+        transition: 0.3s ease;
     }
 
+        .privacy-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(139,92,246,0.25);
+        }
+
+        /* HEADINGS */
         .privacy-card h3 {
-            color: white;
-            font-size: 28px;
+            color: #ffffff;
+            font-size: 26px;
             font-weight: 700;
-            margin-bottom: 18px;
-            margin-top: 35px;
+            margin-top: 30px;
+            margin-bottom: 14px;
         }
 
             .privacy-card h3:first-child {
                 margin-top: 0;
             }
 
+        /* TEXT */
         .privacy-card p {
             color: #d1d5db;
             line-height: 1.9;
             font-size: 16px;
-            margin-bottom: 18px;
+            margin-bottom: 14px;
         }
 
+        /* LIST */
         .privacy-card ul {
-            padding-left: 20px;
+            padding-left: 18px;
+            margin-bottom: 20px;
         }
 
             .privacy-card ul li {
                 color: #d1d5db;
-                margin-bottom: 12px;
+                margin-bottom: 10px;
                 line-height: 1.8;
             }
 
+    /* HIGHLIGHT */
     .highlight-text {
-        color: #c084fc;
+        color: #a855f7;
         font-weight: 600;
     }
 
     /* MOBILE */
-
-    @@media(max-width:768px) {
+    @@media (max-width: 768px) {
 
         .privacy-section {
             padding: 60px 0;
         }
 
         .privacy-header h1 {
-            font-size: 40px;
+            font-size: 38px;
         }
 
         .privacy-header p {
@@ -98,11 +110,11 @@
         }
 
         .privacy-card {
-            padding: 30px 22px;
+            padding: 28px 22px;
         }
 
             .privacy-card h3 {
-                font-size: 24px;
+                font-size: 22px;
             }
     }
 

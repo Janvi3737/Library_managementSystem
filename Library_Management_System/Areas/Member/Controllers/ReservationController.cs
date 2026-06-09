@@ -8,7 +8,7 @@ using System.Security.Claims;
 namespace Library_Management_System.Areas.Member.Controllers
 {
     [Area("Member")]
-    [Authorize(Roles = "Member")]
+    [Authorize(Roles = "Member,User")]
     public class ReservationController : Controller
     {
         private readonly AppDbContext _context;
@@ -18,7 +18,9 @@ namespace Library_Management_System.Areas.Member.Controllers
             _context = context;
         }
 
-        // MY BOOK RESERVATIONS
+        // =========================
+        // MY RESERVATIONS
+        // =========================
 
         public async Task<IActionResult> Index()
         {
@@ -26,7 +28,7 @@ namespace Library_Management_System.Areas.Member.Controllers
 
             var reservations = await _context.Reservations
                 .Include(r => r.Book)
-                    .ThenInclude(b => b.Author)
+                .ThenInclude(b => b.Author)
                 .Where(r => r.MemberId == userId)
                 .OrderByDescending(r => r.ReservedOn)
                 .ToListAsync();
@@ -42,8 +44,11 @@ namespace Library_Management_System.Areas.Member.Controllers
             return View(reservations);
         }
 
-        // RESERVE BOOK PAGE
+        // =========================
+        // RESERVE PAGE
+        // =========================
 
+        [HttpGet]
         public async Task<IActionResult> Create(int bookId, int quantity = 1)
         {
             var book = await _context.Books
@@ -54,28 +59,64 @@ namespace Library_Management_System.Areas.Member.Controllers
             if (book == null)
                 return NotFound();
 
-            // Clamp + pass through to the confirm page so the hidden input
-            if (quantity < 1) quantity = 1;
-            if (quantity > book.AvailableCopies) quantity = book.AvailableCopies;
+            if (quantity < 1)
+                quantity = 1;
+
+            if (quantity > book.AvailableCopies)
+                quantity = book.AvailableCopies;
+
             ViewBag.Quantity = quantity;
 
             return View(book);
         }
 
-        // SAVE BOOK RESERVATION
+        // =========================
+        // SAVE RESERVATION
+        // =========================
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateReservation(int bookId, int quantity = 1)
+        public async Task<IActionResult> CreateReservation(
+            int bookId,
+            int quantity = 1)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            // Server-side validation — never trust the form. Clamp to what's
             var book = await _context.Books.FindAsync(bookId);
-            if (book == null) return NotFound();
 
-            if (quantity < 1) quantity = 1;
-            if (quantity > book.AvailableCopies) quantity = book.AvailableCopies;
+            if (book == null)
+                return NotFound();
+
+            // =========================
+            // TOKEN LIMIT CHECK
+            // =========================
+
+            var token = await _context.UserTokens
+                .FirstOrDefaultAsync(x => x.UserId == userId);
+
+            if (token != null && token.TotalBorrowCount >= 3)
+            {
+                TempData["Error"] =
+                    "Your token borrow limit is over. Please purchase a membership plan.";
+
+                return RedirectToAction(
+                    "Index",
+                    "Membership");
+            }
+
+            // =========================
+            // VALIDATE QUANTITY
+            // =========================
+
+            if (quantity < 1)
+                quantity = 1;
+
+            if (quantity > book.AvailableCopies)
+                quantity = book.AvailableCopies;
+
+            // =========================
+            // CHECK DUPLICATE RESERVATION
+            // =========================
 
             var alreadyReserved = await _context.Reservations
                 .AnyAsync(r =>
@@ -85,10 +126,15 @@ namespace Library_Management_System.Areas.Member.Controllers
 
             if (alreadyReserved)
             {
-                TempData["Error"] = "You already reserved this book.";
+                TempData["Error"] =
+                    "You already reserved this book.";
 
                 return RedirectToAction(nameof(Index));
             }
+
+            // =========================
+            // CREATE RESERVATION
+            // =========================
 
             var reservation = new Reservation
             {
@@ -103,12 +149,15 @@ namespace Library_Management_System.Areas.Member.Controllers
 
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Book reserved successfully.";
+            TempData["Success"] =
+                "Book reserved successfully.";
 
             return RedirectToAction(nameof(Index));
         }
 
+        // =========================
         // CANCEL RESERVATION
+        // =========================
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -124,11 +173,11 @@ namespace Library_Management_System.Areas.Member.Controllers
             if (reservation == null)
                 return NotFound();
 
-            // A reservation that's already been completed (book issued) or
             if (reservation.Status != ReservationStatus.Waiting)
             {
                 TempData["Error"] =
                     "Only waiting reservations can be cancelled.";
+
                 return RedirectToAction(nameof(Index));
             }
 
@@ -136,11 +185,10 @@ namespace Library_Management_System.Areas.Member.Controllers
 
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Reservation cancelled.";
+            TempData["Success"] =
+                "Reservation cancelled successfully.";
 
             return RedirectToAction(nameof(Index));
         }
-
-        // Note: "Approve" (mark Waiting -> Completed and issue a BorrowRecord)
     }
 }

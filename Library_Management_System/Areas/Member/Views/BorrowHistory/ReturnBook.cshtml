@@ -8,9 +8,9 @@
 <style>
 
     body {
-        background: #050816;
+        background: var(--page-bg);
+        color: var(--text);
         font-family: 'Poppins', sans-serif;
-        color: white;
         overflow-x: hidden;
     }
 
@@ -25,10 +25,10 @@
     .return-card {
         width: 100%;
         max-width: 900px;
-        background: linear-gradient(145deg,#0f172a,#111827);
+        background: var(--card-gradient);
+        border: 1px solid var(--soft-border);
         border-radius: 35px;
         overflow: hidden;
-        border: 1px solid rgba(255,255,255,0.05);
         box-shadow: 0 25px 60px rgba(124,58,237,0.18);
         position: relative;
     }
@@ -102,10 +102,10 @@
     }
 
     .book-container {
-        background: rgba(255,255,255,0.03);
+        background: var(--card-hover);
+        border: 1px solid var(--soft-border);
         border-radius: 28px;
         padding: 30px;
-        border: 1px solid rgba(255,255,255,0.04);
     }
 
     .book-title {
@@ -115,7 +115,7 @@
     }
 
     .book-author {
-        color: #9ca3af;
+        color: var(--text-muted);
         margin-bottom: 35px;
         font-size: 16px;
     }
@@ -129,11 +129,11 @@
     }
 
     .info-card {
-        background: linear-gradient(145deg,#111827,#1f2937);
+        background: var(--card);
+        border: 1px solid var(--soft-border);
         border-radius: 22px;
         padding: 24px;
         transition: 0.3s;
-        border: 1px solid rgba(255,255,255,0.04);
     }
 
         .info-card:hover {
@@ -232,6 +232,25 @@
         .confirm-btn {
             width: 100%;
         }
+    }
+    /* LIGHT THEME FIXES */
+
+    body.light-mode .back-btn {
+        color: var(--text-muted);
+    }
+
+        body.light-mode .back-btn:hover {
+            color: var(--text);
+        }
+
+    body.light-mode .info-value,
+    body.light-mode .book-title,
+    body.light-mode .page-title {
+        color: var(--text);
+    }
+
+    body.light-mode .return-section {
+        background: var(--page-bg);
     }
 
 </style>

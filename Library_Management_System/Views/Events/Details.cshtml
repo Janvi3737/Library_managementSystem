@@ -36,8 +36,32 @@
 }
 
 <style>
-
     @@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+    /* ================= THEME ================= */
+
+    :root {
+        --bg: #050816;
+        --page-bg: radial-gradient(circle at top left, rgba(124, 58, 237, .12), transparent 25%), radial-gradient(circle at bottom right, rgba(217, 70, 239, .08), transparent 30%), #050816;
+        --card-bg: rgba(255, 255, 255, .04);
+        --border: rgba(255, 255, 255, .08);
+        --text: #fff;
+        --text-light: #d1d5db;
+        --shadow: 0 20px 60px rgba(0, 0, 0, .45);
+    }
+
+    /* LIGHT MODE */
+    body.light-mode {
+        --bg: #f8fafc;
+        --page-bg: radial-gradient(circle at top left, rgba(124, 58, 237, .08), transparent 25%), radial-gradient(circle at bottom right, rgba(217, 70, 239, .06), transparent 30%), #f8fafc;
+        --card-bg: rgba(255, 255, 255, .9);
+        --border: rgba(0, 0, 0, .08);
+        --text: #0f172a;
+        --text-light: #475569;
+        --shadow: 0 20px 60px rgba(0, 0, 0, .12);
+    }
+
+    /* ================= BASE ================= */
 
     * {
         margin: 0;
@@ -47,181 +71,135 @@
 
     body {
         font-family: 'Inter', sans-serif;
-        background: radial-gradient(circle at top left, rgba(124,58,237,.12), transparent 25%), radial-gradient(circle at bottom right, rgba(217,70,239,.08), transparent 30%), #050816;
-        color: white;
-        overflow-x: hidden;
+        background: var(--bg);
+        color: var(--text);
     }
 
     .event-page {
-        width: 100%;
         min-height: 100vh;
         padding: 35px 24px 80px;
+        background: var(--page-bg);
     }
 
-    /* HERO */
+    /* ================= HERO ================= */
 
     .event-hero {
         position: relative;
-        overflow: hidden;
-        border-radius: 34px;
-        padding: 40px;
-        margin-bottom: 34px;
-        background: linear-gradient(rgba(5,8,22,.88), rgba(15,23,42,.95)), url('/images/library-banner.png');
+        display: flex;
+        align-items: center;
+        padding: 50px;
+        border-radius: 36px;
+        background: linear-gradient(rgba(7, 11, 26, .88), rgba(15, 23, 42, .92)), url('/images/library-banner.png');
         background-size: cover;
         background-position: center;
-        border: 1px solid rgba(255,255,255,.06);
-        box-shadow: 0 25px 70px rgba(0,0,0,.45);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
     }
 
-        .event-hero::before {
-            content: "";
-            position: absolute;
-            width: 420px;
-            height: 420px;
-            border-radius: 50%;
-            background: rgba(168,85,247,.15);
-            top: -160px;
-            right: -120px;
-            filter: blur(80px);
-        }
-
-    .hero-inner {
-        position: relative;
-        z-index: 2;
+    body.light-mode .event-hero {
+        background: linear-gradient(rgba(255, 255, 255, .90), rgba(248, 250, 252, .95)), url('/images/library-banner.png');
     }
 
-    /* IMAGE */
-
-    .event-image-box {
-        position: relative;
-        height: 100%;
+    /* glow */
+    .event-hero::before,
+    .event-hero::after {
+        content: "";
+        position: absolute;
+        filter: blur(80px);
     }
+
+    .event-hero::before {
+        width: 420px;
+        height: 420px;
+        background: rgba(168, 85, 247, .12);
+        top: -160px;
+        right: -120px;
+    }
+
+    .event-hero::after {
+        width: 260px;
+        height: 260px;
+        background: rgba(236, 72, 153, .10);
+        bottom: -100px;
+        left: -80px;
+    }
+
+    /* ================= IMAGE ================= */
 
     .event-image {
         width: 100%;
         height: 520px;
         object-fit: cover;
         border-radius: 30px;
-        border: 1px solid rgba(255,255,255,.08);
-        box-shadow: 0 20px 45px rgba(0,0,0,.45);
-        transition: .4s;
-        background: #111827;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
     }
 
-        .event-image:hover {
-            transform: scale(1.02);
-        }
-
-    /* BADGE */
+    /* ================= BADGE ================= */
 
     .event-badge {
         display: inline-flex;
-        align-items: center;
-        gap: 10px;
         padding: 12px 22px;
-        border-radius: 999px;
-        background: rgba(255,255,255,.06);
-        border: 1px solid rgba(255,255,255,.08);
-        color: #d8b4fe;
+        border-radius: 50px;
+        background: var(--card-bg);
+        border: 1px solid var(--border);
         font-size: 13px;
         font-weight: 700;
-        margin-bottom: 24px;
     }
 
-    /* TITLE */
+    /* ================= TITLE ================= */
 
     .event-title {
         font-size: 60px;
         font-weight: 900;
-        line-height: 1.08;
-        margin-bottom: 20px;
     }
 
         .event-title span {
-            background: linear-gradient(90deg,#c084fc,#f0abfc);
+            background: linear-gradient(90deg, #c084fc, #f0abfc);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-    .event-description {
-        color: #d1d5db;
-        line-height: 1.9;
-        font-size: 15px;
-        margin-bottom: 30px;
-    }
-
-    /* META */
+    /* ================= META ================= */
 
     .event-meta-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
         gap: 16px;
-        margin-bottom: 30px;
     }
 
     .meta-card {
         padding: 22px;
         border-radius: 24px;
-        background: rgba(255,255,255,.04);
-        border: 1px solid rgba(255,255,255,.05);
-        transition: .3s;
+        background: var(--card-bg);
+        border: 1px solid var(--border);
     }
 
-        .meta-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(168,85,247,.35);
-        }
-
-    .meta-label {
-        color: #9ca3af;
-        font-size: 12px;
-        margin-bottom: 10px;
-        font-weight: 700;
-        letter-spacing: .5px;
-    }
-
-    .meta-value {
-        font-size: 15px;
-        font-weight: 700;
-    }
-
-    /* BUTTON */
+    /* ================= BUTTON ================= */
 
     .reserve-btn {
         display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
         padding: 16px 32px;
         border-radius: 22px;
-        background: linear-gradient(135deg,#7c3aed,#d946ef);
+        background: linear-gradient(135deg, #7c3aed, #d946ef);
         color: white;
-        text-decoration: none;
         font-weight: 700;
-        transition: .35s;
-        box-shadow: 0 12px 35px rgba(168,85,247,.35);
     }
 
-        .reserve-btn:hover {
-            transform: translateY(-3px);
-            color: white;
-        }
-
-    /* GLASS CARD */
+    /* ================= GLASS ================= */
 
     .glass-card {
         padding: 30px;
         border-radius: 34px;
-        background: linear-gradient(180deg, rgba(10,15,30,.98), rgba(5,10,22,.98));
-        border: 1px solid rgba(255,255,255,.06);
-        box-shadow: 0 20px 60px rgba(0,0,0,.45);
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
     }
 
-    /* SPEAKER */
+    /* ================= SPEAKER ================= */
 
     .speaker-box {
         display: flex;
-        align-items: center;
         gap: 25px;
     }
 
@@ -230,94 +208,123 @@
         height: 140px;
         border-radius: 50%;
         overflow: hidden;
-        flex-shrink: 0;
-        border: 4px solid rgba(168,85,247,.35);
-        box-shadow: 0 15px 40px rgba(168,85,247,.20);
+        border: 4px solid rgba(168, 85, 247, .35);
     }
 
-        .speaker-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+    /* ================= SUMMARY ================= */
 
-    .speaker-name {
-        font-size: 30px;
-        font-weight: 800;
-        margin-bottom: 12px;
-    }
-
-    .speaker-desc {
-        color: #d1d5db;
-        line-height: 1.9;
-    }
-
-    /* SUMMARY */
+    /* ================= EVENT SUMMARY (NEW DESIGN) ================= */
 
     .summary-card {
         position: sticky;
         top: 110px;
+        padding: 28px;
+        border-radius: 28px;
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(14px);
     }
 
     .summary-title {
-        font-size: 30px;
+        font-size: 22px;
         font-weight: 900;
-        margin-bottom: 28px;
+        margin-bottom: 20px;
+        color: var(--text);
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .summary-title::before {
+            content: "📊";
+            font-size: 18px;
+        }
+
+    .summary-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
     }
 
     .summary-item {
         display: flex;
         align-items: center;
-        gap: 16px;
-        padding: 18px;
-        border-radius: 22px;
-        background: rgba(255,255,255,.04);
-        border: 1px solid rgba(255,255,255,.05);
-        margin-bottom: 18px;
-        transition: .3s;
+        gap: 14px;
+        padding: 14px 16px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border);
+        transition: 0.25s ease;
     }
 
         .summary-item:hover {
-            transform: translateX(4px);
-            border-color: rgba(168,85,247,.35);
+            transform: translateX(6px);
+            border-color: rgba(168, 85, 247, 0.35);
+            background: rgba(168, 85, 247, 0.06);
         }
 
     .summary-icon {
-        width: 56px;
-        height: 56px;
-        border-radius: 18px;
-        background: linear-gradient(135deg,#7c3aed,#d946ef);
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 22px;
-        box-shadow: 0 10px 25px rgba(168,85,247,.30);
+        background: linear-gradient(135deg, #7c3aed, #d946ef);
+        color: #fff;
+        font-size: 18px;
+        box-shadow: 0 8px 18px rgba(124, 58, 237, 0.25);
     }
 
     .summary-text small {
         display: block;
-        color: #9ca3af;
-        margin-bottom: 5px;
+        font-size: 11px;
+        color: var(--text-light);
+        margin-bottom: 2px;
     }
 
     .summary-text strong {
-        font-size: 15px;
+        font-size: 14px;
+        color: var(--text);
+        font-weight: 700;
+    }
+
+    /* divider */
+    .summary-divider {
+        height: 1px;
+        background: var(--border);
+        margin: 14px 0;
+    }
+
+    /* CTA inside summary */
+    .summary-cta {
+        margin-top: 16px;
+    }
+
+    .summary-btn {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        padding: 12px 16px;
+        border-radius: 14px;
+        background: linear-gradient(90deg, #7c3aed, #9333ea);
         color: white;
+        font-weight: 700;
+        text-decoration: none;
+        transition: 0.3s;
     }
 
-    /* RESPONSIVE */
-
-    @@media(max-width:1200px) {
-
-        .event-title {
-            font-size: 48px;
+        .summary-btn:hover {
+            transform: translateY(-2px);
         }
-    }
 
-    @@media(max-width:992px) {
+    /* ================= RESPONSIVE ================= */
 
-        .summary-card {
-            position: static;
+    @@media (max-width: 992px) {
+        .event-title {
+            font-size: 42px;
         }
 
         .event-image {
@@ -325,67 +332,37 @@
         }
     }
 
-    @@media(max-width:768px) {
-
-        .event-page {
-            padding: 20px;
-        }
-
+    @@media (max-width: 768px) {
         .event-hero {
+            flex-direction: column;
             padding: 25px;
         }
 
         .event-title {
-            font-size: 34px;
-        }
-
-        .speaker-box {
-            flex-direction: column;
-            text-align: center;
+            font-size: 32px;
         }
 
         .event-image {
             height: 320px;
         }
-
-        .reserve-btn {
-            width: 100%;
-        }
     }
 </style>
 
 <div class="event-page">
-
     <div class="row g-4">
 
         <!-- LEFT -->
-
         <div class="col-lg-8">
 
-            <!-- HERO -->
-
             <div class="event-hero">
-
                 <div class="hero-inner">
 
                     <div class="row g-4 align-items-center">
 
-                        <!-- IMAGE -->
-
                         <div class="col-lg-5">
-
-                            <div class="event-image-box">
-
-                                <img src="@(string.IsNullOrEmpty(Model.ImagePath)
-                                                                         ? "/images/no-event.svg"
-                                                                         : Model.ImagePath)"
-                                     class="event-image" />
-
-                            </div>
-
+                            <img src="@(string.IsNullOrEmpty(Model.ImagePath) ? "/images/no-event.svg" : Model.ImagePath)"
+                                 class="event-image" />
                         </div>
-
-                        <!-- CONTENT -->
 
                         <div class="col-lg-7">
 
@@ -394,10 +371,7 @@
                             </div>
 
                             <div class="event-title">
-
-                                Discover
-                                <span>@Model.Title</span>
-
+                                Discover <span>@Model.Title</span>
                             </div>
 
                             <div class="event-description">
@@ -407,50 +381,20 @@
                             <div class="event-meta-grid">
 
                                 <div class="meta-card">
-
-                                    <div class="meta-label">
-                                        EVENT DATE
-                                    </div>
-
-                                    <div class="meta-value">
-                                        📅 @Model.Date.ToString("dd MMM yyyy")
-                                    </div>
-
+                                    📅 @Model.Date.ToString("dd MMM yyyy")
                                 </div>
 
                                 <div class="meta-card">
-
-                                    <div class="meta-label">
-                                        EVENT TIME
-                                    </div>
-
-                                    <div class="meta-value">
-                                        ⏰ 4:00 PM - 6:00 PM
-                                    </div>
-
+                                    ⏰ 4:00 PM - 6:00 PM
                                 </div>
 
-                                @* <div class="meta-card">
-
-                                    <div class="meta-label">
-                                        LOCATION
-                                    </div>
-
-                                    <div class="meta-value">
-                                        📍 @Model.Location
-                                    </div>
-
-                                </div> *@
-
                             </div>
-                            <form asp-area="Member"
-                                  asp-controller="EventReservation"
-                                  asp-action="Create"
-                                  method="get">
+
+                            <form asp-area="Member" asp-controller="EventReservation" asp-action="Create" method="get">
 
                                 <input type="hidden" name="eventId" value="@Model.Id" />
 
-                                <button type="submit" class="reserve-btn">
+                                <button class="reserve-btn">
                                     🎟 Reserve Seat
                                 </button>
                             </form>
@@ -458,47 +402,27 @@
                         </div>
 
                     </div>
-
                 </div>
-
             </div>
 
-            <!-- SPEAKER -->
-
             <div class="glass-card">
-
-                <h2 class="mb-4 fw-bold">
-                    About Speaker
-                </h2>
+                <h2>About Speaker</h2>
 
                 <div class="speaker-box">
-
                     <div class="speaker-image">
-
                         <img src="@speakerImage" />
-
                     </div>
 
                     <div>
-
-                        <div class="speaker-name">
-                            @speakerName
-                        </div>
-
-                        <div class="speaker-desc">
-                            @speakerDesc
-                        </div>
-
+                        <div class="speaker-name">@speakerName</div>
+                        <div class="speaker-desc">@speakerDesc</div>
                     </div>
-
                 </div>
-
             </div>
 
         </div>
 
         <!-- RIGHT -->
-
         <div class="col-lg-4">
 
             <div class="glass-card summary-card">
@@ -507,82 +431,48 @@
                     Event Summary
                 </div>
 
-                <div class="summary-item">
+                <div class="summary-grid">
 
-                    <div class="summary-icon">
-                        📅
+                    <div class="summary-item">
+                        <div class="summary-icon">📅</div>
+                        <div class="summary-text">
+                            <small>Date</small>
+                            <strong>@Model.Date.ToString("dd MMM yyyy")</strong>
+                        </div>
                     </div>
 
-                    <div class="summary-text">
-
-                        <small>Date</small>
-
-                        <strong>
-                            @Model.Date.ToString("dd MMM yyyy")
-                        </strong>
-
+                    <div class="summary-item">
+                        <div class="summary-icon">📍</div>
+                        <div class="summary-text">
+                            <small>Location</small>
+                            <strong>@Model.Location</strong>
+                        </div>
                     </div>
 
-                </div>
-
-                <div class="summary-item">
-
-                    <div class="summary-icon">
-                        📍
+                    <div class="summary-item">
+                        <div class="summary-icon">🎤</div>
+                        <div class="summary-text">
+                            <small>Category</small>
+                            <strong>Author Session</strong>
+                        </div>
                     </div>
 
-                    <div class="summary-text">
-
-                        <small>Location</small>
-
-                        <strong>
-                            @Model.Location
-                        </strong>
-
-                    </div>
-
-                </div>
-
-                <div class="summary-item">
-
-                    <div class="summary-icon">
-                        🎤
-                    </div>
-
-                    <div class="summary-text">
-
-                        <small>Category</small>
-
-                        <strong>
-                            Author Session
-                        </strong>
-
+                    <div class="summary-item">
+                        <div class="summary-icon">👥</div>
+                        <div class="summary-text">
+                            <small>Audience</small>
+                            <strong>Book Community</strong>
+                        </div>
                     </div>
 
                 </div>
 
-                <div class="summary-item">
 
-                    <div class="summary-icon">
-                        👥
-                    </div>
 
-                    <div class="summary-text">
-
-                        <small>Audience</small>
-
-                        <strong>
-                            Book Community
-                        </strong>
-
-                    </div>
-
-                </div>
 
             </div>
 
         </div>
 
     </div>
-
 </div>

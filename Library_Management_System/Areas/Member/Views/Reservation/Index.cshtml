@@ -12,7 +12,7 @@
 <style>
 
     body {
-        background: #050816;
+        background: var(--card);
         color: white;
     }
 
@@ -27,7 +27,7 @@
     }
 
     .reservation-card {
-        background: linear-gradient(145deg,#0f172a,#111827);
+        background: var(--card);
         border-radius: 24px;
         padding: 24px;
         margin-bottom: 22px;
@@ -57,7 +57,8 @@
     }
 
     .info-box {
-        background: rgba(255,255,255,0.04);
+        background: var(--card-2);
+        border: 1px solid var(--border);
         padding: 14px 18px;
         border-radius: 14px;
         min-width: 180px;
@@ -126,6 +127,115 @@
             box-shadow: 0 10px 20px rgba(16,185,129,0.35);
             color: white;
         }
+
+    /* =========================================
+       GLOBAL MEMBER PAGE SUPPORT
+    ========================================= */
+
+    body {
+        background: var(--bg) !important;
+        color: var(--text) !important;
+    }
+
+    /* COMMON CARDS */
+
+    .dashboard-card,
+    .stat-card,
+    .member-card,
+    .history-card,
+    .reservation-card,
+    .return-card,
+    .book-container,
+    .info-card,
+    .info-box,
+    .activity-item,
+    .quick-btn,
+    .empty-box {
+        background: var(--card) !important;
+        color: var(--text) !important;
+        border: 1px solid var(--border) !important;
+    }
+
+    /* TITLES */
+
+    .page-title,
+    .card-title,
+    .book-title,
+    .member-title,
+    .stat-value,
+    .activity-title,
+    .quick-title,
+    .info-value {
+        color: var(--text) !important;
+    }
+
+    /* SUB TEXT */
+
+    .book-author,
+    .author-name,
+    .activity-date,
+    .quick-sub,
+    .info-title,
+    .member-sub,
+    .stat-title,
+    .page-subtitle {
+        color: var(--text-muted) !important;
+    }
+
+    /* TABLE */
+
+    .books-table th,
+    .books-table td {
+        color: var(--text) !important;
+    }
+
+    .books-table tr {
+        border-color: var(--border) !important;
+    }
+
+    /* FILTER BUTTON */
+
+    .filter-btn {
+        background: var(--card) !important;
+        color: var(--text) !important;
+        border: 1px solid var(--border) !important;
+    }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: linear-gradient(135deg,var(--primary),var(--primary-light)) !important;
+            color: white !important;
+        }
+
+    /* INFO BOX */
+
+    .info-box {
+        background: var(--card-2) !important;
+    }
+
+    /* INPUT */
+
+    input,
+    select,
+    textarea {
+        background: var(--card-2) !important;
+        color: var(--text) !important;
+        border-color: var(--border) !important;
+    }
+
+    /* LIGHT MODE FIX */
+
+    body.light-mode .timeline-dot {
+        border-color: var(--bg);
+    }
+
+    /* ALERT */
+
+    .alert-dark {
+        background: var(--card) !important;
+        color: var(--text) !important;
+        border: 1px solid var(--border) !important;
+    }
 </style>
 
 <div class="reservation-wrapper">
@@ -248,4 +358,3 @@
     }
 
 </div>
-

@@ -1,0 +1,190 @@
+@{
+    ViewData["Title"] = "My Token Status";
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
+}
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+<style>
+
+    body {
+        background: #050816;
+        color: white;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .token-page {
+        min-height: 100vh;
+        padding: 80px 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .token-card {
+        width: 100%;
+        max-width: 650px;
+        background: rgba(15,23,42,.95);
+        border: 1px solid rgba(255,255,255,.08);
+        border-radius: 30px;
+        padding: 40px;
+        text-align: center;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 20px 50px rgba(124,58,237,.25);
+    }
+
+    .token-icon {
+        width: 100px;
+        height: 100px;
+        margin: auto;
+        border-radius: 50%;
+        background: linear-gradient(135deg,#f59e0b,#f97316);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 42px;
+        margin-bottom: 25px;
+    }
+
+    .token-title {
+        font-size: 36px;
+        font-weight: 800;
+        margin-bottom: 10px;
+    }
+
+    .token-subtitle {
+        color: #9ca3af;
+        margin-bottom: 25px;
+    }
+
+    .status-grid {
+        display: grid;
+        grid-template-columns: repeat(2,1fr);
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .status-card {
+        background: rgba(255,255,255,.04);
+        border-radius: 18px;
+        padding: 20px;
+    }
+
+    .status-value {
+        font-size: 28px;
+        font-weight: 800;
+        color: #fbbf24;
+    }
+
+    .status-label {
+        color: #9ca3af;
+        font-size: 14px;
+    }
+
+    .limit-box {
+        background: rgba(239,68,68,.12);
+        border: 1px solid rgba(239,68,68,.35);
+        color: #fecaca;
+        border-radius: 18px;
+        padding: 18px;
+        margin-bottom: 20px;
+    }
+
+    .membership-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        padding: 16px;
+        border-radius: 18px;
+        text-decoration: none;
+        color: white;
+        font-weight: 800;
+        background: linear-gradient(135deg,#7c3aed,#9333ea);
+        margin-bottom: 20px;
+    }
+
+        .membership-btn:hover {
+            color: white;
+            transform: translateY(-2px);
+        }
+
+</style>
+
+<div class="token-page">
+
+    <div class="token-card">
+
+        <div class="token-icon">
+            <i class="bi bi-coin"></i>
+        </div>
+
+        <div class="token-title">
+            My Token Status
+        </div>
+
+        <div class="token-subtitle">
+            Manage your borrow tokens and membership eligibility.
+        </div>
+
+        <div class="status-grid">
+
+            <div class="status-card">
+                <div class="status-value">
+                    @ViewBag.RemainingBorrows
+                </div>
+                <div class="status-label">
+                    Remaining Borrows
+                </div>
+            </div>
+
+            <div class="status-card">
+                <div class="status-value">
+                    @ViewBag.TotalBorrowCount
+                </div>
+                <div class="status-label">
+                    Borrows Used
+                </div>
+            </div>
+
+        </div>
+
+        @if (ViewBag.TotalBorrowCount >= 3)
+        {
+            <div class="limit-box">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <strong> Token Limit Reached</strong>
+                <p class="mb-0 mt-2">
+                    You have used all 3 token borrows.
+                    Please upgrade to membership to continue borrowing books.
+                </p>
+            </div>
+
+            <a asp-controller="Membership"
+               asp-action="Index"
+               class="membership-btn">
+                <i class="bi bi-award-fill"></i>
+                Buy Membership
+            </a>
+        }
+
+        else
+        {
+            <div class="limit-box" style="border-color: rgba(34,197,94,.4); background: rgba(34,197,94,.1); color: #bbf7d0;">
+                <i class="bi bi-check-circle-fill"></i>
+                You can still borrow books using tokens.
+            </div>
+
+            @* <a asp-controller="Token"
+               asp-action="BuyToken"
+               class="membership-btn"
+               style="background: linear-gradient(135deg,#f59e0b,#f97316);">
+                <i class="bi bi-plus-circle"></i>
+                Buy More Token
+            </a> *@
+        }
+
+    </div>
+</div>

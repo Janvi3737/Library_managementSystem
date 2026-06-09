@@ -71,61 +71,141 @@ namespace LibraryManagementSystem.Controllers
 
         // ================= ISSUE POST =================
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Issue(BorrowRecord Record, int borrowDays)
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> Issue(BorrowRecord Record, int borrowDays)
+{
+    var book = await _context.Books.FindAsync(Record.BookId);
+
+    if (book == null)
+    {
+        TempData["Error"] = "Book not found.";
+        return RedirectToAction(nameof(Issue));
+    }
+
+    if (book.AvailableCopies <= 0)
+    {
+        TempData["Error"] = "❌ Book not available.";
+        return RedirectToAction(nameof(Issue));
+    }
+
+    var alreadyHolds = await _context.BorrowRecords.AnyAsync(b =>
+        b.BookId == Record.BookId &&
+        b.MemberId == Record.MemberId &&
+        b.ReturnedOn == null);
+
+    if (alreadyHolds)
+    {
+        TempData["Error"] =
+            "❌ This member already has an unreturned copy of this book.";
+
+        return RedirectToAction(nameof(Issue));
+    }
+
+    var membership = await _context.Memberships
+        .FirstOrDefaultAsync(x =>
+            x.MemberId == Record.MemberId &&
+            x.IsActive &&
+            x.EndDate > DateTime.Now);
+
+    if (membership == null)
+    {
+        var member = await _context.Members
+            .FirstOrDefaultAsync(x => x.Id == Record.MemberId);
+
+        if (member == null)
         {
-            var book = await _context.Books.FindAsync(Record.BookId);
-
-            if (book == null)
-            {
-                TempData["Error"] = "Book not found.";
-                return RedirectToAction(nameof(Issue));
-            }
-
-            if (book.AvailableCopies <= 0)
-            {
-                TempData["Error"] = "❌ Book not available.";
-                return RedirectToAction(nameof(Issue));
-            }
-
-            // Block issuing the same book to a member who already holds an
-            var alreadyHolds = await _context.BorrowRecords.AnyAsync(b =>
-                b.BookId == Record.BookId &&
-                b.MemberId == Record.MemberId &&
-                b.ReturnedOn == null);
-
-            if (alreadyHolds)
-            {
-                TempData["Error"] =
-                    "❌ This member already has an unreturned copy of this book.";
-                return RedirectToAction(nameof(Issue));
-            }
-
-            // Admin can edit defaults via /Settings — use them here instead
-            var settings = await _context.LibrarySettings.FirstOrDefaultAsync()
-                           ?? new LibrarySettings();
-
-            if (borrowDays <= 0)
-                borrowDays = settings.DefaultLoanDays;
-
-            Record.IssuedOn = DateTime.Now;
-            Record.DueDate = DateTime.Now.AddDays(borrowDays);
-            Record.Status = "Issued";
-
-            Record.FinePerDay = settings.FinePerDay;
-            Record.FineAmount = 0;
-            Record.DaysLate = 0;
-
-            book.AvailableCopies--;
-
-            _context.BorrowRecords.Add(Record);
-            _context.Books.Update(book);
-
-            await _context.SaveChangesAsync();
-
-            TempData["Success"] = "✅ Book issued successfully!";
-            return RedirectToAction(nameof(Index));
+            TempData["Error"] = "Member not found.";
+            return RedirectToAction(nameof(Issue));
         }
+
+        var token = await _context.UserTokens
+            .FirstOrDefaultAsync(x => x.UserId == member.ApplicationUserId);
+
+        if (token == null)
+        {
+            TempData["Error"] =
+                "This user has no active membership or token.";
+
+            return RedirectToAction(nameof(Issue));
+        }
+
+        if (!token.IsApproved)
+        {
+            TempData["Error"] =
+                "User token is waiting for approval.";
+
+            return RedirectToAction(nameof(Issue));
+        }
+
+        if (token.TotalBorrowCount >= 3)
+        {
+            TempData["Error"] =
+                "❌ Token limit is over. User must purchase a membership.";
+
+            return RedirectToAction(nameof(Issue));
+        }
+
+        // Count this borrow
+        token.TotalBorrowCount++;
+
+        _context.UserTokens.Update(token);
+
+        // Notification
+        _context.Notifications.Add(new Notification
+        {
+            MemberId = token.UserId,
+            Message =
+                $"📚 Book borrowed successfully. Token usage: {token.TotalBorrowCount}/3",
+            Link = "/Member/Notifications/Index",
+            IsRead = false,
+            CreatedOn = DateTime.Now
+        });
+
+        // Last borrow warning
+        if (token.TotalBorrowCount == 3)
+        {
+            _context.Notifications.Add(new Notification
+            {
+                MemberId = token.UserId,
+                Message =
+                    "⚠️ You have used all 3 token borrows. Membership is required for future borrowing.",
+                Link = "/Membership/Index",
+                IsRead = false,
+                CreatedOn = DateTime.Now
+            });
+        }
+    }
+
+    // =========================================
+    // ISSUE BOOK
+    // =========================================
+
+    var settings = await _context.LibrarySettings.FirstOrDefaultAsync()
+                   ?? new LibrarySettings();
+
+    if (borrowDays <= 0)
+        borrowDays = settings.DefaultLoanDays;
+
+    Record.IssuedOn = DateTime.Now;
+    Record.DueDate = DateTime.Now.AddDays(borrowDays);
+    Record.Status = "Issued";
+
+    Record.FinePerDay = settings.FinePerDay;
+    Record.FineAmount = 0;
+    Record.DaysLate = 0;
+
+    book.AvailableCopies--;
+
+    _context.BorrowRecords.Add(Record);
+    _context.Books.Update(book);
+
+    await _context.SaveChangesAsync();
+
+    TempData["Success"] =
+        "✅ Book issued successfully.";
+
+    return RedirectToAction(nameof(Index));
+}
 
         // ================= RETURN GET =================
         [HttpGet]

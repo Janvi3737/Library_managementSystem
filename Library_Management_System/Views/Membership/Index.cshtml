@@ -123,6 +123,101 @@
             height: 52px;
         }
     }
+
+    /* ==========================
+       TOKEN SECTION
+    ========================== */
+
+    .token-section {
+        position: relative;
+        z-index: 2;
+        margin-bottom: 50px;
+    }
+
+    .token-card {
+        background: linear-gradient( 135deg, rgba(124,58,237,.18), rgba(217,70,239,.15) );
+        border: 1px solid rgba(192,132,252,.25);
+        border-radius: 28px;
+        padding: 28px 35px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 25px;
+        backdrop-filter: blur(18px);
+        box-shadow: 0 15px 40px rgba(124,58,237,.15);
+    }
+
+    .token-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 24px;
+        background: linear-gradient( 135deg, #f59e0b, #f97316 );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 34px;
+        color: white;
+        flex-shrink: 0;
+        box-shadow: 0 15px 30px rgba(249,115,22,.35);
+    }
+
+    .token-content {
+        flex: 1;
+    }
+
+        .token-content h3 {
+            font-size: 28px;
+            font-weight: 900;
+            margin-bottom: 8px;
+            color: white;
+        }
+
+        .token-content p {
+            color: #cbd5e1;
+            margin: 0;
+            line-height: 1.7;
+        }
+
+    .token-btn {
+        min-width: 220px;
+        height: 62px;
+        border-radius: 18px;
+        text-decoration: none;
+        color: white;
+        font-weight: 800;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        background: linear-gradient( 135deg, #f59e0b, #f97316 );
+        transition: .35s ease;
+        box-shadow: 0 12px 30px rgba(249,115,22,.25);
+    }
+
+        .token-btn:hover {
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(249,115,22,.35);
+        }
+
+    @@media(max-width:768px) {
+
+        .token-card {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .token-btn {
+            width: 100%;
+            min-width: auto;
+        }
+
+        .token-content h3 {
+            font-size: 24px;
+        }
+    }
+
     /* GRID */
     .membership-grid {
         position: relative;
@@ -434,6 +529,40 @@
         </div>
 
     </div>
+
+    <!-- TOKEN PURCHASE CARD -->
+    <div class="token-section">
+
+        <div class="token-card">
+
+            <div class="token-icon">
+                <i class="bi bi-coin"></i>
+            </div>
+
+            <div class="token-content">
+
+                <h3>Need to Borrow Tokens?</h3>
+
+                <p>
+                    Purchase additional borrow tokens instantly and continue
+                    borrowing books for temporary!
+                </p>
+
+            </div>
+
+            <a asp-controller="Token"
+               asp-action="BuyToken"
+               class="token-btn">
+
+                <i class="bi bi-lightning-charge-fill"></i>
+                Buy Tokens
+
+            </a>
+
+        </div>
+
+    </div>
+
     <!-- GRID -->
     <div class="membership-grid">
 
