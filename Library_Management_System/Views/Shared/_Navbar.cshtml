@@ -4,6 +4,7 @@
 @inject UserManager<LibraryManagementSystem.ClassLibrary.Models.ApplicationUser> UserManager
 
 @{
+
     var currentUser = await UserManager.GetUserAsync(User);
 
     string profileImage = "/images/default-user.svg";
