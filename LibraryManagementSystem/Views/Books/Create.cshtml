@@ -72,6 +72,13 @@
                     <input asp-for="TotalPages" class="form-control" />
                 </div>
 
+                <!-- Deposit Amount -->
+                <div class="mb-3">
+                    <label asp-for="DepositAmount">Deposit Amount</label>
+                    <input asp-for="DepositAmount" class="form-control" />
+                    <span asp-validation-for="DepositAmount" class="text-danger"></span>
+                </div>
+
                 <div class="mb-3">
                     <label asp-for="Reservations"></label>
                     <input asp-for="Reservations" class="form-control" />

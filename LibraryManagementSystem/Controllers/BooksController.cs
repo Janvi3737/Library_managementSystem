@@ -50,7 +50,9 @@ namespace LibraryManagementSystem.Controllers
                      b.Category.Name.Contains(search)) ||
 
                     (b.Department != null &&
-                     b.Department.Name.Contains(search))
+                     b.Department.Name.Contains(search)) ||
+
+                    b.DepositAmount.ToString().Contains(search)
                 );
             }
 
@@ -97,7 +99,6 @@ namespace LibraryManagementSystem.Controllers
         public IActionResult Create()
         {
             LoadDropdowns();
-
             return View();
         }
 
@@ -105,10 +106,18 @@ namespace LibraryManagementSystem.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            Book book,
-            IFormFile? PdfFile)
+    Book book,
+    IFormFile? PdfFile)
         {
             ValidateBook(book);
+
+            // ✅ ADD DEPOSIT VALIDATION
+            if (book.DepositAmount < 0)
+            {
+                ModelState.AddModelError(
+                    "DepositAmount",
+                    "Deposit amount cannot be negative.");
+            }
 
             bool isbnExists = await _context.Books
                 .AnyAsync(b => b.ISBN == book.ISBN);
@@ -125,9 +134,7 @@ namespace LibraryManagementSystem.Controllers
             // PDF UPLOAD
             if (PdfFile != null && PdfFile.Length > 0)
             {
-                // CHECK PDF EXTENSION
-                if (Path.GetExtension(PdfFile.FileName)
-                    .ToLower() != ".pdf")
+                if (Path.GetExtension(PdfFile.FileName).ToLower() != ".pdf")
                 {
                     ModelState.AddModelError(
                         "PdfFile",
@@ -141,13 +148,11 @@ namespace LibraryManagementSystem.Controllers
                         "uploads",
                         "pdfs");
 
-                    // CREATE FOLDER
                     if (!Directory.Exists(pdfFolder))
                     {
                         Directory.CreateDirectory(pdfFolder);
                     }
 
-                    // UNIQUE FILE NAME
                     string fileName =
                         Guid.NewGuid().ToString()
                         + Path.GetExtension(PdfFile.FileName);
@@ -155,14 +160,12 @@ namespace LibraryManagementSystem.Controllers
                     string filePath =
                         Path.Combine(pdfFolder, fileName);
 
-                    // SAVE FILE
                     using (var stream =
                            new FileStream(filePath, FileMode.Create))
                     {
                         await PdfFile.CopyToAsync(stream);
                     }
 
-                    // SAVE URL
                     book.PdfUrl = "/uploads/pdfs/" + fileName;
                 }
             }
@@ -174,18 +177,15 @@ namespace LibraryManagementSystem.Controllers
                     book.CreatedAt = DateTime.UtcNow;
 
                     _context.Books.Add(book);
-
                     await _context.SaveChangesAsync();
 
-                    TempData["Success"] =
-                        "Book added successfully!";
+                    TempData["Success"] = "Book added successfully!";
 
                     return RedirectToAction(nameof(Index));
                 }
                 catch
                 {
-                    TempData["Error"] =
-                        "Something went wrong while saving.";
+                    TempData["Error"] = "Something went wrong while saving.";
                 }
             }
 
@@ -196,8 +196,6 @@ namespace LibraryManagementSystem.Controllers
 
             return View(book);
         }
-
-
 
         // EDIT GET
         [HttpGet]
@@ -221,17 +219,13 @@ namespace LibraryManagementSystem.Controllers
 
 
         // EDIT POST
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
             Book book,
             IFormFile? PdfFile)
         {
-
-
             // REMOVE UNUSED VALIDATIONS
-
             ModelState.Remove("Author");
             ModelState.Remove("Category");
             ModelState.Remove("Department");
@@ -240,11 +234,17 @@ namespace LibraryManagementSystem.Controllers
             ModelState.Remove("Reviews");
 
             // CUSTOM VALIDATION
-
             ValidateBook(book);
 
-            // DUPLICATE ISBN CHECK
+            // ✅ ADD DEPOSIT VALIDATION
+            if (book.DepositAmount < 0)
+            {
+                ModelState.AddModelError(
+                    "DepositAmount",
+                    "Deposit amount cannot be negative.");
+            }
 
+            // DUPLICATE ISBN CHECK
             bool isbnExists = await _context.Books
                 .AnyAsync(x =>
                     x.ISBN == book.ISBN &&
@@ -258,7 +258,6 @@ namespace LibraryManagementSystem.Controllers
             }
 
             // AVAILABLE COPIES CHECK
-
             if (book.AvailableCopies > book.TotalCopies)
             {
                 ModelState.AddModelError(
@@ -278,11 +277,8 @@ namespace LibraryManagementSystem.Controllers
 
             try
             {
-
                 var existingBook = await _context.Books
                     .FirstOrDefaultAsync(x => x.Id == book.Id);
-
-
 
                 if (existingBook == null)
                 {
@@ -290,7 +286,6 @@ namespace LibraryManagementSystem.Controllers
                 }
 
                 // UPDATE DATA
-
                 existingBook.Title = book.Title;
                 existingBook.ISBN = book.ISBN;
                 existingBook.AuthorId = book.AuthorId;
@@ -303,14 +298,13 @@ namespace LibraryManagementSystem.Controllers
                 existingBook.AvailableCopies = book.AvailableCopies;
                 existingBook.IsFeatured = book.IsFeatured;
 
-                // PDF UPLOAD
+                // ✅ ADD THIS LINE (DEPOSIT)
+                existingBook.DepositAmount = book.DepositAmount;
 
+                // PDF UPLOAD
                 if (PdfFile != null && PdfFile.Length > 0)
                 {
-                    // VALIDATE PDF
-
-                    if (Path.GetExtension(PdfFile.FileName)
-                        .ToLower() != ".pdf")
+                    if (Path.GetExtension(PdfFile.FileName).ToLower() != ".pdf")
                     {
                         ModelState.AddModelError(
                             "PdfFile",
@@ -330,14 +324,10 @@ namespace LibraryManagementSystem.Controllers
                         "uploads",
                         "pdfs");
 
-                    // CREATE FOLDER
-
                     if (!Directory.Exists(pdfFolder))
                     {
                         Directory.CreateDirectory(pdfFolder);
                     }
-
-                    // DELETE OLD PDF
 
                     if (!string.IsNullOrWhiteSpace(existingBook.PdfUrl))
                     {
@@ -352,8 +342,6 @@ namespace LibraryManagementSystem.Controllers
                         }
                     }
 
-                    // NEW FILE NAME
-
                     string fileName =
                         Guid.NewGuid().ToString() +
                         Path.GetExtension(PdfFile.FileName);
@@ -361,21 +349,15 @@ namespace LibraryManagementSystem.Controllers
                     string filePath =
                         Path.Combine(pdfFolder, fileName);
 
-                    // SAVE FILE
-
                     using (var stream =
                            new FileStream(filePath, FileMode.Create))
                     {
                         await PdfFile.CopyToAsync(stream);
                     }
 
-                    // SAVE URL
-
                     existingBook.PdfUrl =
                         "/uploads/pdfs/" + fileName;
                 }
-
-                // SAVE CHANGES
 
                 await _context.SaveChangesAsync();
 
@@ -396,7 +378,6 @@ namespace LibraryManagementSystem.Controllers
                 return View(book);
             }
         }
-
 
         // DELETE GET
         [HttpGet]
@@ -451,7 +432,6 @@ namespace LibraryManagementSystem.Controllers
             }
 
             _context.Books.Remove(book);
-
             await _context.SaveChangesAsync();
 
             TempData["Success"] =
@@ -459,7 +439,6 @@ namespace LibraryManagementSystem.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
         // EXPORT EXCEL
         public async Task<IActionResult> ExportExcel()
         {
@@ -478,13 +457,7 @@ namespace LibraryManagementSystem.Controllers
                 "Books.xlsx"
             );
         }
-
-        // IMPORT GET
-        [HttpGet]
-        public IActionResult Import()
-        {
-            return View();
-        }
+        
 
         // BULK DELETE
         [HttpPost]
@@ -505,21 +478,20 @@ namespace LibraryManagementSystem.Controllers
                 try
                 {
                     var b = await _context.Books
-                        .FindAsync(bookId);
+                        .Include(x => x.BorrowRecords)
+                        .FirstOrDefaultAsync(x => x.Id == bookId);
 
                     if (b == null)
                         continue;
 
-                    bool inUse = await _context.BorrowRecords
-                        .AnyAsync(br => br.BookId == bookId);
-
-                    if (inUse)
+                    // CHECK IF BOOK IS IN USE
+                    if (b.BorrowRecords != null && b.BorrowRecords.Any())
                     {
                         skipped++;
                         continue;
                     }
 
-                    // DELETE PDF
+                    // DELETE PDF FILE
                     if (!string.IsNullOrWhiteSpace(b.PdfUrl))
                     {
                         string pdfPath = Path.Combine(
@@ -534,7 +506,6 @@ namespace LibraryManagementSystem.Controllers
                     }
 
                     _context.Books.Remove(b);
-
                     await _context.SaveChangesAsync();
 
                     deleted++;
@@ -552,11 +523,18 @@ namespace LibraryManagementSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // IMPORT GET
+        [HttpGet]
+        public IActionResult Import()
+        {
+            return View();
+        }
+
         // IMPORT POST
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Import(
-            BookImportViewModel model)
+    BookImportViewModel model)
         {
             try
             {
@@ -663,6 +641,10 @@ namespace LibraryManagementSystem.Controllers
                             Description = csv.GetField("Description"),
                             CoverImageUrl = csv.GetField("CoverImageUrl"),
                             IsFeatured = csv.GetField<bool>("IsFeatured"),
+
+                            // ✅ ADDED HERE
+                            DepositAmount = csv.GetField<decimal>("DepositAmount"),
+
                             CreatedAt = DateTime.UtcNow
                         };
 
@@ -677,7 +659,6 @@ namespace LibraryManagementSystem.Controllers
                 if (books.Any())
                 {
                     await _context.Books.AddRangeAsync(books);
-
                     await _context.SaveChangesAsync();
 
                     TempData["Success"] =
@@ -694,68 +675,7 @@ namespace LibraryManagementSystem.Controllers
             catch (Exception ex)
             {
                 TempData["Error"] = ex.Message;
-
                 return View(model);
-            }
-        }
-
-        // PRIVATE METHODS
-
-        private void LoadDropdowns(
-            int? categoryId = null,
-            int? authorId = null,
-            int? departmentId = null)
-        {
-            ViewBag.CategoryList =
-                new SelectList(
-                    _context.Categories,
-                    "Id",
-                    "Name",
-                    categoryId);
-
-            ViewBag.AuthorList =
-                new SelectList(
-                    _context.Authors,
-                    "Id",
-                    "Name",
-                    authorId);
-
-            ViewBag.DepartmentList =
-                new SelectList(
-                    _context.Departments,
-                    "Id",
-                    "Name",
-                    departmentId);
-        }
-
-        private void ValidateBook(Book book)
-        {
-            if (book.CategoryId == 0)
-            {
-                ModelState.AddModelError(
-                    "CategoryId",
-                    "Select Category");
-            }
-
-            if (book.AuthorId == 0)
-            {
-                ModelState.AddModelError(
-                    "AuthorId",
-                    "Select Author");
-            }
-
-            if (book.TotalCopies <= 0)
-            {
-                ModelState.AddModelError(
-                    "TotalCopies",
-                    "Enter valid total copies");
-            }
-
-            if (book.TotalPages <= 0)
-            {
-                ModelState.AddModelError(
-                    "TotalPages",
-                    "Enter valid total pages");
             }
         }
 
@@ -771,7 +691,54 @@ namespace LibraryManagementSystem.Controllers
                 "wwwroot",
                 book.PdfUrl.TrimStart('/'));
 
+            if (!System.IO.File.Exists(path))
+                return NotFound();
+
             return PhysicalFile(path, "application/pdf");
+        }
+
+        private void LoadDropdowns(
+    int? categoryId = null,
+    int? authorId = null,
+    int? departmentId = null)
+        {
+            ViewBag.CategoryList =
+                new SelectList(_context.Categories, "Id", "Name", categoryId);
+
+            ViewBag.AuthorList =
+                new SelectList(_context.Authors, "Id", "Name", authorId);
+
+            ViewBag.DepartmentList =
+                new SelectList(_context.Departments, "Id", "Name", departmentId);
+        }
+
+        private void ValidateBook(Book book)
+        {
+            if (book.CategoryId == 0)
+            {
+                ModelState.AddModelError("CategoryId", "Select Category");
+            }
+
+            if (book.AuthorId == 0)
+            {
+                ModelState.AddModelError("AuthorId", "Select Author");
+            }
+
+            if (book.TotalCopies <= 0)
+            {
+                ModelState.AddModelError("TotalCopies", "Enter valid total copies");
+            }
+
+            if (book.TotalPages <= 0)
+            {
+                ModelState.AddModelError("TotalPages", "Enter valid total pages");
+            }
+
+            // ✅ ADDED (IMPORTANT)
+            if (book.DepositAmount < 0)
+            {
+                ModelState.AddModelError("DepositAmount", "Deposit cannot be negative");
+            }
         }
     }
 }

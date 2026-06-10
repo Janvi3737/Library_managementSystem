@@ -77,10 +77,13 @@ namespace Library_Management_System.Areas.Member.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateReservation(
-            int bookId,
-            int quantity = 1)
+    int bookId,
+    int quantity = 1)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+                return RedirectToAction("Login", "Account");
 
             var book = await _context.Books.FindAsync(bookId);
 
@@ -88,24 +91,55 @@ namespace Library_Management_System.Areas.Member.Controllers
                 return NotFound();
 
             // =========================
-            // TOKEN LIMIT CHECK
+            // GET USER TOKEN
             // =========================
 
             var token = await _context.UserTokens
                 .FirstOrDefaultAsync(x => x.UserId == userId);
 
-            if (token != null && token.TotalBorrowCount >= 3)
+            if (token == null)
             {
                 TempData["Error"] =
-                    "Your token borrow limit is over. Please purchase a membership plan.";
+                    "You don't have any token. Please purchase a token first.";
 
                 return RedirectToAction(
-                    "Index",
-                    "Membership");
+                    "BuyToken",
+                    "Token",
+                    new { area = "", bookId = bookId });
             }
 
             // =========================
-            // VALIDATE QUANTITY
+            // TOKEN LIMIT CHECK
+            // =========================
+
+            if (token.TotalBorrowCount >= 3)
+            {
+                TempData["Error"] =
+                    "You have already used all 3 tokens. Please purchase membership.";
+
+                return RedirectToAction(
+                    "Index",
+                    "Membership",
+                    new { area = "" });
+            }
+
+            // =========================
+            // AVAILABLE TOKEN CHECK
+            // =========================
+
+            if (token.AvailableTokens <= 0)
+            {
+                TempData["Error"] =
+                    "No available tokens found. Please purchase another token.";
+
+                return RedirectToAction(
+                    "BuyToken",
+                    "Token",
+                    new { area = "", bookId = bookId });
+            }
+
+            // =========================
+            // QUANTITY VALIDATION
             // =========================
 
             if (quantity < 1)
@@ -115,10 +149,10 @@ namespace Library_Management_System.Areas.Member.Controllers
                 quantity = book.AvailableCopies;
 
             // =========================
-            // CHECK DUPLICATE RESERVATION
+            // DUPLICATE CHECK
             // =========================
 
-            var alreadyReserved = await _context.Reservations
+            bool alreadyReserved = await _context.Reservations
                 .AnyAsync(r =>
                     r.BookId == bookId &&
                     r.MemberId == userId &&
@@ -127,7 +161,7 @@ namespace Library_Management_System.Areas.Member.Controllers
             if (alreadyReserved)
             {
                 TempData["Error"] =
-                    "You already reserved this book.";
+                    "You have already reserved this book.";
 
                 return RedirectToAction(nameof(Index));
             }
@@ -147,10 +181,19 @@ namespace Library_Management_System.Areas.Member.Controllers
 
             _context.Reservations.Add(reservation);
 
+            // =========================
+            // CONSUME TOKEN
+            // =========================
+
+            token.AvailableTokens -= 1;
+            token.TotalBorrowCount += 1;
+
+            _context.UserTokens.Update(token);
+
             await _context.SaveChangesAsync();
 
             TempData["Success"] =
-                "Book reserved successfully.";
+                $"Book reserved successfully. Remaining Tokens: {token.AvailableTokens}";
 
             return RedirectToAction(nameof(Index));
         }

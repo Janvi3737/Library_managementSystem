@@ -123,8 +123,9 @@
         transition: .3s;
     }
 
-        .buy-btn:hover:not(:disabled) {
+        .buy-btn:hover {
             transform: translateY(-3px);
+            color: #9333ea;
         }
 
         .buy-btn:disabled {
@@ -172,33 +173,33 @@
         </div>
 
         <div class="token-title">
-            Borrow Token
+            Book Borrow Token
         </div>
 
         <div class="token-subtitle">
-            For non-members who want to borrow books without purchasing a membership.
+            Borrow books without purchasing a membership.
+            Each token allows you to borrow 1 book only.
         </div>
 
         <div class="price-box">
-
             <div class="price">
-                ₹200
+                ₹@ViewBag.DepositAmount
             </div>
 
             <div>
                 Refundable Security Deposit
             </div>
-
         </div>
 
         <div class="status-grid">
 
             <div class="status-card">
                 <div class="status-value">
-                    @ViewBag.RemainingBorrows
+                    @(3 - ViewBag.TotalBorrowCount)
                 </div>
+
                 <div class="status-label">
-                    Remaining Borrows
+                    Tokens Remaining
                 </div>
             </div>
 
@@ -206,8 +207,9 @@
                 <div class="status-value">
                     @ViewBag.TotalBorrowCount
                 </div>
+
                 <div class="status-label">
-                    Borrows Used
+                    Tokens Used
                 </div>
             </div>
 
@@ -216,85 +218,81 @@
         @if (ViewBag.TotalBorrowCount >= 3)
         {
             <div class="limit-box">
+
                 <h5>
                     <i class="bi bi-exclamation-triangle-fill"></i>
                     Token Limit Reached
                 </h5>
 
                 <p class="mb-0">
-                    You have already used your maximum 3 token borrows.
-                    Membership is required to continue borrowing books.
+                    You have already used all 3 borrow tokens.
+                    To continue borrowing books, please purchase a membership plan.
                 </p>
+
             </div>
 
             <a asp-controller="Membership"
                asp-action="Index"
                class="membership-btn">
+
                 <i class="bi bi-award-fill"></i>
-                Buy Membership
+                Upgrade To Membership
+
             </a>
         }
+        else
+        {
+            <div class="feature-list">
 
-        <div class="feature-list">
+                <div class="feature-item">
+                    <i class="bi bi-check-circle-fill"></i>
+                    1 Token = 1 Book Borrow
+                </div>
 
-            <div class="feature-item">
-                <i class="bi bi-check-circle-fill"></i>
-                Borrow Books Using Token
+                <div class="feature-item">
+                    <i class="bi bi-check-circle-fill"></i>
+                    Maximum 3 Tokens Per User
+                </div>
+
+                <div class="feature-item">
+                    <i class="bi bi-check-circle-fill"></i>
+                    Secure Refundable Deposit
+                </div>
+
+                <div class="feature-item">
+                    <i class="bi bi-check-circle-fill"></i>
+                    Fast Admin Approval
+                </div>
+
+                <div class="feature-item">
+                    <i class="bi bi-check-circle-fill"></i>
+                    Track Borrow Activity
+                </div>
+
+                <div class="feature-item">
+                    <i class="bi bi-check-circle-fill"></i>
+                    Membership Required After 3 Borrows
+                </div>
+
             </div>
 
-            <div class="feature-item">
-                <i class="bi bi-check-circle-fill"></i>
-                Maximum 3 Borrows Allowed
-            </div>
+            <form asp-action="Checkout" method="post">
 
-            <div class="feature-item">
-                <i class="bi bi-check-circle-fill"></i>
-                Reserve Books
-            </div>
+                @Html.AntiForgeryToken()
 
-            <div class="feature-item">
-                <i class="bi bi-check-circle-fill"></i>
-                View Borrow History & Activity
-            </div>
+                <input type="hidden"
+                       name="bookId"
+                       value="@ViewBag.BookId" />
 
-            <div class="feature-item">
-                <i class="bi bi-check-circle-fill"></i>
-                Refundable ₹200 Security Deposit
-            </div>
+                <button type="submit" class="buy-btn">
 
-            <div class="feature-item">
-                <i class="bi bi-check-circle-fill"></i>
-                Membership Required After 3 Borrows
-            </div>
+                    <i class="bi bi-credit-card"></i>
+                    Purchase Borrow Token
 
-        </div>
+                </button>
 
-        <form asp-action="Checkout" method="post">
-
-            @Html.AntiForgeryToken()
-
-            <button type="submit"
-                    class="buy-btn"
-                    @(ViewBag.TotalBorrowCount >= 3 ? "disabled" : "")>
-
-                @if (ViewBag.TotalBorrowCount >= 3)
-                {
-                    <span>
-                        <i class="bi bi-lock-fill"></i>
-                        Membership Required
-                    </span>
-                }
-                else
-                {
-                    <span>
-                        <i class="bi bi-credit-card"></i>
-                        Buy Token Now
-                    </span>
-                }
-
-            </button>
-
-        </form>
+            </form>
+        }
 
     </div>
 

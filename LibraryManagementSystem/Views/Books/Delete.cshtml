@@ -1,4 +1,4 @@
-﻿@model LibraryManagementSystem.ClassLibrary.Models.Book
+@model LibraryManagementSystem.ClassLibrary.Models.Book
 
 @{
     ViewData["Title"] = "Delete Book";
@@ -120,6 +120,13 @@
                             <p>
                                 <strong>Borrow Count:</strong>
                                 @Model.BorrowCount
+                            </p>
+
+                            <p>
+                                <strong>Deposit Amount:</strong>
+                                <span class="badge bg-info text-dark">
+                                    ₹@Model.DepositAmount
+                                </span>
                             </p>
 
                         </div>

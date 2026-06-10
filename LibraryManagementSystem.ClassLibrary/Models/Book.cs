@@ -40,6 +40,8 @@ namespace LibraryManagementSystem.ClassLibrary.Models
         public int TotalCopies { get; set; }
 
         public int TotalPages { get; set; }
+
+        public decimal DepositAmount { get; set; }
         public int AvailableCopies { get; set; }
         public bool IsFeatured { get; set; } = false;
 

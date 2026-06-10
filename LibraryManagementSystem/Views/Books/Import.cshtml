@@ -1,4 +1,4 @@
-﻿@model LibraryManagementSystem.ViewModels.BookImportViewModel
+@model LibraryManagementSystem.ViewModels.BookImportViewModel
 
 @{
     ViewData["Title"] = "Bulk Import Books";
@@ -122,9 +122,9 @@
                         <div class="bg-light border rounded-3 p-3">
 
 <pre class="mb-0">
-Title,ISBN,AuthorId,CategoryId,DepartmentId,TotalCopies,AvailableCopies,IsFeatured
-Atomic Habits,11111,1,2,1,10,10,true
-Clean Code,22222,2,1,2,5,5,false
+Title,ISBN,AuthorId,CategoryId,DepartmentId,TotalCopies,AvailableCopies,IsFeatured,DepositAmount
+Atomic Habits,11111,1,2,1,10,10,true,100
+Clean Code,22222,2,1,2,5,5,false,50
 </pre>
 
                         </div>
@@ -150,6 +150,10 @@ Clean Code,22222,2,1,2,5,5,false
 
                             <li>
                                 Duplicate ISBN values should be avoided.
+                            </li>
+
+                            <li>
+                                DepositAmount is required and must be numeric (e.g. 100, 50, 0).
                             </li>
 
                             <li>

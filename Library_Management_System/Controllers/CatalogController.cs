@@ -180,7 +180,9 @@ namespace Library_Management_System.Controllers
                 TotalReviews = reviews.Count,
                 Reviews = reviews,
 
-                HasMembership = hasMembership
+                HasMembership = hasMembership,
+                DepositAmount=book.DepositAmount
+
             };
 
             return View(vm);

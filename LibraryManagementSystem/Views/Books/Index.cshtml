@@ -1,4 +1,4 @@
-﻿@model IEnumerable<LibraryManagementSystem.ClassLibrary.Models.Book>
+@model IEnumerable<LibraryManagementSystem.ClassLibrary.Models.Book>
 @{
     ViewData["Title"] = "Books";
 }
@@ -144,6 +144,7 @@
                                 <th>Featured</th>
                                 <th>Total</th>
                                 <th>Available</th>
+                            <th>Deposit</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -196,6 +197,11 @@
 
                                     <td>@item.TotalCopies</td>
                                     <td>@item.AvailableCopies</td>
+                                <td>
+                                    <span class="badge bg-info text-dark">
+                                        ₹@item.DepositAmount
+                                    </span>
+                                </td>
 
                                     <!-- FIX: Actions must be inside TD -->
                                     <td class="text-nowrap">

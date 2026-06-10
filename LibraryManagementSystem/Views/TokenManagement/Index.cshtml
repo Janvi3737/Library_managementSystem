@@ -1,7 +1,7 @@
 @model IEnumerable<LibraryManagementSystem.ClassLibrary.Models.TokenPayment>
 
 @{
-    ViewData["Title"] = "Token Approvals";
+    ViewData["Title"] = "Token Approval Management";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -24,8 +24,8 @@
     }
 
     /* ===================================
-       GLOBAL
-    =================================== */
+           GLOBAL
+        =================================== */
 
     * {
         margin: 0;
@@ -40,8 +40,8 @@
     }
 
     /* ===================================
-       PAGE
-    =================================== */
+           PAGE
+        =================================== */
 
     .page {
         padding: 35px;
@@ -50,8 +50,8 @@
     }
 
     /* ===================================
-       HEADER
-    =================================== */
+           HEADER
+        =================================== */
 
     .header {
         background: #fff;
@@ -74,8 +74,8 @@
     }
 
     /* ===================================
-       EMPTY STATE
-    =================================== */
+           EMPTY STATE
+        =================================== */
 
     .empty {
         margin-top: 25px;
@@ -103,8 +103,8 @@
         }
 
     /* ===================================
-       GRID
-    =================================== */
+           GRID
+        =================================== */
 
     .grid {
         display: flex;
@@ -114,8 +114,8 @@
     }
 
     /* ===================================
-       CARD
-    =================================== */
+           CARD
+        =================================== */
 
     .card {
         background: var(--card);
@@ -136,8 +136,8 @@
         }
 
     /* ===================================
-       IMAGE
-    =================================== */
+           IMAGE
+        =================================== */
 
     .image-section {
         position: relative;
@@ -169,8 +169,8 @@
         }
 
     /* ===================================
-       CONTENT
-    =================================== */
+           CONTENT
+        =================================== */
 
     .content-section {
         display: flex;
@@ -184,8 +184,8 @@
     }
 
     /* ===================================
-       USER
-    =================================== */
+           USER
+        =================================== */
 
     .user {
         display: flex;
@@ -218,8 +218,8 @@
     }
 
     /* ===================================
-       STATUS
-    =================================== */
+           STATUS
+        =================================== */
 
     .status {
         padding: 10px 18px;
@@ -246,8 +246,8 @@
     }
 
     /* ===================================
-       DETAILS
-    =================================== */
+           DETAILS
+        =================================== */
 
     .details {
         display: grid;
@@ -278,8 +278,8 @@
     }
 
     /* ===================================
-       BUTTONS
-    =================================== */
+           BUTTONS
+        =================================== */
 
     .actions {
         display: flex;
@@ -331,8 +331,8 @@
         }
 
     /* ===================================
-       SCROLLBAR
-    =================================== */
+           SCROLLBAR
+        =================================== */
 
     ::-webkit-scrollbar {
         width: 10px;
@@ -348,8 +348,8 @@
     }
 
     /* ===================================
-       RESPONSIVE
-    =================================== */
+           RESPONSIVE
+        =================================== */
 
     @@media (max-width: 992px) {
 
@@ -433,10 +433,17 @@
                 var email = item.UserToken?.User?.Email ?? "-";
                 var initial = name.Substring(0, 1).ToUpper();
 
+                var availableTokens = item.UserToken?.AvailableTokens ?? 0;
+                var usedTokens = item.UserToken?.TotalBorrowCount ?? 0;
+                var totalPurchased = availableTokens + usedTokens;
+
+                bool limitReached = totalPurchased >= 3;
+
                 <div class="card">
 
                     <!-- IMAGE -->
                     <div class="image-section">
+
                         @if (!string.IsNullOrEmpty(item.ScreenshotPath))
                         {
                             <img src="@item.ScreenshotPath" class="img" />
@@ -448,6 +455,7 @@
                                 <span>No Screenshot</span>
                             </div>
                         }
+
                     </div>
 
                     <!-- CONTENT -->
@@ -468,8 +476,14 @@
 
                             </div>
 
-                            <div class="status @item.PaymentStatus.ToLower()">
+                            <div class="status @(item.PaymentStatus == "Approved"
+                                                             ? "approved"
+                                                             : item.PaymentStatus == "Rejected"
+                                                                 ? "rejected"
+                                                                 : "pending")">
+
                                 @item.PaymentStatus
+
                             </div>
 
                         </div>
@@ -501,29 +515,68 @@
                                 <div class="value">@item.PaymentDate.ToString("dd MMM yyyy")</div>
                             </div>
 
+                            <hr />
+
+                            <div class="row">
+                                <div class="label">Available Tokens</div>
+                                <div class="value">@availableTokens</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="label">Used Tokens</div>
+                                <div class="value">@usedTokens</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="label">Total Purchased</div>
+                                <div class="value">@totalPurchased / 3</div>
+                            </div>
+
                         </div>
 
                         @if (item.PaymentStatus == "Pending")
                         {
                             <div class="actions">
 
-                                <form asp-action="Approve" method="post">
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" name="id" value="@item.Id" />
+                                @if (!limitReached)
+                                {
+                                    <form asp-action="Approve" method="post">
+                                        @Html.AntiForgeryToken()
 
-                                    <button type="submit" class="btn-approve">
-                                        <i class="bi bi-check-circle-fill"></i>
-                                        Approve
+                                        <input type="hidden"
+                                               name="id"
+                                               value="@item.Id" />
+
+                                        <button type="submit"
+                                                class="btn-approve">
+
+                                            <i class="bi bi-check-circle-fill"></i>
+                                            Approve
+
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <button class="btn-limit" disabled>
+                                        <i class="bi bi-exclamation-triangle"></i>
+                                        Limit Reached (3/3)
                                     </button>
-                                </form>
+                                }
 
                                 <form asp-action="Reject" method="post">
                                     @Html.AntiForgeryToken()
-                                    <input type="hidden" name="id" value="@item.Id" />
 
-                                    <button type="submit" class="btn-reject">
+                                    <input type="hidden"
+                                           name="id"
+                                           value="@item.Id" />
+
+                                    <button type="submit"
+                                            class="btn-reject">
+
                                         <i class="bi bi-x-circle-fill"></i>
                                         Reject
+
                                     </button>
                                 </form>
 

@@ -70,10 +70,13 @@ h4,
 h5,
 h6,
 .title,
-.page-title,
 .book-title,
 .catalog-book-title {
   color: var(--text) !important;
+}
+
+.page-title {
+  color: mediumpurple !important;
 }
 
 p,
@@ -96,12 +99,12 @@ th {
 ========================================= */
 
 a {
-  color: var(--text-light) !important;
+  color: rgb(228, 207, 255) !important;
   text-decoration: none;
 }
 
   a:hover {
-    color: var(--primary-light) !important;
+    color: white !important;
   }
 
 /* =========================================
@@ -516,8 +519,8 @@ body.light-mode .btn-dark {
   cursor: pointer;
   transition: 0.3s ease;
   position: fixed;
-  bottom: 20px;
-  left: 20px;
+  bottom: 27px;
+  right: 290px;
   z-index: 9999;
 }
 
@@ -757,17 +760,25 @@ body.light-mode {
 
   /* TEXT */
 
-  body.light-mode h1,
+
   body.light-mode h2,
   body.light-mode h3,
-  body.light-mode h4,
+  /* body.light-mode h4, */
   body.light-mode h5,
   body.light-mode .member-name,
   body.light-mode .info-value,
   body.light-mode .card-title,
   body.light-mode .card-header h2,
   body.light-mode .preview-section h3 {
-    color: #111827 !important;
+    color: black !important;
+  }
+
+  body.light-mode h4 {
+    color: white !important;
+  }
+
+  body.light-mode h1 {
+    color: mediumpurple !important;
   }
 
   body.light-mode p,
