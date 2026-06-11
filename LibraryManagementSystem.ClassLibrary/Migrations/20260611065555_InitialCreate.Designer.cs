@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LibraryManagementSystem.ClassLibrary.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260609070739_InitialCreate")]
+    [Migration("20260611065555_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -189,6 +189,9 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                     b.Property<int?>("DepartmentId")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("DepositAmount")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("Description")
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
@@ -277,6 +280,12 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                     b.Property<int>("BookId")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("BorrowFee")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("DamageCharge")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<int>("DaysLate")
                         .HasColumnType("int");
 
@@ -292,11 +301,17 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                     b.Property<decimal>("FinePerDay")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<bool>("IsNonMemberBorrow")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsTokenBorrow")
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("IssuedOn")
                         .HasColumnType("datetime2");
+
+                    b.Property<decimal>("LostBookCharge")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("MemberId")
                         .HasColumnType("int");
@@ -310,8 +325,16 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                     b.Property<int>("RenewCount")
                         .HasColumnType("int");
 
+                    b.Property<string>("ReturnStatus")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<DateTime?>("ReturnedOn")
                         .HasColumnType("datetime2");
+
+                    b.Property<decimal>("SecurityDeposit")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Status")
                         .IsRequired()

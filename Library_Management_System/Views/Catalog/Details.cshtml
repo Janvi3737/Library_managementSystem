@@ -1172,16 +1172,28 @@
 
                 </div>
 
-                @if (!Model.HasMembership)
+                @if (Model.HasMembership)
+                {
+                    <div class="deposit-box membership-box">
+                        <div class="price">FREE</div>
+                        <div class="deposit-text">
+                            Membership Benefit
+                            <br />
+                            No Security Deposit Required
+                        </div>
+                    </div>
+                }
+                else if (Model.DepositAmount > 0)
                 {
                     <div class="deposit-box">
                         <div class="price">₹@Model.DepositAmount</div>
                         <div class="deposit-text">
-                            Refundable Security Deposit (Token Required)
+                            Refundable Security Deposit
+                            <br />
+                            Required for Non-Members
                         </div>
                     </div>
                 }
-
                 <!-- ACTIONS -->
 
                 <div class="details-actions">
@@ -1229,38 +1241,37 @@
                     </div>
 
                     <!-- RESERVE -->
-                    @if (Model.AvailableCopies > 0)
+                    @if (Model.AvailableCopies <= 0)
                     {
-                        @if (!Model.HasMembership)
-                        {
-                            <a href="/Token/BuyToken?bookId=@Model.Id"
-                               class="details-btn details-reserve-btn">
-
-                                <i class="bi bi-credit-card"></i>
-                                Get Token to Reserve
-                            </a>
-                        }
-                        else
-                        {
-                            <a href="/Member/Reservation/Create?bookId=@Model.Id&quantity=1" id="reserveBookBtn"
-                               class="details-btn details-reserve-btn">
-                                <i class="bi bi-book"></i>
-                                Reserve Book
-                            </a>
-                        }
+                        <button class="details-btn details-reserve-btn" disabled>
+                            <i class="bi bi-lock"></i>
+                            Not Available
+                        </button>
+                    }
+                    else if (Model.HasMembership)
+                    {
+                        <a asp-area="Member"
+                           asp-controller="Reservation"
+                           asp-action="Create"
+                           asp-route-bookId="@Model.Id"
+                           asp-route-quantity="1"
+                           class="details-btn details-reserve-btn">
+                            <i class="bi bi-book"></i>
+                            Reserve Book
+                        </a>
                     }
                     else
                     {
-                        <button class="details-btn details-reserve-btn" disabled>
-
-                            <i class="bi bi-lock"></i>
-
-                            Not Available
-
-                        </button>
+                        <a asp-area="Member"
+                           asp-controller="Reservation"
+                           asp-action="Payment"
+                           asp-route-bookId="@Model.Id"
+                           asp-route-quantity="1"
+                           class="details-btn details-reserve-btn">
+                            <i class="bi bi-credit-card"></i>
+                            Pay & Reserve
+                        </a>
                     }
-
-
 
                 </div>
 

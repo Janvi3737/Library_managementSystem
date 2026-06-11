@@ -163,8 +163,6 @@ namespace Library_Management_System.Areas.Member.Controllers
                 return NotFound();
             }
 
-            // Already Returned
-
             if (borrow.ReturnedOn != null)
             {
                 TempData["Error"] =
@@ -173,19 +171,11 @@ namespace Library_Management_System.Areas.Member.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // RETURN DATE
-
             borrow.ReturnedOn = DateTime.Now;
-
-            // STATUS
 
             borrow.Status = "Returned";
 
-            // FINE PER DAY
-
             borrow.FinePerDay = 10;
-
-            // CALCULATE LATE DAYS
 
             int lateDays =
                 (borrow.ReturnedOn.Value.Date -
@@ -209,6 +199,31 @@ namespace Library_Management_System.Areas.Member.Controllers
                 borrow.FinePaid = true;
             }
 
+            // ==========================================
+            // NON-MEMBER REFUND CALCULATION
+            // ==========================================
+
+            if (borrow.IsNonMemberBorrow)
+            {
+                // Returned on time
+                if (borrow.DaysLate == 0)
+                {
+                    borrow.RefundAmount =
+                        borrow.SecurityDeposit;
+                }
+                else
+                {
+                    // Late return
+                    borrow.RefundAmount =
+                        Math.Max(
+                            0,
+                            borrow.SecurityDeposit - borrow.FineAmount
+                        );
+                }
+
+                borrow.RefundProcessed = false;
+            }
+
             // INCREASE STOCK
 
             if (borrow.Book != null)
@@ -216,56 +231,14 @@ namespace Library_Management_System.Areas.Member.Controllers
                 borrow.Book.AvailableCopies += 1;
             }
 
-            // ==========================================
-            // TOKEN REFUND REQUEST CREATION
-            // ==========================================
-
-            if (borrow.IsTokenBorrow &&
-                borrow.UserTokenId.HasValue)
-            {
-                bool refundExists =
-                    await _context.TokenRefunds
-                    .AnyAsync(x =>
-                        x.BorrowRecordId == borrow.Id);
-
-                if (!refundExists)
-                {
-                    var refund = new TokenRefund
-                    {
-                        BorrowRecordId = borrow.Id,
-
-                        UserTokenId =
-                            borrow.UserTokenId.Value,
-
-                        DepositAmount = 200,
-
-                        FineAmount =
-                            borrow.FineAmount,
-
-                        RefundAmount = 0,
-
-                        BookCondition =
-                            "Pending Review",
-
-                        RefundStatus =
-                            "Pending",
-
-                        CreatedOn =
-                            DateTime.Now
-                    };
-
-                    _context.TokenRefunds.Add(refund);
-                }
-            }
-
             await _context.SaveChangesAsync();
 
             // SUCCESS MESSAGE
 
-            if (borrow.IsTokenBorrow)
+            if (borrow.IsNonMemberBorrow)
             {
                 TempData["Success"] =
-                    "Book returned successfully. Refund request submitted for admin review.";
+                    $"Book returned successfully. Refund Amount: ₹{borrow.RefundAmount}";
             }
             else if (borrow.FineAmount > 0)
             {

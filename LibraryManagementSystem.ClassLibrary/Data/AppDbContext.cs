@@ -49,11 +49,6 @@ namespace LibraryManagementSystem.ClassLibrary.Data
 
         public DbSet<EventReservation> EventReservations { get; set; }
 
-        public DbSet<UserToken> UserTokens { get; set; }
-
-        public DbSet<TokenPayment> TokenPayments { get; set; }
-
-        public DbSet<TokenRefund> TokenRefunds { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

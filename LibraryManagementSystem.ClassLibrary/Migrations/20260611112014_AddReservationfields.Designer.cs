@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LibraryManagementSystem.ClassLibrary.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260609142141_DepositeinBooks")]
-    partial class DepositeinBooks
+    [Migration("20260611112014_AddReservationfields")]
+    partial class AddReservationfields
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -280,6 +280,12 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                     b.Property<int>("BookId")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("BorrowFee")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("DamageCharge")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<int>("DaysLate")
                         .HasColumnType("int");
 
@@ -295,11 +301,14 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                     b.Property<decimal>("FinePerDay")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<bool>("IsTokenBorrow")
+                    b.Property<bool>("IsNonMemberBorrow")
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("IssuedOn")
                         .HasColumnType("datetime2");
+
+                    b.Property<decimal>("LostBookCharge")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("MemberId")
                         .HasColumnType("int");
@@ -313,16 +322,21 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                     b.Property<int>("RenewCount")
                         .HasColumnType("int");
 
+                    b.Property<string>("ReturnStatus")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<DateTime?>("ReturnedOn")
                         .HasColumnType("datetime2");
+
+                    b.Property<decimal>("SecurityDeposit")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
-
-                    b.Property<int?>("UserTokenId")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -333,8 +347,6 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                     b.HasIndex("MemberId");
 
                     b.HasIndex("ReturnedOn");
-
-                    b.HasIndex("UserTokenId");
 
                     b.ToTable("BorrowRecords");
                 });
@@ -685,9 +697,15 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                     b.Property<int>("BookId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsPaymentCompleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("MemberId")
                         .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("PaymentRequired")
+                        .HasColumnType("bit");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -698,6 +716,9 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("BookId");
@@ -705,132 +726,6 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                     b.HasIndex("MemberId");
 
                     b.ToTable("Reservations");
-                });
-
-            modelBuilder.Entity("LibraryManagementSystem.ClassLibrary.Models.TokenPayment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("PaymentDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("PaymentMethod")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PaymentStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ScreenshotPath")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TransactionId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserTokenId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserTokenId");
-
-                    b.ToTable("TokenPayments");
-                });
-
-            modelBuilder.Entity("LibraryManagementSystem.ClassLibrary.Models.TokenRefund", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("BookCondition")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<int>("BorrowRecordId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("DepositAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("FineAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime?>("ProcessedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("RefundAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("RefundStatus")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("Remarks")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int>("UserTokenId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BorrowRecordId");
-
-                    b.HasIndex("UserTokenId");
-
-                    b.ToTable("TokenRefunds");
-                });
-
-            modelBuilder.Entity("LibraryManagementSystem.ClassLibrary.Models.UserToken", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AvailableTokens")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("DepositAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<bool>("IsApproved")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("PurchaseDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("TotalBorrowCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserTokens");
                 });
 
             modelBuilder.Entity("LibraryManagementSystem.ClassLibrary.Models.Wishlist", b =>
@@ -1058,15 +953,9 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("LibraryManagementSystem.ClassLibrary.Models.UserToken", "UserToken")
-                        .WithMany()
-                        .HasForeignKey("UserTokenId");
-
                     b.Navigation("Book");
 
                     b.Navigation("Member");
-
-                    b.Navigation("UserToken");
                 });
 
             modelBuilder.Entity("LibraryManagementSystem.ClassLibrary.Models.EventReservation", b =>
@@ -1148,47 +1037,6 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                     b.Navigation("Book");
 
                     b.Navigation("Member");
-                });
-
-            modelBuilder.Entity("LibraryManagementSystem.ClassLibrary.Models.TokenPayment", b =>
-                {
-                    b.HasOne("LibraryManagementSystem.ClassLibrary.Models.UserToken", "UserToken")
-                        .WithMany()
-                        .HasForeignKey("UserTokenId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("UserToken");
-                });
-
-            modelBuilder.Entity("LibraryManagementSystem.ClassLibrary.Models.TokenRefund", b =>
-                {
-                    b.HasOne("LibraryManagementSystem.ClassLibrary.Models.BorrowRecord", "BorrowRecord")
-                        .WithMany()
-                        .HasForeignKey("BorrowRecordId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("LibraryManagementSystem.ClassLibrary.Models.UserToken", "UserToken")
-                        .WithMany()
-                        .HasForeignKey("UserTokenId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("BorrowRecord");
-
-                    b.Navigation("UserToken");
-                });
-
-            modelBuilder.Entity("LibraryManagementSystem.ClassLibrary.Models.UserToken", b =>
-                {
-                    b.HasOne("LibraryManagementSystem.ClassLibrary.Models.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("LibraryManagementSystem.ClassLibrary.Models.Wishlist", b =>

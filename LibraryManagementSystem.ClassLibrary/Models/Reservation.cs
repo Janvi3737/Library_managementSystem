@@ -26,5 +26,14 @@ namespace LibraryManagementSystem.ClassLibrary.Models
 
         public ReservationStatus Status { get; set; }
             = ReservationStatus.Waiting;
+
+        public bool PaymentRequired { get; set; }
+
+        public bool IsPaymentCompleted { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal TotalAmount { get; set; }
+
+
     }
 }

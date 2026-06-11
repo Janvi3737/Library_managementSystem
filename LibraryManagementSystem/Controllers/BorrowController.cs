@@ -102,85 +102,40 @@ public async Task<IActionResult> Issue(BorrowRecord Record, int borrowDays)
     }
 
     var membership = await _context.Memberships
-        .FirstOrDefaultAsync(x =>
-            x.MemberId == Record.MemberId &&
-            x.IsActive &&
-            x.EndDate > DateTime.Now);
+    .FirstOrDefaultAsync(x =>
+        x.MemberId == Record.MemberId &&
+        x.IsActive &&
+        x.EndDate > DateTime.Now);
 
-    if (membership == null)
-    {
-        var member = await _context.Members
-            .FirstOrDefaultAsync(x => x.Id == Record.MemberId);
 
-        if (member == null)
-        {
-            TempData["Error"] = "Member not found.";
-            return RedirectToAction(nameof(Issue));
-        }
-
-        var token = await _context.UserTokens
-            .FirstOrDefaultAsync(x => x.UserId == member.ApplicationUserId);
-
-        if (token == null)
-        {
-            TempData["Error"] =
-                "This user has no active membership or token.";
-
-            return RedirectToAction(nameof(Issue));
-        }
-
-        if (!token.IsApproved)
-        {
-            TempData["Error"] =
-                "User token is waiting for approval.";
-
-            return RedirectToAction(nameof(Issue));
-        }
-
-        if (token.TotalBorrowCount >= 3)
-        {
-            TempData["Error"] =
-                "❌ Token limit is over. User must purchase a membership.";
-
-            return RedirectToAction(nameof(Issue));
-        }
-
-        // Count this borrow
-        token.TotalBorrowCount++;
-
-        _context.UserTokens.Update(token);
-
-        // Notification
-        _context.Notifications.Add(new Notification
-        {
-            MemberId = token.UserId,
-            Message =
-                $"📚 Book borrowed successfully. Token usage: {token.TotalBorrowCount}/3",
-            Link = "/Member/Notifications/Index",
-            IsRead = false,
-            CreatedOn = DateTime.Now
-        });
-
-        // Last borrow warning
-        if (token.TotalBorrowCount == 3)
-        {
-            _context.Notifications.Add(new Notification
+            if (membership == null)
             {
-                MemberId = token.UserId,
-                Message =
-                    "⚠️ You have used all 3 token borrows. Membership is required for future borrowing.",
-                Link = "/Membership/Index",
-                IsRead = false,
-                CreatedOn = DateTime.Now
-            });
-        }
-    }
+                Record.IsNonMemberBorrow = true;
 
-    // =========================================
-    // ISSUE BOOK
-    // =========================================
+                Record.BorrowFee = 20;
 
-    var settings = await _context.LibrarySettings.FirstOrDefaultAsync()
+                Record.SecurityDeposit = 300;
+
+                if (borrowDays <= 0)
+                    borrowDays = 7;
+            }
+            else
+            {
+                Record.IsNonMemberBorrow = false;
+
+                Record.BorrowFee = 0;
+
+                Record.SecurityDeposit = 0;
+
+                if (borrowDays <= 0)
+                    borrowDays = 15;
+            }
+
+            // =========================================
+            // ISSUE BOOK
+            // =========================================
+
+            var settings = await _context.LibrarySettings.FirstOrDefaultAsync()
                    ?? new LibrarySettings();
 
     if (borrowDays <= 0)
@@ -260,6 +215,27 @@ public async Task<IActionResult> Issue(BorrowRecord Record, int borrowDays)
 
             record.Status = "Returned";
 
+            // NON-MEMBER REFUND
+
+            if (record.IsNonMemberBorrow)
+            {
+                if (record.DaysLate == 0)
+                {
+                    record.RefundAmount =
+                        record.SecurityDeposit;
+                }
+                else
+                {
+                    record.RefundAmount =
+                        Math.Max(
+                            0,
+                            record.SecurityDeposit - record.FineAmount
+                        );
+                }
+
+                record.RefundProcessed = false;
+            }
+
             // INCREASE STOCK
             if (record.Book != null)
             {
@@ -270,8 +246,16 @@ public async Task<IActionResult> Issue(BorrowRecord Record, int borrowDays)
 
             await _context.SaveChangesAsync();
 
-            TempData["Success"] =
-                "✅ Book returned successfully!";
+            if (record.IsNonMemberBorrow)
+            {
+                TempData["Success"] =
+                    $"✅ Book returned successfully. Refund Amount: ₹{record.RefundAmount}";
+            }
+            else
+            {
+                TempData["Success"] =
+                    "✅ Book returned successfully!";
+            }
 
             return RedirectToAction(nameof(Index));
         }

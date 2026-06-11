@@ -1,0 +1,261 @@
+@model Library_Management_System.ViewModels.RazorPayViewModel
+@{
+    ViewData["Title"] = "Reservation Payment";
+    Layout = "~/Areas/Member/Views/Shared/_MemberLayout.cshtml";
+}
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+<style>
+    .payment-wrapper {
+        max-width: 900px;
+        margin: auto;
+        padding: 30px;
+    }
+
+    .payment-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        overflow: hidden;
+    }
+
+    .payment-header {
+        padding: 30px;
+        text-align: center;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .payment-icon {
+        width: 80px;
+        height: 80px;
+        margin: auto auto 15px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(139,92,246,.15);
+        color: var(--primary);
+        font-size: 34px;
+    }
+
+    .payment-title {
+        font-size: 30px;
+        font-weight: 800;
+        color: var(--text);
+    }
+
+    .payment-subtitle {
+        color: var(--text-muted);
+        margin-top: 10px;
+    }
+
+    .payment-body {
+        padding: 30px;
+    }
+
+    .book-info {
+        background: var(--card-2);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 20px;
+        margin-bottom: 25px;
+    }
+
+    .book-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text);
+    }
+
+    .payment-table {
+        width: 100%;
+    }
+
+        .payment-table td {
+            padding: 16px 0;
+            color: var(--text);
+        }
+
+        .payment-table tr {
+            border-bottom: 1px solid var(--border);
+        }
+
+    .total-row td {
+        font-size: 22px;
+        font-weight: 800;
+        color: #10b981;
+    }
+
+    .payment-btn {
+        width: 100%;
+        border: none;
+        padding: 16px;
+        border-radius: 16px;
+        font-size: 18px;
+        font-weight: 700;
+        color: white;
+        background: linear-gradient(135deg,var(--primary),var(--primary-light));
+        transition: .3s;
+    }
+
+        .payment-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(139,92,246,.35);
+        }
+
+    .notice-box {
+        margin-top: 20px;
+        background: rgba(245,158,11,.12);
+        border: 1px solid rgba(245,158,11,.25);
+        padding: 18px;
+        border-radius: 16px;
+        color: #fbbf24;
+    }
+</style>
+
+<div class="payment-wrapper">
+
+    <div class="payment-card">
+
+        <div class="payment-header">
+
+            <div class="payment-icon">
+                <i class="bi bi-credit-card"></i>
+            </div>
+
+            <div class="payment-title">
+                Reservation Payment
+            </div>
+
+            <div class="payment-subtitle">
+                Complete payment to reserve this book
+            </div>
+
+        </div>
+
+        <div class="payment-body">
+
+            <div class="book-info">
+
+                <div class="book-title">
+                    @Model.Book.Title
+                </div>
+
+                <div class="text-muted mt-2">
+                    Quantity : @Model.Quantity
+                </div>
+
+            </div>
+
+            <table class="payment-table">
+
+                <tr>
+                    <td>Borrow Fee</td>
+                    <td class="text-end">₹@Model.BorrowFee</td>
+                </tr>
+
+                <tr>
+                    <td>Security Deposit</td>
+                    <td class="text-end">₹@Model.SecurityDeposit</td>
+                </tr>
+
+                <tr class="total-row">
+                    <td>Total Payable</td>
+                    <td class="text-end">₹@Model.TotalAmount</td>
+                </tr>
+
+            </table>
+
+            <div class="notice-box">
+                <i class="bi bi-info-circle"></i>
+                Security Deposit is refundable after successful return of the book.
+            </div>
+
+            <button id="rzp-button"
+                    type="button"
+                    class="payment-btn mt-4">
+
+                <i class="bi bi-shield-check"></i>
+                Pay ₹@Model.TotalAmount
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<form id="paymentForm"
+      asp-action="PaymentSuccess"
+      method="post">
+
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" name="bookId" value="@Model.Book.Id" />
+    <input type="hidden" name="quantity" value="@Model.Quantity" />
+
+    <input type="hidden"
+           name="razorpayPaymentId"
+           id="razorpayPaymentId" />
+
+    <input type="hidden"
+           name="razorpayOrderId"
+           id="razorpayOrderId" />
+
+    <input type="hidden"
+           name="razorpaySignature"
+           id="razorpaySignature" />
+
+</form>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+
+    var options = {
+
+        key: "@Model.RazorpayKey",
+
+        amount: "@((decimal)Model.TotalAmount * 100)",
+
+        currency: "INR",
+
+        name: "Library Management System",
+
+        description: "Book Reservation Payment",
+
+        order_id: "@Model.RazorpayOrderId",
+
+        handler: function (response) {
+
+            document.getElementById("razorpayPaymentId").value =
+                response.razorpay_payment_id;
+
+            document.getElementById("razorpayOrderId").value =
+                response.razorpay_order_id;
+
+            document.getElementById("razorpaySignature").value =
+                response.razorpay_signature;
+
+            document.getElementById("paymentForm").submit();
+        },
+
+        theme: {
+            color: "#8b5cf6"
+        }
+    };
+
+    var rzp = new Razorpay(options);
+
+    document.getElementById("rzp-button")
+        .onclick = function (e) {
+
+            rzp.open();
+
+            e.preventDefault();
+        };
+
+</script>

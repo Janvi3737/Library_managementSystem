@@ -358,6 +358,7 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                     DepartmentId = table.Column<int>(type: "int", nullable: true),
                     TotalCopies = table.Column<int>(type: "int", nullable: false),
                     TotalPages = table.Column<int>(type: "int", nullable: false),
+                    DepositAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     AvailableCopies = table.Column<int>(type: "int", nullable: false),
                     IsFeatured = table.Column<bool>(type: "bit", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: true),
@@ -519,7 +520,13 @@ namespace LibraryManagementSystem.ClassLibrary.Migrations
                     UserTokenId = table.Column<int>(type: "int", nullable: true),
                     BookCondition = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     RefundAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    RefundProcessed = table.Column<bool>(type: "bit", nullable: false)
+                    RefundProcessed = table.Column<bool>(type: "bit", nullable: false),
+                    BorrowFee = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    SecurityDeposit = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    IsNonMemberBorrow = table.Column<bool>(type: "bit", nullable: false),
+                    ReturnStatus = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    DamageCharge = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    LostBookCharge = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {

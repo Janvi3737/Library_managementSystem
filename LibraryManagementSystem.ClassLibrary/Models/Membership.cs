@@ -24,9 +24,6 @@ namespace LibraryManagementSystem.ClassLibrary.Models
         [Required]
         public DateTime EndDate { get; set; }
         
-        // public bool IsActive { get; set; } = true;
-
-         // ✅ UPDATED: only true after admin approval
         public bool IsActive { get; set; } = false;
 
         public bool IsRenewed { get; set; } = false;

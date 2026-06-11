@@ -316,5 +316,88 @@ namespace Library_Management_System.Controllers
 
             return RedirectToAction("Details", new { id = bookId });
         }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> IssueBook(int bookId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+                return RedirectToAction("Login", "Account");
+
+            var member = await _context.Members
+                .FirstOrDefaultAsync(m => m.ApplicationUserId == userId);
+
+            if (member == null)
+                return NotFound();
+
+            bool hasMembership = await _context.Memberships
+                .AnyAsync(m =>
+                m.MemberId == member.Id &&
+                m.IsActive &&
+                m.EndDate >= DateTime.UtcNow);
+
+            var book = await _context.Books.FindAsync(bookId);
+
+            if (book == null)
+                return NotFound();
+
+            if (book.AvailableCopies <= 0)
+            {
+                TempData["Error"] = "Book is not available.";
+                return RedirectToAction("Details", new { id = bookId });
+            }
+
+            var borrow = new BorrowRecord
+            {
+                BookId = bookId,
+                MemberId = member.Id,
+                IssuedOn = DateTime.Now,
+                Status = "Issued",
+                FineAmount = 0,
+                FinePaid = false,
+                DaysLate = 0,
+                RenewCount = 0
+            };
+
+            // =====================================
+            // NON-MEMBER BORROW
+            // =====================================
+
+            if (!hasMembership)
+            {
+                borrow.IsNonMemberBorrow = true;
+
+                borrow.BorrowFee = 20;
+                borrow.SecurityDeposit = 300;
+
+                borrow.DueDate = DateTime.Now.AddDays(7);
+            }
+            else
+            {
+                borrow.IsNonMemberBorrow = false;
+
+                borrow.BorrowFee = 0;
+                borrow.SecurityDeposit = 0;
+
+                borrow.DueDate = DateTime.Now.AddDays(15);
+            }
+
+            _context.BorrowRecords.Add(borrow);
+
+            book.AvailableCopies--;
+
+            book.BorrowCount++;
+
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] =
+                borrow.IsNonMemberBorrow
+                ? "Book issued successfully. Borrow Fee ₹20 and Security Deposit ₹300 applied."
+                : "Book issued successfully.";
+
+            return RedirectToAction("Index");
+        }
     }
 }

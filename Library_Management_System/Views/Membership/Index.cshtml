@@ -124,97 +124,106 @@
         }
     }
 
-    /* ==========================
-       TOKEN SECTION
-    ========================== */
+    /* Nonmember section */
 
-    .token-section {
-        position: relative;
-        z-index: 2;
-        margin-bottom: 50px;
+    .nonmember-section {
+        margin: 30px 0;
     }
 
-    .token-card {
-        background: linear-gradient( 135deg, rgba(124,58,237,.18), rgba(217,70,239,.15) );
-        border: 1px solid rgba(192,132,252,.25);
-        border-radius: 28px;
-        padding: 28px 35px;
+    .nonmember-card {
         display: flex;
         align-items: center;
-        justify-content: space-between;
         gap: 25px;
-        backdrop-filter: blur(18px);
-        box-shadow: 0 15px 40px rgba(124,58,237,.15);
+        background: linear-gradient(135deg,#0f172a,#1e293b);
+        border: 1px solid rgba(255,255,255,.08);
+        border-radius: 24px;
+        padding: 28px;
+        color: #fff;
+        box-shadow: 0 15px 40px rgba(0,0,0,.25);
     }
 
-    .token-icon {
-        width: 80px;
-        height: 80px;
-        border-radius: 24px;
-        background: linear-gradient( 135deg, #f59e0b, #f97316 );
+    .nonmember-icon {
+        width: 90px;
+        height: 90px;
+        flex-shrink: 0;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 34px;
-        color: white;
-        flex-shrink: 0;
-        box-shadow: 0 15px 30px rgba(249,115,22,.35);
+        border-radius: 20px;
+        background: rgba(255,255,255,.08);
     }
 
-    .token-content {
+        .nonmember-icon i {
+            font-size: 40px;
+            color: #fbbf24;
+        }
+
+    .nonmember-content {
         flex: 1;
     }
 
-        .token-content h3 {
-            font-size: 28px;
-            font-weight: 900;
-            margin-bottom: 8px;
-            color: white;
+        .nonmember-content h3 {
+            margin-bottom: 10px;
+            font-size: 24px;
+            font-weight: 700;
         }
 
-        .token-content p {
+        .nonmember-content p {
             color: #cbd5e1;
-            margin: 0;
             line-height: 1.7;
+            margin-bottom: 18px;
         }
 
-    .token-btn {
-        min-width: 220px;
-        height: 62px;
-        border-radius: 18px;
-        text-decoration: none;
-        color: white;
-        font-weight: 800;
-        font-size: 16px;
+    .borrow-info {
         display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        background: linear-gradient( 135deg, #f59e0b, #f97316 );
-        transition: .35s ease;
-        box-shadow: 0 12px 30px rgba(249,115,22,.25);
+        flex-wrap: wrap;
+        gap: 12px;
     }
 
-        .token-btn:hover {
-            color: white;
-            transform: translateY(-3px);
-            box-shadow: 0 20px 40px rgba(249,115,22,.35);
+        .borrow-info span {
+            background: rgba(255,255,255,.08);
+            border: 1px solid rgba(255,255,255,.08);
+            padding: 10px 16px;
+            border-radius: 50px;
+            font-size: 14px;
         }
 
-    @@media(max-width:768px) {
+        .borrow-info i {
+            margin-right: 6px;
+            color: #fbbf24;
+        }
 
-        .token-card {
+    .borrow-btn {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 24px;
+        background: #fbbf24;
+        color: #111827;
+        text-decoration: none;
+        border-radius: 14px;
+        font-weight: 700;
+        transition: .3s;
+    }
+
+        .borrow-btn:hover {
+            transform: translateY(-3px);
+            color: #111827;
+        }
+
+        .borrow-btn i {
+            font-size: 18px;
+        }
+
+    @@media(max - width:768px) {
+
+        .nonmember-card {
             flex-direction: column;
             text-align: center;
         }
 
-        .token-btn {
-            width: 100%;
-            min-width: auto;
-        }
-
-        .token-content h3 {
-            font-size: 24px;
+        .borrow-info {
+            justify-content: center;
         }
     }
 
@@ -530,33 +539,57 @@
 
     </div>
 
-    <!-- TOKEN PURCHASE CARD -->
-    <div class="token-section">
+    <!-- NonMember Card -->
+    <div class="nonmember-section">
 
-        <div class="token-card">
+        <div class="nonmember-card">
 
-            <div class="token-icon">
-                <i class="bi bi-coin"></i>
+            <div class="nonmember-icon">
+                <i class="bi bi-journal-bookmark-fill"></i>
             </div>
 
-            <div class="token-content">
+            <div class="nonmember-content">
 
                 <h3>Borrow Without Membership</h3>
 
                 <p>
-                    Get a borrow token and reserve books without purchasing a membership.
-                    Each token allows 1 book borrow. Maximum 3 tokens per user.
-                    After 3 borrows, a membership is required.
+                    Not ready to purchase a membership? You can still borrow books as a
+                    Guest Reader. Simply pay a small borrowing fee and a refundable
+                    security deposit for each book.
                 </p>
+
+                <div class="borrow-info">
+
+                    <span>
+                        <i class="bi bi-book"></i>
+                        5 Book Maximum
+                    </span>
+
+                    <span>
+                        <i class="bi bi-calendar-event"></i>
+                        7 Days Borrow Period
+                    </span>
+
+                    <span>
+                        <i class="bi bi-cash-stack"></i>
+                        Refundable Deposit
+                    </span>
+
+                    <span>
+                        <i class="bi bi-exclamation-circle"></i>
+                        Late Fine Applicable
+                    </span>
+
+                </div>
 
             </div>
 
-            <a asp-controller="Token"
-               asp-action="RedirectToken"
-               class="token-btn">
+            <a asp-controller="Catalog"
+               asp-action="Index"
+               class="borrow-btn">
 
-                <i class="bi bi-lightning-charge-fill"></i>
-                Tokens
+                <i class="bi bi-arrow-right-circle-fill"></i>
+                Borrow Now
 
             </a>
 

@@ -1,9 +1,12 @@
+using System.Security.Claims;
+using Library_Management_System.ViewModels;
 using LibraryManagementSystem.ClassLibrary.Data;
 using LibraryManagementSystem.ClassLibrary.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
+using Razorpay.Api;
+using Microsoft.Extensions.Configuration;
 
 namespace Library_Management_System.Areas.Member.Controllers
 {
@@ -12,10 +15,14 @@ namespace Library_Management_System.Areas.Member.Controllers
     public class ReservationController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly IConfiguration _configuration;
 
-        public ReservationController(AppDbContext context)
+        public ReservationController(
+            AppDbContext context,
+            IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         // =========================
@@ -41,6 +48,21 @@ namespace Library_Management_System.Areas.Member.Controllers
                     x.Status == ReservationStatus.Waiting) + 1
             );
 
+            // Membership Check
+            var member = await _context.Members
+    .FirstOrDefaultAsync(m => m.ApplicationUserId == userId);
+
+            ViewBag.HasMembership = false;
+
+            if (member != null)
+            {
+                ViewBag.HasMembership = await _context.Memberships
+                    .AnyAsync(m =>
+                        m.MemberId == member.Id &&
+                        m.IsActive &&
+                        m.EndDate >= DateTime.Now);
+            }
+
             return View(reservations);
         }
 
@@ -51,6 +73,8 @@ namespace Library_Management_System.Areas.Member.Controllers
         [HttpGet]
         public async Task<IActionResult> Create(int bookId, int quantity = 1)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             var book = await _context.Books
                 .Include(b => b.Author)
                 .Include(b => b.Category)
@@ -65,7 +89,36 @@ namespace Library_Management_System.Areas.Member.Controllers
             if (quantity > book.AvailableCopies)
                 quantity = book.AvailableCopies;
 
+            // KEEP MEMBERSHIP CHECK AS IT IS
+            var member = await _context.Members
+    .FirstOrDefaultAsync(m => m.ApplicationUserId == userId);
+
+            bool hasMembership = false;
+
+            if (member != null)
+            {
+                hasMembership = await _context.Memberships
+                    .AnyAsync(m =>
+                        m.MemberId == member.Id &&
+                        m.IsActive &&
+                        m.EndDate >= DateTime.Now);
+            }
+
+            ViewBag.HasMembership = hasMembership;
             ViewBag.Quantity = quantity;
+
+            // Non-member charges
+            ViewBag.BorrowFee = hasMembership
+                ? 0
+                : (50 * quantity);
+
+            ViewBag.SecurityDeposit = hasMembership
+                ? 0
+                : (book.DepositAmount * quantity);
+
+            ViewBag.TotalAmount =
+                (decimal)ViewBag.BorrowFee +
+                (decimal)ViewBag.SecurityDeposit;
 
             return View(book);
         }
@@ -73,74 +126,30 @@ namespace Library_Management_System.Areas.Member.Controllers
         // =========================
         // SAVE RESERVATION
         // =========================
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateReservation(
-    int bookId,
-    int quantity = 1)
+            int bookId,
+            int quantity = 1)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (string.IsNullOrEmpty(userId))
                 return RedirectToAction("Login", "Account");
 
-            var book = await _context.Books.FindAsync(bookId);
+            var book = await _context.Books
+                .FirstOrDefaultAsync(b => b.Id == bookId);
 
             if (book == null)
                 return NotFound();
 
-            // =========================
-            // GET USER TOKEN
-            // =========================
-
-            var token = await _context.UserTokens
-                .FirstOrDefaultAsync(x => x.UserId == userId);
-
-            if (token == null)
+            if (book.AvailableCopies <= 0)
             {
-                TempData["Error"] =
-                    "You don't have any token. Please purchase a token first.";
-
-                return RedirectToAction(
-                    "BuyToken",
-                    "Token",
-                    new { area = "", bookId = bookId });
+                TempData["Error"] = "Book is not available.";
+                return RedirectToAction(nameof(Index));
             }
 
-            // =========================
-            // TOKEN LIMIT CHECK
-            // =========================
-
-            if (token.TotalBorrowCount >= 3)
-            {
-                TempData["Error"] =
-                    "You have already used all 3 tokens. Please purchase membership.";
-
-                return RedirectToAction(
-                    "Index",
-                    "Membership",
-                    new { area = "" });
-            }
-
-            // =========================
-            // AVAILABLE TOKEN CHECK
-            // =========================
-
-            if (token.AvailableTokens <= 0)
-            {
-                TempData["Error"] =
-                    "No available tokens found. Please purchase another token.";
-
-                return RedirectToAction(
-                    "BuyToken",
-                    "Token",
-                    new { area = "", bookId = bookId });
-            }
-
-            // =========================
-            // QUANTITY VALIDATION
-            // =========================
+            // Quantity Validation
 
             if (quantity < 1)
                 quantity = 1;
@@ -148,9 +157,7 @@ namespace Library_Management_System.Areas.Member.Controllers
             if (quantity > book.AvailableCopies)
                 quantity = book.AvailableCopies;
 
-            // =========================
-            // DUPLICATE CHECK
-            // =========================
+            // Duplicate Reservation Check
 
             bool alreadyReserved = await _context.Reservations
                 .AnyAsync(r =>
@@ -166,36 +173,66 @@ namespace Library_Management_System.Areas.Member.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // =========================
-            // CREATE RESERVATION
-            // =========================
+            // Membership Check
 
-            var reservation = new Reservation
+            var member = await _context.Members
+                .FirstOrDefaultAsync(m => m.ApplicationUserId == userId);
+
+            bool hasMembership = false;
+
+            if (member != null)
             {
-                BookId = bookId,
-                MemberId = userId,
-                Quantity = quantity,
-                ReservedOn = DateTime.Now,
-                Status = ReservationStatus.Waiting
-            };
-
-            _context.Reservations.Add(reservation);
+                hasMembership = await _context.Memberships
+                    .AnyAsync(m =>
+                        m.MemberId == member.Id &&
+                        m.IsActive &&
+                        m.EndDate >= DateTime.Now);
+            }
 
             // =========================
-            // CONSUME TOKEN
+            // MEMBER USER
             // =========================
 
-            token.AvailableTokens -= 1;
-            token.TotalBorrowCount += 1;
+            if (hasMembership)
+            {
+                var reservation = new Reservation
+                {
+                    BookId = bookId,
+                    MemberId = userId,
+                    Quantity = quantity,
+                    ReservedOn = DateTime.Now,
+                    Status = ReservationStatus.Waiting
+                };
 
-            _context.UserTokens.Update(token);
+                _context.Reservations.Add(reservation);
 
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
-            TempData["Success"] =
-                $"Book reserved successfully. Remaining Tokens: {token.AvailableTokens}";
+                TempData["Success"] =
+                    $"Book reserved successfully. {quantity} copy(s) reserved.";
 
-            return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index));
+            }
+
+            // =========================
+            // NON-MEMBER USER
+            // =========================
+
+            decimal borrowFee = 50m * quantity;
+            decimal securityDeposit = book.DepositAmount * quantity;
+            decimal totalPayable = borrowFee + securityDeposit;
+
+            TempData["BookId"] = bookId;
+            TempData["Quantity"] = quantity;
+            TempData["BorrowFee"] = borrowFee.ToString();
+            TempData["SecurityDeposit"] = securityDeposit.ToString();
+            TempData["TotalPayable"] = totalPayable.ToString();
+
+            return RedirectToAction("Payment", new
+            {
+                bookId = bookId,
+                quantity = quantity
+            });
         }
 
         // =========================
@@ -232,6 +269,92 @@ namespace Library_Management_System.Areas.Member.Controllers
                 "Reservation cancelled successfully.";
 
             return RedirectToAction(nameof(Index));
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> Payment(int bookId, int quantity)
+        {
+            var book = await _context.Books
+                .Include(b => b.Author)
+                .FirstOrDefaultAsync(b => b.Id == bookId);
+
+            if (book == null)
+                return NotFound();
+
+            decimal borrowFee = 50m * quantity;
+            decimal deposit = book.DepositAmount * quantity;
+            decimal totalAmount = borrowFee + deposit;
+
+            var razorpayKey = _configuration["Razorpay:Key"];
+            var razorpaySecret = _configuration["Razorpay:Secret"];
+
+            RazorpayClient client = new RazorpayClient(
+                razorpayKey,
+                razorpaySecret);
+
+            Dictionary<string, object> options = new Dictionary<string, object>();
+
+            options.Add("amount", Convert.ToInt32(totalAmount * 100)); 
+            options.Add("currency", "INR");
+            options.Add("receipt", $"BOOK_{bookId}_{DateTime.Now.Ticks}");
+
+            Order order = client.Order.Create(options);
+
+            var model = new RazorPayViewModel
+            {
+                Book = book,
+                Quantity = quantity,
+                BorrowFee = borrowFee,
+                SecurityDeposit = deposit,
+                TotalAmount = totalAmount,
+                RazorpayKey = razorpayKey,
+                RazorpayOrderId = order["id"].ToString()
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PaymentSuccess(
+    int bookId,
+    int quantity,
+    string razorpayPaymentId,
+    string razorpayOrderId,
+    string razorpaySignature)
+        {
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                
+
+                var reservation = new Reservation
+                {
+                    BookId = bookId,
+                    MemberId = userId,
+                    Quantity = quantity,
+                    ReservedOn = DateTime.Now,
+                    Status = ReservationStatus.Waiting
+                };
+
+                _context.Reservations.Add(reservation);
+
+                await _context.SaveChangesAsync();
+
+                TempData["Success"] =
+                    $"Payment Successful. Payment Id: {razorpayPaymentId}";
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] =
+                    "Payment Verification Failed.";
+
+                return RedirectToAction(nameof(Index));
+            }
         }
     }
 }

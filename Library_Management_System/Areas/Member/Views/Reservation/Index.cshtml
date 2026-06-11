@@ -49,6 +49,61 @@
         margin-top: 5px;
     }
 
+    /* =========================
+       MEMBERSHIP INFO BOXES
+    ========================= */
+
+    .membership-box {
+        margin-top: 18px;
+        padding: 18px;
+        border-radius: 16px;
+    }
+
+    .non-member-box {
+        background: rgba(245, 158, 11, 0.12) !important;
+        border: 1px solid rgba(245, 158, 11, 0.35) !important;
+    }
+
+        .non-member-box .info-title {
+            color: #fbbf24 !important;
+            font-weight: 700;
+        }
+
+        .non-member-box .info-value {
+            color: #ffffff !important;
+            line-height: 1.8;
+        }
+
+    .member-box {
+        background: rgba(16, 185, 129, 0.12) !important;
+        border: 1px solid rgba(16, 185, 129, 0.35) !important;
+    }
+
+        .member-box .info-title {
+            color: #34d399 !important;
+            font-weight: 700;
+        }
+
+        .member-box .info-value {
+            color: #ffffff !important;
+            line-height: 1.8;
+        }
+
+    /* Light Mode */
+
+    body.light-mode .non-member-box {
+        background: rgba(245, 158, 11, 0.08) !important;
+    }
+
+    body.light-mode .member-box {
+        background: rgba(16, 185, 129, 0.08) !important;
+    }
+
+        body.light-mode .non-member-box .info-value,
+        body.light-mode .member-box .info-value {
+            color: #111827 !important;
+        }
+
     .reservation-info {
         margin-top: 20px;
         display: flex;
@@ -241,7 +296,7 @@
 <div class="reservation-wrapper">
 
     <div class="page-title">
-        ðŸ“š My Reservations
+         My Reservations
     </div>
 
     @if (!Model.Any())
@@ -249,6 +304,10 @@
         <div class="alert alert-dark">
             No reservations found.
         </div>
+    }
+
+    @{
+        bool hasMembership = ViewBag.HasMembership ?? false;
     }
 
     @foreach (var item in Model)
@@ -333,6 +392,37 @@
                 </div>
 
             </div>
+
+            @if (!hasMembership)
+            {
+                <div class="info-box membership-box non-member-box">
+
+                    <div class="info-title">
+                        Non-Member Charges
+                    </div>
+
+                    <div class="info-value">
+                        💰 Borrow Fee: ₹20 <br />
+                        🔒 Security Deposit: ₹300
+                    </div>
+
+                </div>
+            }
+            else
+            {
+                <div class="info-box membership-box member-box">
+
+                    <div class="info-title">
+                        Membership Benefits
+                    </div>
+
+                    <div class="info-value">
+                        ✅ No Borrow Fee <br />
+                        ✅ No Security Deposit
+                    </div>
+
+                </div>
+            }
 
             @if (item.Status == ReservationStatus.Waiting)
             {
